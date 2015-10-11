@@ -260,6 +260,10 @@ public class ATNEngine {
            biomassCSV += "\n" + tempStr;
 
        }
+
+       // Append node config to the ATN CSV
+       psATN.println();
+       psATN.println("\"node-config: " + job.getNode_Config() + "\"");
        
        biomassCSV += "\n\n";
        
