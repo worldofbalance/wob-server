@@ -159,6 +159,15 @@ public class GameEngine {
         runSimulation(ecosystem, getCurrentMonth());
     }
     
+    /**
+     * Run a simulation at the same timestep.
+     */
+    public void forceSimulation(int timestep) {
+        runSimulation(ecosystem, timestep);
+        //this.setCurrentMonth(timestep);
+        ecosystem.updateTimeSteps(timestep);
+    }
+    
     public void deleteSimulationIds() {
     	simEngine.saveBiomassCSVFileSimJob(ecosystem.getManipulationID(), "Simulation Job ", simEngine.getBiomassCSVString(ecosystem.getManipulationID()));
     	simEngine.deleteManipulation(ecosystem.getManipulationID());
@@ -303,12 +312,25 @@ public class GameEngine {
 	        }
     	}
         ecosystem.setSpecies(species);
-        SpeciesType type = species.getSpeciesType();
-        for (Entry<Integer, Float> entry : type.getNodeDistribution().entrySet()) {
-            int node_id = entry.getKey(), biomass = (int) (species.getTotalBiomass() * entry.getValue());
-
-            SpeciesZoneType szt = atnEngine.createSpeciesZoneType(node_id, biomass);
-            ecosystem.getZoneNodes().addNode(node_id, szt);
+        //10/12/2015, HJR Not sure if we need to add this logic for the simulation engine,
+        //because we services default food web does this
+//        if(Constants.useSimEngine){
+//	        SpeciesType type = species.getSpeciesType();
+//	        for (Entry<Integer, Float> entry : type.getNodeDistribution().entrySet()) {
+//	            int node_id = entry.getKey(), biomass = (int) (species.getTotalBiomass() * entry.getValue());
+//	
+//	            SpeciesZoneType szt = simEngine.createSpeciesZoneType(node_id, biomass);
+//	            ecosystem.getZoneNodes().addNode(node_id, szt);
+//	        }
+//        }
+        if(Constants.useAtnEngine){
+	        SpeciesType type = species.getSpeciesType();
+	        for (Entry<Integer, Float> entry : type.getNodeDistribution().entrySet()) {
+	            int node_id = entry.getKey(), biomass = (int) (species.getTotalBiomass() * entry.getValue());
+	
+	            SpeciesZoneType szt = atnEngine.createSpeciesZoneType(node_id, biomass);
+	            ecosystem.getZoneNodes().addNode(node_id, szt);
+	        }
         }
     }
     

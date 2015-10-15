@@ -1238,8 +1238,8 @@ public class SimulationTest {
 //	    SimulationEngine se = new SimulationEngine("http://127.0.0.1:81/N3DWebService.svc?wsdl");                                         
 //        SimulationEngine se = new SimulationEngine("http://54050601f7a9427285bd6fcfd56f8679.cloudapp.net/N3DWebService.svc?wsdl");
 
-//        sTest.someTest();
-        sTest.someTest1();
+        sTest.someTest();
+//        sTest.someTest1();
 //        sTest.someTest2();
 //        sTest.testNode4Oribi();
 //                String manpl = se.foodwebStabilityTest10_1_1();

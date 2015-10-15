@@ -14,6 +14,7 @@ import java.util.Random;
 import core.GameEngine;
 import core.world.World;
 import db.CSVDAO;
+import db.EcosystemDAO;
 import db.ScoreDAO;
 import db.ZoneNodeAddDAO;
 import metadata.Constants;
@@ -183,8 +184,6 @@ public class Ecosystem {
     }
 
     public Map<Integer, Integer> getAddSpeciesList() {
-    	int size = (addNodeList == null) ?  0 : addNodeList.size();
-    	System.out.println("addNodeList " + size);
         return addNodeList;
     }
 
@@ -618,4 +617,8 @@ public class Ecosystem {
     public void setPerBiomass(float perBiomass) {
         this.perBiomass = perBiomass;
     }
+
+	public void updateTimeSteps(int timesteps) {
+		EcosystemDAO.updateTimeStep(this.eco_id, timesteps);
+	}
 }
