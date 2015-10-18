@@ -236,14 +236,16 @@ public class FormCustomSim extends javax.swing.JFrame {
         jLabel12.setText("- Plant Global (non-PP) Defaults -");
         jLabel12.setFocusable(false);
 
-        jLabel14.setText("k: Carrying Capacity (" + jobMgr.getSimEngine().getPropertiesConfig("carryingCapacityDefault") + ")");
-        jLabel14.setFocusable(false);
-
-        jLabel8.setText("r: Growth Rate (" + jobMgr.getSimEngine().getPropertiesConfig("growthRateDefault") + ")");
-        jLabel8.setFocusable(false);
-
-        jLabel15.setText("x: Metabolic Rate (" + jobMgr.getSimEngine().getPropertiesConfig("metabolicRateDefault") + ")");
-        jLabel15.setFocusable(false);
+        if(Constants.useSimEngine){
+	        jLabel14.setText("k: Carrying Capacity (" + jobMgr.getSimEngine().getPropertiesConfig("carryingCapacityDefault") + ")");
+	        jLabel14.setFocusable(false);
+	
+	        jLabel8.setText("r: Growth Rate (" + jobMgr.getSimEngine().getPropertiesConfig("growthRateDefault") + ")");
+	        jLabel8.setFocusable(false);
+	
+	        jLabel15.setText("x: Metabolic Rate (" + jobMgr.getSimEngine().getPropertiesConfig("metabolicRateDefault") + ")");
+	        jLabel15.setFocusable(false);
+        }
 
         jCheckBox2.setText("Calc Animal Metabolic Rate");
         jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
@@ -303,20 +305,22 @@ public class FormCustomSim extends javax.swing.JFrame {
         jLabel16.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
         jLabel16.setText("- Predator Link Defaults -");
 
-        jLabel17.setText("a: Rel Half Saturation Density (" + jobMgr.getSimEngine().getPropertiesConfig("halfSaturationDensityDefault") +")");
-        jLabel17.setFocusable(false);
-
-        jLabel18.setText("e: Assimilation Efficiency (" + jobMgr.getSimEngine().getPropertiesConfig("assimilationEfficiencyDefault") + ")");
-        jLabel18.setFocusable(false);
-
-        jLabel19.setText("d: Predator Interference (" +  jobMgr.getSimEngine().getPropertiesConfig("predatorInterferenceDefault") + ")");
-        jLabel19.setFocusable(false);
-
-        jLabel20.setText("q: Functional Response Control (" + jobMgr.getSimEngine().getPropertiesConfig("functionalResponseControlParameterDefault") + ")");
-        jLabel20.setFocusable(false);
-
-        jLabel21.setText("y: Maximum Ingestion Rate (" + jobMgr.getSimEngine().getPropertiesConfig("maximumIngestionRateDefault") + ")");
-        jLabel21.setFocusable(false);
+        if(Constants.useSimEngine){
+	        jLabel17.setText("a: Rel Half Saturation Density (" + jobMgr.getSimEngine().getPropertiesConfig("halfSaturationDensityDefault") +")");
+	        jLabel17.setFocusable(false);
+	
+	        jLabel18.setText("e: Assimilation Efficiency (" + jobMgr.getSimEngine().getPropertiesConfig("assimilationEfficiencyDefault") + ")");
+	        jLabel18.setFocusable(false);
+	
+	        jLabel19.setText("d: Predator Interference (" +  jobMgr.getSimEngine().getPropertiesConfig("predatorInterferenceDefault") + ")");
+	        jLabel19.setFocusable(false);
+	
+	        jLabel20.setText("q: Functional Response Control (" + jobMgr.getSimEngine().getPropertiesConfig("functionalResponseControlParameterDefault") + ")");
+	        jLabel20.setFocusable(false);
+	
+	        jLabel21.setText("y: Maximum Ingestion Rate (" + jobMgr.getSimEngine().getPropertiesConfig("maximumIngestionRateDefault") + ")");
+	        jLabel21.setFocusable(false);
+        }
 
         jCheckBox1.setText("calc");
 

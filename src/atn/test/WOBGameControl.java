@@ -1,6 +1,7 @@
 package atn.test;
 
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TimerTask;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,6 +28,9 @@ import model.Ecosystem;
 import model.Player;
 import model.Species;
 import model.SpeciesType;
+import model.ZoneNodes;
+import simulation.simjob.FormCustomSim;
+import simulation.simjob.SimJob;
 import util.ConfigureException;
 import util.ExpTable;
 import util.GameTimer;
@@ -44,7 +49,7 @@ import db.PlayerDAO;
 import db.UserLogDAO;
 
 
-class WOBGameControl extends JFrame {
+class WOBGameControl extends JFrame  implements UpdatePredictionListener {
     final static Logger logger = Logger.getLogger(WOBGameControl.class.getName());
     private static Player player;
     private static EcosystemLobby lobby;
@@ -78,6 +83,7 @@ class WOBGameControl extends JFrame {
 	private JPanel content;
 	private Properties propertiesConfig;
 	private boolean LOAD_SIM_TEST_PARAMS = true;
+	private FormUpdateNodeConfig cFormFormUpdateNodeConfig;
     
 //    "Increasing biomass of existing species",
 //    "Decreasing biomass of existing species",
@@ -132,7 +138,7 @@ class WOBGameControl extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
             	System.out.println("You pressed " + functions[2]);
-            	//increaseBiomass();
+            	increaseBiomass();
             }
         });
         content.add(button,2);
@@ -195,6 +201,7 @@ class WOBGameControl extends JFrame {
         
         disableAll();
         enable(0);
+        //enable(2);
     }
     
     public void init(){
@@ -219,7 +226,39 @@ class WOBGameControl extends JFrame {
 	       SpeciesType.loadSimTestLinkParams(Constants.ECOSYSTEM_TYPE);
        }
     }
+    public void updateNodeConfig(HashMap<String, String> newSpeciesMap, int timesteps){
+    	HashMap<Integer, Integer> newNodeIdList = new HashMap<Integer, Integer>();
+		for(Map.Entry<String, String> entry : newSpeciesMap.entrySet()){
+			newNodeIdList.put(Integer.valueOf(entry.getKey()), Integer.valueOf(entry.getValue()));
+		}
+		HashMap<Integer, Integer> newSpeciesIdList = lobby.getGameEngine().getSpeciesIdFromNodeIds(newNodeIdList);
+        lobby.getGameEngine().createSpeciesByPurchase(player, newSpeciesIdList, ecosystem);
+        lobby.getGameEngine().forceSimulation(timesteps);   
+        lobby.getGameEngine().setUpdatePredictionlistener(this);
+    }
     
+	@Override
+	public void updatePredictionComplete() {
+		System.out.println("Entered prediction complete in wobgamecontrol");
+		cFormFormUpdateNodeConfig.populateJTextArea3();
+	}
+    public HashMap<Integer, Integer> getPredictionResults(){
+        HashMap<Integer, Integer> result = gameEngine.getBiomassOfSpeciesInEcosystem();
+        return result;
+    }
+    public void increaseBiomass(){
+    	ATNResultModel result = null;
+    	if(gameEngine != null){
+    		result = gameEngine.getSpeciesInEcosystem();
+
+	        getContentPane().setVisible(false);
+	        cFormFormUpdateNodeConfig = new FormUpdateNodeConfig((Frame) this, true, result);
+	        cFormFormUpdateNodeConfig.setVisible(true);
+	        getContentPane().setVisible(true);
+    	}else{
+    		System.out.println("Game Engine is not intitalized. Please Start");
+    	}
+    }
     public void createEcosystem(){
         List<Species> currentSpecies = EcoSpeciesDAO.getSpecies(ecosystem.getID());
         if(currentSpecies != null && currentSpecies.size() == 0){
@@ -230,19 +269,25 @@ class WOBGameControl extends JFrame {
 	        speciesList.put(42, 240);		//African Grey Hornbill
 	        speciesList.put(31, 1415);		//Tree Mouse 	
 	        speciesList.put(14, 1752);		//Crickets
-	        EcosystemController.createEcosystem(ecosystem, speciesList);       	
-        }else{
-        	startEcosystem();
+	        EcosystemController.createEcosystem(ecosystem, speciesList);
+	        
         }
+        //else{
+        	startEcosystem();
+        //}
         
         disableAll();
         enableEcosystemFunctions(2,6); 	//enable simulation functions ( 2- 6)
     	enable(7);	//enable logout button
     }
     
-    public void runSimulations(){
+    public void runSimulations(int timesteps){
         //We need to map the speciesList in the ecosystem to the zoneNodes in the ecosystem
-        lobby.getGameEngine().forceSimulation();   	
+        lobby.getGameEngine().forceSimulation(timesteps);   	
+    }
+    
+    public void runSimulations(){
+    	lobby.getGameEngine().forceSimulation();
     }
     
     public void startEcosystem(){
@@ -250,7 +295,7 @@ class WOBGameControl extends JFrame {
         EcosystemController.startEcosystem(player);
 		lobby = EcosystemController.getLobby();
 		ecosystem = EcosystemController.getEcosystem();
-        
+        gameEngine = lobby.getGameEngine();
         //We need to map the speciesList in the ecosystem to the zoneNodes in the ecosystem
         lobby.getGameEngine().forceSimulation();
         logger.info("Hjr's ecosystem started");
@@ -425,5 +470,13 @@ class WOBGameControl extends JFrame {
             }
         });
     }
+    
+	   public static void addDelay(){
+		   try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	   }
 }
     

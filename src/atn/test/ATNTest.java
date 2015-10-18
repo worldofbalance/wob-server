@@ -217,9 +217,11 @@ public class ATNTest {
 //		            speciesList.put(20, 5000);  //species_id = 20, node_id = 20, biomass = 5000 , per unit biomass = 0.04 		(both in simtest_node_params && species tables)
 //		            speciesList.put(31, 5000);  //species_id = 31, node_id = 31, biomass = 5000 , per unit biomass = 0.0075 	(both in simtest_node_params && species tables)
 		            logger.info("Adding nodes to ecosystem");
-			        speciesList.put(1005, 2000); //Grass and herbs with 2000 biomass
-			        speciesList.put(2, 1000);		//African Clawless Otter
-			        speciesList.put(31, 1500);		//African Clawless Otter
+			        speciesList.put(1005, 2000);	//To start we start with 1000 and add another 1000 to keep it consistent
+			        speciesList.put(2, 2494);		//African Clawless Otter
+			        speciesList.put(42, 240);		//African Grey Hornbill
+			        speciesList.put(31, 1415);		//Tree Mouse 	
+			        speciesList.put(14, 1752);		//Crickets
 			        EcosystemController.createEcosystem(ecosystem, speciesList);
 		        }
 	        } 
@@ -230,7 +232,7 @@ public class ATNTest {
 			ecosystem = EcosystemController.getEcosystem();
 	        
 	        //We need to map the speciesList in the ecosystem to the zoneNodes in the ecosystem
-	        lobby.getGameEngine().forceSimulation(10);
+	        lobby.getGameEngine().forceSimulation(200);
 	        
 	        addDelay();
 	        
@@ -246,48 +248,50 @@ public class ATNTest {
 	        
 	        //lobby.getGameEngine().createSpeciesByPurchase(player,speciesList,ecosystem);		// We need to add to the ecosystem's addNodeList variable via the ecosystem.setNewSpeciesNode
 	        logger.info("lobby.getGameEngine().createSpeciesByPurchase(player,speciesList,ecosystem) functionality");
-	        for (Entry<Integer, Integer> entry : speciesList.entrySet()) {
-	            int species_id = entry.getKey(), biomassValue = entry.getValue();
-	            SpeciesType speciesType = ServerResources.getSpeciesTable().getSpecies(species_id);
-
-	            for (int node_id : speciesType.getNodeList()) {
-	            	ecosystem.setNewSpeciesNode(node_id, biomassValue);
-	            }
-
-	            Species species = null;
-
-	            if (ecosystem.containsSpecies(species_id)) {
-	                species = ecosystem.getSpecies(species_id);
-
-	                for (SpeciesGroup group : species.getGroups().values()) {
-	                	//HJR below line needs to be tested
-	                    group.setBiomass(group.getBiomass() + biomassValue / species.getGroups().size());
-	                    EcoSpeciesDAO.updateBiomass(group.getID(), group.getBiomass());
-	                }	                
-	            } else {
-	                    int group_id = EcoSpeciesDAO.createSpecies(ecosystem.getID(), species_id, biomassValue);
-
-	                    species = new Species(species_id, speciesType);
-	                    SpeciesGroup group = new SpeciesGroup(species, group_id, biomassValue, Vector3.zero);
-	                    species.add(group);
-	            }
-
-	            ecosystem.addSpecies(species);
-
-	            // Logging Purposes
-	            int player_id = player.getID(), ecosystem_id = ecosystem.getID();
-
-	            try {
-	                StatsDAO.createStat(species_id, lobby.getGameEngine().getCurrentMonth(), "Purchase", biomassValue, player_id, ecosystem_id);
-	            } catch (SQLException ex) {
-	                Log.println_e(ex.getMessage());
-	            }
-	        }
+//	        for (Entry<Integer, Integer> entry : speciesList.entrySet()) {
+//	            int species_id = entry.getKey(), biomassValue = entry.getValue();
+//	            SpeciesType speciesType = ServerResources.getSpeciesTable().getSpecies(species_id);
+//
+//	            for (int node_id : speciesType.getNodeList()) {
+//	            	ecosystem.setNewSpeciesNode(node_id, biomassValue);
+//	            }
+//
+//	            Species species = null;
+//
+//	            if (ecosystem.containsSpecies(species_id)) {
+//	                species = ecosystem.getSpecies(species_id);
+//
+//	                for (SpeciesGroup group : species.getGroups().values()) {
+//	                	//HJR below line needs to be tested
+//	                    group.setBiomass(group.getBiomass() + biomassValue / species.getGroups().size());
+//	                    EcoSpeciesDAO.updateBiomass(group.getID(), group.getBiomass());
+//	                }	                
+//	            } else {
+//	                    int group_id = EcoSpeciesDAO.createSpecies(ecosystem.getID(), species_id, biomassValue);
+//
+//	                    species = new Species(species_id, speciesType);
+//	                    SpeciesGroup group = new SpeciesGroup(species, group_id, biomassValue, Vector3.zero);
+//	                    species.add(group);
+//	            }
+//
+//	            ecosystem.addSpecies(species);
+//
+//	            // Logging Purposes
+//	            int player_id = player.getID(), ecosystem_id = ecosystem.getID();
+//
+//	            try {
+//	                StatsDAO.createStat(species_id, lobby.getGameEngine().getCurrentMonth(), "Purchase", biomassValue, player_id, ecosystem_id);
+//	            } catch (SQLException ex) {
+//	                Log.println_e(ex.getMessage());
+//	            }
+//	        }
 	        
-	        lobby.getGameEngine().forceSimulation(10);
-	        if(Constants.useSimEngine){
-		        lobby.getGameEngine().deleteSimulationIds();
-	        }
+	        
+//	        lobby.getGameEngine().createSpeciesByPurchase(player, speciesList, ecosystem);
+//	        lobby.getGameEngine().forceSimulation(10);
+//	        if(Constants.useSimEngine){
+//		        lobby.getGameEngine().deleteSimulationIds();
+//	        }
 	       	        
 	   }
 	   

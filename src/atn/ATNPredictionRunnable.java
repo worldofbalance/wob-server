@@ -60,14 +60,14 @@ public class ATNPredictionRunnable implements Runnable {
 
  public long initialize() {
      // Adjust for delays
-     runTimestep = gameEngine.getCurrentMonth() - startTimestep + 1;
+//     runTimestep = gameEngine.getCurrentMonth() - startTimestep + 1;
      // Adjust for delays
-// 	if(Constants.useAtnEngine){
-// 		runTimestep = 1;
+ 	if(Constants.useAtnEngine){
+ 		runTimestep = 1;
 // 		System.out.println("startTimestep"+startTimestep);
 // 		System.out.println("currentMonth (runTimestep)"+runTimestep);
 // 		System.out.println("gameEngine.getCurrentMonth() " + gameEngine.getCurrentMonth());
-// 	}
+ 	}
      // Store the most recent data
      newSpeciesNodeList = new HashMap<Integer, Integer>(newSpeciesNodeList);
      // Convert Species to Nodes

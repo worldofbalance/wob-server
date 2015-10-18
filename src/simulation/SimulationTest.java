@@ -148,7 +148,7 @@ public class SimulationTest {
 
     public String foodwebStabilityTest3(String fwname) throws SimulationException {
         int nodeList[] = {7, 33};
-        String manpId = simulationEngine.createAndRunSeregenttiSubFoodweb(nodeList, fwname, 0, 3, true);
+        String manpId = simulationEngine.createAndRunSeregenttiSubFoodweb(nodeList, fwname, 1, 200, true);
 
         HashMap<Integer, SpeciesZoneType> spList = new HashMap<Integer, SpeciesZoneType>();
         SpeciesZoneType szt1 = new SpeciesZoneType("", 10, 1, 1, 1.0, SpeciesTypeEnum.ANIMAL);
@@ -1105,6 +1105,7 @@ public class SimulationTest {
 
     public void someTest() throws SimulationException {
         int nodeList[] = {5, 7, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 4};
+    	//int nodeList[] = {5, 14, 31, 42, 70};
         String manpId = simulationEngine.createAndRunSeregenttiSubFoodweb(nodeList, "testNode4and73", 0, 0, true);
 
         List<NodeBiomass> lNodeBiomass = new ArrayList<NodeBiomass>();
@@ -1149,7 +1150,7 @@ public class SimulationTest {
         species.add(szt);
         simulationEngine.setParameters2(species, 0, manpId);
 
-        simulationEngine.run(1, 10, manpId);
+        simulationEngine.run(0, 200, manpId);
 
         simulationEngine.getBiomassInfo(manpId);
         simulationEngine.saveBiomassCSVFile(manpId);
@@ -1238,7 +1239,7 @@ public class SimulationTest {
 //	    SimulationEngine se = new SimulationEngine("http://127.0.0.1:81/N3DWebService.svc?wsdl");                                         
 //        SimulationEngine se = new SimulationEngine("http://54050601f7a9427285bd6fcfd56f8679.cloudapp.net/N3DWebService.svc?wsdl");
 
-        sTest.someTest();
+//        sTest.someTest();
 //        sTest.someTest1();
 //        sTest.someTest2();
 //        sTest.testNode4Oribi();
@@ -1266,5 +1267,8 @@ public class SimulationTest {
 //                se.foodwebStabilityTest10_5();
 //                se.nodeInfoTest();
 //                se.SixSpeciesFoodwebTest("aFoodWeb1000");
+        
+        //HJR
+        sTest.someTestCarryingCapacity();
     }
 }
