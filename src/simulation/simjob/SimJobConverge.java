@@ -58,9 +58,14 @@ public class SimJobConverge {
         String csv = null;
         if(Constants.useSimEngine){
         	csv = simJob.getCsv();
+        	System.out.println("Web services");
+        	System.out.println(csv);
         }
-        else if(Constants.useAtnEngine){
+        else 
+        if(Constants.useAtnEngine){
         	csv = simJob.getBiomassCSV();
+        	System.out.println("ATN Engine");
+        	System.out.println(csv);
         }
         String newCsv = "";
 

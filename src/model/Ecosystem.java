@@ -16,6 +16,7 @@ import core.world.World;
 import db.CSVDAO;
 import db.EcosystemDAO;
 import db.ScoreDAO;
+import db.SpeciesChangeListDAO;
 import db.ZoneNodeAddDAO;
 import metadata.Constants;
 import net.response.ResponseChart;
@@ -42,14 +43,14 @@ public class Ecosystem {
     private int highEnvScore;
     private int accumEnvScore;
     private Timestamp last_played;
-    private final Map<Integer, Animal> animals = new HashMap<Integer, Animal>();
-    private final Map<Integer, Plant> plants = new HashMap<Integer, Plant>();
+//    private final Map<Integer, Animal> animals = new HashMap<Integer, Animal>();
+//    private final Map<Integer, Plant> plants = new HashMap<Integer, Plant>();
     private GameEngine gameEngine;
-    private Map<Short, Float> parametersList = new HashMap<Short, Float>();
+//    private Map<Short, Float> parametersList = new HashMap<Short, Float>();
     // Species ID -> Species
     private final Map<Integer, Species> speciesList = new HashMap<Integer, Species>();
     // Node ID -> Count
-    private final Map<Integer, Integer> nodeList = new HashMap<Integer, Integer>();
+//    private final Map<Integer, Integer> nodeList = new HashMap<Integer, Integer>();
     // Node ID -> Biomass
     private Map<Integer, Integer> addNodeList = new HashMap<Integer, Integer>();
     private List<List<String>> score_csv;
@@ -59,8 +60,8 @@ public class Ecosystem {
     //in order to store game or player changes to species parameters (I'm certain that there
     //is a lot of unnecessary redundancy here, but I don't have time to look into it)
     private ZoneNodes zoneNodes = new ZoneNodes();
-    private float carryingCapacity;
-    private float perBiomass;
+//    private float carryingCapacity;
+//    private float perBiomass;
 	private String atnManipId;
 	private String networkId;
 
@@ -213,6 +214,31 @@ public class Ecosystem {
         }
     }
 
+    public void removeNode(int node_id){
+    	Map<Integer, SpeciesZoneType> nodes = zoneNodes.getNodes();
+    	if(nodes != null){
+    		if(nodes.containsKey(node_id)){
+    			//check to see if it contains the node_id
+        		//remove the node_id
+    			zoneNodes.removeNode(node_id);
+    			try {
+					ZoneNodeAddDAO.removeEntry(eco_id, node_id);
+				} catch (SQLException e) {
+					System.err.println(e.getMessage());
+				}
+    		}
+    	}
+    	
+    }
+    
+    public void removeEntry(int species_id){
+    	try {
+			SpeciesChangeListDAO.removeEntry(eco_id, species_id);
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+    }
+    
     public void removeNewSpeciesNode(int node_id, int amount) {
         try {
             if (addNodeList.containsKey(node_id)) {
@@ -232,39 +258,39 @@ public class Ecosystem {
         }
     }
 
-    public boolean containsOrganism(int organism_id) {
-        return plants.containsKey(organism_id) || animals.containsKey(organism_id);
-    }
-
-    public List<Animal> getAnimals() {
-        return new ArrayList<Animal>(animals.values());
-    }
-
-    public List<Organism> getOrganisms() {
-        List<Organism> organismList = new ArrayList<Organism>();
-        organismList.addAll(plants.values());
-        organismList.addAll(animals.values());
-
-        return organismList;
-    }
-
-    public List<Organism> getOrganismsBySpecies(int species_id) {
-        List<Organism> organismList = new ArrayList<Organism>();
-
-        for (Animal animal : animals.values()) {
-            if (animal.getSpeciesTypeID() == species_id) {
-                organismList.add(animal);
-            }
-        }
-
-        for (Plant plant : plants.values()) {
-            if (plant.getSpeciesTypeID() == species_id) {
-                organismList.add(plant);
-            }
-        }
-
-        return organismList;
-    }
+//    public boolean containsOrganism(int organism_id) {
+//        return plants.containsKey(organism_id) || animals.containsKey(organism_id);
+//    }
+//
+//    public List<Animal> getAnimals() {
+//        return new ArrayList<Animal>(animals.values());
+//    }
+//
+//    public List<Organism> getOrganisms() {
+//        List<Organism> organismList = new ArrayList<Organism>();
+//        organismList.addAll(plants.values());
+//        organismList.addAll(animals.values());
+//
+//        return organismList;
+//    }
+//
+//    public List<Organism> getOrganismsBySpecies(int species_id) {
+//        List<Organism> organismList = new ArrayList<Organism>();
+//
+//        for (Animal animal : animals.values()) {
+//            if (animal.getSpeciesTypeID() == species_id) {
+//                organismList.add(animal);
+//            }
+//        }
+//
+//        for (Plant plant : plants.values()) {
+//            if (plant.getSpeciesTypeID() == species_id) {
+//                organismList.add(plant);
+//            }
+//        }
+//
+//        return organismList;
+//    }
     
     public void setSpecies(Species species) {
         speciesList.put(species.getID(), species);
@@ -275,7 +301,21 @@ public class Ecosystem {
 
         updateEcosystemScore();
     }
+    
+    public void removeSpecies(int species_id) {
+        speciesList.remove(species_id);
 
+        updateEcosystemScore();
+    }
+
+    public GameEngine getGameEngine() {
+        return gameEngine;
+    }
+
+    public GameEngine setGameEngine(GameEngine gameEngine) {
+        return this.gameEngine = gameEngine;
+    }
+    
     public void updateScore() {
         updateEcosystemScore();
 
@@ -373,223 +413,216 @@ public class Ecosystem {
         return this.last_played = last_played;
     }
 
-    public int getTotalBiomass() {
-        int total = 0;
-
-        for (Species species : speciesList.values()) {
-            total += species.getTotalBiomass();
-        }
-
-        return total;
-    }
-
-    public Animal findPredator(Organism organism) {
-        Animal predator = null;
-
-        int species_id = organism.getSpeciesType().getID();
-        double distance = -1;
-
-        List<Animal> predatorList = getAnimals();
-        Collections.shuffle(predatorList);
-
-        for (Animal animal : predatorList) {
-            if (animal.getID() != organism.getID() && (organism.getOrganismType() == Constants.ORGANISM_TYPE_PLANT || animal.getHungerLevel() < 1.0f)) {
-                int[] preyList = animal.getSpeciesType().getPreyIDs();
-
-                if (preyList != null) {
-                    for (int prey_id : preyList) {
-                        if (prey_id == species_id) {
-                            double temp = Math.sqrt(Math.pow(animal.getX() - organism.getX(), 2) + Math.pow(animal.getY() - organism.getY(), 2));
-
-                            if (distance == -1 || temp < distance) {
-                                distance = temp;
-                                predator = animal;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return predator;
-    }
-
-    public Map<Short, Float> getParameters() {
-        return parametersList;
-    }
-
-    public Map<Short, Float> setParameters(HashMap<Short, Float> parametersList) {
-        return this.parametersList = parametersList;
-    }
-
-    public void updateAnimalTarget(int animalID, int xTarg, int yTarg) {
-        Animal animal = animals.get(animalID);
-
-        if (animal != null) {
-            animal.setTargetPos(xTarg, yTarg, 0);
-        }
-    }
-
-    public void updateAnimalCoors(int animalID, int xCoor, int yCoor) {
-        Animal animal = animals.get(animalID);
-
-        if (animal != null) {
-            animal.setPos(xCoor, yCoor, 0);
-        }
-    }
-
-    public GameEngine getGameEngine() {
-        return gameEngine;
-    }
-
-    public GameEngine setGameEngine(GameEngine gameEngine) {
-        return this.gameEngine = gameEngine;
-    }
-
-    /**
-     * Set indicated parameter value for all Animal species in zone. JTC
-     *
-     * @param world
-     * @param param
-     * @param value
-     */
-    public void setAnimalNodeParam(World world, int param, double value) {
-        zoneNodes.setNodeParam(param, value, SpeciesZoneType.SpeciesTypeEnum.ANIMAL);
-    }
-
-    /**
-     * set indicated parameter value for all Plant species in zone. JTC
-     *
-     * @param world
-     * @param param
-     * @param value
-     */
-    public void setPlantNodeParam(World world, int param, double value) {
-        zoneNodes.setNodeParam(param, value, SpeciesZoneType.SpeciesTypeEnum.PLANT);
-    }
-
-    /**
-     * set indicated parameter value for single species in zone. JTC
-     *
-     * @param world
-     * @param param
-     * @param value
-     * @param species_id
-     */
-    public void setNodeParam(World world, int param, double value, int species_id) {
-        zoneNodes.setNodeParam(param, value, species_id);
-    }
-
-    /**
-     * get indicated parameter value for single species in zone. JTC
-     *
-     * @param world
-     * @param param
-     * @param species_id
-     * @return
-     */
-    public double getNodeParam(World world, int param, int species_id) {
-        return zoneNodes.getNodeParam(param, species_id);
-    }
-
-    /**
-     * reset indicated parameter value for all Animal species in zone. JTC
-     *
-     * @param world
-     * @param param
-     */
-    public void resetAnimalNodeParam(World world, int param) {
-        zoneNodes.resetNodeParam(param, SpeciesZoneType.SpeciesTypeEnum.ANIMAL);
-    }
-
-    /**
-     * reset indicated parameter value for all Plant species in zone
-     *
-     * @param world
-     * @param param
-     */
-    public void resetPlantNodeParam(World world, int param) {
-        zoneNodes.resetNodeParam(param, SpeciesZoneType.SpeciesTypeEnum.PLANT);
-    }
-
-    /**
-     * reset indicated parameter value for single species in zone. JTC
-     *
-     * @param world
-     * @param param
-     * @param species_id
-     */
-    public void resetNodeParam(World world, int param, int species_id) {
-        zoneNodes.resetNodeParam(param, species_id);
-    }
-
-    /**
-     * modify current biomass for all Animal species in zone by specified amt
-     * (+/- fraction). JTC
-     *
-     * @param world
-     * @param fraction
-     */
-    public void modifyAnimalNodeBiomassByFraction(World world, double fraction) {
-        zoneNodes.modifyNodeBiomassByFraction(fraction, SpeciesZoneType.SpeciesTypeEnum.ANIMAL);
-    }
-
-    /**
-     * modify current biomass for all Plant species in zone by specified amt
-     * (+/- fraction). JTC
-     *
-     * @param world
-     * @param fraction
-     */
-    public void modifyPlantNodeBiomassByFraction(World world, double fraction) {
-        zoneNodes.modifyNodeBiomassByFraction(fraction, SpeciesZoneType.SpeciesTypeEnum.PLANT);
-    }
-
-    /**
-     * modify current biomass for single species in zone by specified amt ( +/-
-     * fraction). JTC
-     *
-     * @param world
-     * @param fraction
-     * @param species_id
-     */
-    public void modifyNodeBiomassByFraction(World world, double fraction, int species_id) {
-        zoneNodes.modifyNodeBiomassByFraction(fraction, species_id);
-    }
-
-    /**
-     * modify current biomass for all Animal species in zone by specified amt
-     * (+/- ). JTC
-     *
-     * @param world
-     * @param amount
-     */
-    public void modifyAnimalNodeBiomassByAmount(World world, double amount) {
-        zoneNodes.modifyNodeBiomassByAmount(amount, SpeciesZoneType.SpeciesTypeEnum.ANIMAL);
-    }
-
-    /**
-     * modify current biomass for all Plant species in zone by specified amt
-     * (+/- ). JTC
-     *
-     * @param world
-     * @param amount
-     */
-    public void modifyPlantNodeBiomassByAmount(World world, double amount) {
-        zoneNodes.modifyNodeBiomassByAmount(amount, SpeciesZoneType.SpeciesTypeEnum.PLANT);
-    }
-
-    /**
-     * modify current biomass for single species in zone by specified amount
-     * (+/- ). JTC
-     *
-     * @param world
-     * @param amount
-     * @param species_id
-     */
-    public void modifyNodeBiomassByAmount(World world, double amount, int species_id) {
-        zoneNodes.modifyNodeBiomassByAmount(amount, species_id);
-    }
+//    public int getTotalBiomass() {
+//        int total = 0;
+//
+//        for (Species species : speciesList.values()) {
+//            total += species.getTotalBiomass();
+//        }
+//
+//        return total;
+//    }
+//
+//    public Animal findPredator(Organism organism) {
+//        Animal predator = null;
+//
+//        int species_id = organism.getSpeciesType().getID();
+//        double distance = -1;
+//
+//        List<Animal> predatorList = getAnimals();
+//        Collections.shuffle(predatorList);
+//
+//        for (Animal animal : predatorList) {
+//            if (animal.getID() != organism.getID() && (organism.getOrganismType() == Constants.ORGANISM_TYPE_PLANT || animal.getHungerLevel() < 1.0f)) {
+//                int[] preyList = animal.getSpeciesType().getPreyIDs();
+//
+//                if (preyList != null) {
+//                    for (int prey_id : preyList) {
+//                        if (prey_id == species_id) {
+//                            double temp = Math.sqrt(Math.pow(animal.getX() - organism.getX(), 2) + Math.pow(animal.getY() - organism.getY(), 2));
+//
+//                            if (distance == -1 || temp < distance) {
+//                                distance = temp;
+//                                predator = animal;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        return predator;
+//    }
+//
+//    public Map<Short, Float> getParameters() {
+//        return parametersList;
+//    }
+//
+//    public Map<Short, Float> setParameters(HashMap<Short, Float> parametersList) {
+//        return this.parametersList = parametersList;
+//    }
+//
+//    public void updateAnimalTarget(int animalID, int xTarg, int yTarg) {
+//        Animal animal = animals.get(animalID);
+//
+//        if (animal != null) {
+//            animal.setTargetPos(xTarg, yTarg, 0);
+//        }
+//    }
+//
+//    public void updateAnimalCoors(int animalID, int xCoor, int yCoor) {
+//        Animal animal = animals.get(animalID);
+//
+//        if (animal != null) {
+//            animal.setPos(xCoor, yCoor, 0);
+//        }
+//    }
+//
+//
+//    /**
+//     * Set indicated parameter value for all Animal species in zone. JTC
+//     *
+//     * @param world
+//     * @param param
+//     * @param value
+//     */
+//    public void setAnimalNodeParam(World world, int param, double value) {
+//        zoneNodes.setNodeParam(param, value, SpeciesZoneType.SpeciesTypeEnum.ANIMAL);
+//    }
+//
+//    /**
+//     * set indicated parameter value for all Plant species in zone. JTC
+//     *
+//     * @param world
+//     * @param param
+//     * @param value
+//     */
+//    public void setPlantNodeParam(World world, int param, double value) {
+//        zoneNodes.setNodeParam(param, value, SpeciesZoneType.SpeciesTypeEnum.PLANT);
+//    }
+//
+//    /**
+//     * set indicated parameter value for single species in zone. JTC
+//     *
+//     * @param world
+//     * @param param
+//     * @param value
+//     * @param species_id
+//     */
+//    public void setNodeParam(World world, int param, double value, int species_id) {
+//        zoneNodes.setNodeParam(param, value, species_id);
+//    }
+//
+//    /**
+//     * get indicated parameter value for single species in zone. JTC
+//     *
+//     * @param world
+//     * @param param
+//     * @param species_id
+//     * @return
+//     */
+//    public double getNodeParam(World world, int param, int species_id) {
+//        return zoneNodes.getNodeParam(param, species_id);
+//    }
+//
+//    /**
+//     * reset indicated parameter value for all Animal species in zone. JTC
+//     *
+//     * @param world
+//     * @param param
+//     */
+//    public void resetAnimalNodeParam(World world, int param) {
+//        zoneNodes.resetNodeParam(param, SpeciesZoneType.SpeciesTypeEnum.ANIMAL);
+//    }
+//
+//    /**
+//     * reset indicated parameter value for all Plant species in zone
+//     *
+//     * @param world
+//     * @param param
+//     */
+//    public void resetPlantNodeParam(World world, int param) {
+//        zoneNodes.resetNodeParam(param, SpeciesZoneType.SpeciesTypeEnum.PLANT);
+//    }
+//
+//    /**
+//     * reset indicated parameter value for single species in zone. JTC
+//     *
+//     * @param world
+//     * @param param
+//     * @param species_id
+//     */
+//    public void resetNodeParam(World world, int param, int species_id) {
+//        zoneNodes.resetNodeParam(param, species_id);
+//    }
+//
+//    /**
+//     * modify current biomass for all Animal species in zone by specified amt
+//     * (+/- fraction). JTC
+//     *
+//     * @param world
+//     * @param fraction
+//     */
+//    public void modifyAnimalNodeBiomassByFraction(World world, double fraction) {
+//        zoneNodes.modifyNodeBiomassByFraction(fraction, SpeciesZoneType.SpeciesTypeEnum.ANIMAL);
+//    }
+//
+//    /**
+//     * modify current biomass for all Plant species in zone by specified amt
+//     * (+/- fraction). JTC
+//     *
+//     * @param world
+//     * @param fraction
+//     */
+//    public void modifyPlantNodeBiomassByFraction(World world, double fraction) {
+//        zoneNodes.modifyNodeBiomassByFraction(fraction, SpeciesZoneType.SpeciesTypeEnum.PLANT);
+//    }
+//
+//    /**
+//     * modify current biomass for single species in zone by specified amt ( +/-
+//     * fraction). JTC
+//     *
+//     * @param world
+//     * @param fraction
+//     * @param species_id
+//     */
+//    public void modifyNodeBiomassByFraction(World world, double fraction, int species_id) {
+//        zoneNodes.modifyNodeBiomassByFraction(fraction, species_id);
+//    }
+//
+//    /**
+//     * modify current biomass for all Animal species in zone by specified amt
+//     * (+/- ). JTC
+//     *
+//     * @param world
+//     * @param amount
+//     */
+//    public void modifyAnimalNodeBiomassByAmount(World world, double amount) {
+//        zoneNodes.modifyNodeBiomassByAmount(amount, SpeciesZoneType.SpeciesTypeEnum.ANIMAL);
+//    }
+//
+//    /**
+//     * modify current biomass for all Plant species in zone by specified amt
+//     * (+/- ). JTC
+//     *
+//     * @param world
+//     * @param amount
+//     */
+//    public void modifyPlantNodeBiomassByAmount(World world, double amount) {
+//        zoneNodes.modifyNodeBiomassByAmount(amount, SpeciesZoneType.SpeciesTypeEnum.PLANT);
+//    }
+//
+//    /**
+//     * modify current biomass for single species in zone by specified amount
+//     * (+/- ). JTC
+//     *
+//     * @param world
+//     * @param amount
+//     * @param species_id
+//     */
+//    public void modifyNodeBiomassByAmount(World world, double amount, int species_id) {
+//        zoneNodes.modifyNodeBiomassByAmount(amount, species_id);
+//    }
 
     /**
      * getter for zoneNodes
@@ -600,23 +633,23 @@ public class Ecosystem {
         return zoneNodes;
     }
 
-    public float getCarryingCapacity() {
-        return carryingCapacity;
-    }
-
-    public void setCarryingCapacity(float carryingCapacity) {
-        this.carryingCapacity = carryingCapacity;
-        //set carrying capacity for individ plant nodes. JTC
-        zoneNodes.setCarryingCapacity(carryingCapacity);
-    }
-
-    public float getPerBiomass() {
-        return perBiomass;
-    }
-
-    public void setPerBiomass(float perBiomass) {
-        this.perBiomass = perBiomass;
-    }
+//    public float getCarryingCapacity() {
+//        return carryingCapacity;
+//    }
+//
+//    public void setCarryingCapacity(float carryingCapacity) {
+//        this.carryingCapacity = carryingCapacity;
+//        //set carrying capacity for individ plant nodes. JTC
+//        zoneNodes.setCarryingCapacity(carryingCapacity);
+//    }
+//
+//    public float getPerBiomass() {
+//        return perBiomass;
+//    }
+//
+//    public void setPerBiomass(float perBiomass) {
+//        this.perBiomass = perBiomass;
+//    }
 
 	public void updateTimeSteps(int timesteps) {
 		EcosystemDAO.updateTimeStep(this.eco_id, timesteps);

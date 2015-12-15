@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import simulation.config.ManipulationActionType;
 import simulation.simjob.SimJob;
 
 import model.ZoneNodes;
@@ -21,6 +22,7 @@ import model.ZoneNodes;
 public class FormUpdateNodeConfig extends javax.swing.JDialog{
     private String existingNodeConfig;
 	private ZoneNodes zoneNodes;
+	private ManipulationActionType manipulationActionType;
     private String newNodeConfig;
     private HashMap<String,String> newSpeciesMap = new HashMap<String, String>();
     private Container content;
@@ -35,10 +37,11 @@ public class FormUpdateNodeConfig extends javax.swing.JDialog{
      * Creates new form FormCustomSimulation
      */
     public FormUpdateNodeConfig(java.awt.Frame parent, boolean modal, ATNResultModel result) {
-    	super(parent, modal);
+    	super(parent, result.getTitle());
     	this.frame = parent;
         existingNodeConfig = result.getNodeConfig();
         zoneNodes = result.getZoneNodes();
+        manipulationActionType = result.getManipulationActionType();
         content = getContentPane();
 
         // Use a grid to layout buttons and add one row for control buttons
@@ -120,7 +123,22 @@ public class FormUpdateNodeConfig extends javax.swing.JDialog{
         jLabel5.setText("Biomass : ");
 
         jButton3.setFont(new java.awt.Font("Arial Narrow", 1, 13)); // NOI18N
-        jButton3.setText("ADD");
+        if(manipulationActionType.equals(ManipulationActionType.SPECIES_PROLIFERATION)){
+        	jButton3.setText("ADD");
+        	jLabel1.setText("Add Biomass to species - Biomass Increased");
+        }
+        else if(manipulationActionType.equals(ManipulationActionType.SPECIES_EXPLOIT)){
+        	jButton3.setText("SUBTRACT");
+        	jLabel1.setText("Remove Biomass from species - Biomass Decreased");
+        }
+        else if(manipulationActionType.equals(ManipulationActionType.SPECIES_INVASION)){
+        	jButton3.setText("ADD NEW SPECIES");
+        	jLabel1.setText("Introduce new species - Purchase New Species");
+        }
+        else if(manipulationActionType.equals(ManipulationActionType.SPECIES_REMOVAL)){
+        	jButton3.setText("REMOVE SPECIES");
+        	jLabel1.setText("Extinction of current species - Species Removal");
+        }
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -187,8 +205,6 @@ public class FormUpdateNodeConfig extends javax.swing.JDialog{
         jTextArea3.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         jScrollPane2.setViewportView(jTextArea3);
 
-        jLabel1.setText("Add Biomass");
-
         jLabel2.setText("New Biomass after simulations");
 
         jLabel6.setText("Current Node Configuration");
@@ -212,7 +228,7 @@ public class FormUpdateNodeConfig extends javax.swing.JDialog{
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(27, 27, 27)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel2)
@@ -266,7 +282,7 @@ public class FormUpdateNodeConfig extends javax.swing.JDialog{
         // TODO add your handling code here:
        int timesteps = Integer.valueOf(jTextField3.getText());
 //       ((WOBGameControl)frame).runSimulations(timesteps);
-       ((WOBGameControl)frame).updateNodeConfig(newSpeciesMap, timesteps);     
+       ((WOBGameControl)frame).updateNodeConfig(newSpeciesMap, timesteps, this.manipulationActionType);     
        //If simulation is run, then disable the ADD & Run Simulation button
 //     setVisible(false);
 //     dispose();
@@ -294,9 +310,58 @@ public class FormUpdateNodeConfig extends javax.swing.JDialog{
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {                                         
         // TODO add your handling code here:
-    	//When you click on add we have to make sure we only support existing species
-    	populateJTextArea1();
+    	if(manipulationActionType.equals(ManipulationActionType.SPECIES_PROLIFERATION)){
+	    	//When you click on add we have to make sure we only support existing species
+	    	populateJTextArea1();
+    	}else if(manipulationActionType.equals(ManipulationActionType.SPECIES_EXPLOIT)){
+	    	//When you click on subtract we have to make sure we only support existing species
+	    	populateJTextArea1();
+    	}else if(manipulationActionType.equals(ManipulationActionType.SPECIES_INVASION)){
+	    	//When you click on subtract we have to make sure we only support existing species
+	    	populateJTextArea1SpeciesInvasion();
+    	}else if(manipulationActionType.equals(ManipulationActionType.SPECIES_REMOVAL)){
+	    	//When you click on subtract we have to make sure we only support existing species
+	    	populateJTextArea1SpeciesRemoval();
+    	}
     }    
+   
+    public void populateJTextArea1SpeciesRemoval(){
+		String textArea1 = "";
+    	if(zoneNodes != null){
+    		Set<Integer> speciesList = zoneNodes.getNodes().keySet();
+    		String nodeIndex = jTextField4.getText().toString();
+    		String biomass = jTextField5.getText().toString();
+    		
+    		if(speciesList.contains(Integer.valueOf(nodeIndex))){
+    			//Only if the nodeIndex is not in the speciesList then add it to the newSpeciesMap
+    			newSpeciesMap.put(nodeIndex, "0");
+    		}
+			for(Map.Entry<String, String> entry : newSpeciesMap.entrySet()){
+				textArea1 += entry.getKey() + " - " + entry.getValue() + "\n";
+			}
+
+    	}
+    	jTextArea1.setText(textArea1);     	
+    }
+    
+    public void populateJTextArea1SpeciesInvasion(){
+		String textArea1 = "";
+    	if(zoneNodes != null){
+    		Set<Integer> speciesList = zoneNodes.getNodes().keySet();
+    		String nodeIndex = jTextField4.getText().toString();
+    		String biomass = jTextField5.getText().toString();
+    		
+    		if(!speciesList.contains(Integer.valueOf(nodeIndex))){
+    			//Only if the nodeIndex is not in the speciesList then add it to the newSpeciesMap
+    			newSpeciesMap.put(nodeIndex, biomass);
+    		}
+			for(Map.Entry<String, String> entry : newSpeciesMap.entrySet()){
+				textArea1 += entry.getKey() + " - " + entry.getValue() + "\n";
+			}
+
+    	}
+    	jTextArea1.setText(textArea1);     	
+    }
     
     public void populateJTextArea1(){
 		String textArea1 = "";

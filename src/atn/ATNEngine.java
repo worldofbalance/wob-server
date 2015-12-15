@@ -551,9 +551,9 @@ public class ATNEngine {
        return szt;
    }
 
-   /*5/5/14, JTC, added persistent species data for players; system parameter masterSpeciesList,
-   replaces mSpecies.  
-   Get previous timestep biomass for all species from web service*/
+   /*//HJR Concept orginally borrowed from Simulation engine and modified to 
+    * work for ATN Engine
+    */
   public HashMap<Integer, SpeciesZoneType> getPrediction(String networkOrManipulationId,
           int startTimestep, int runTimestep, Map<Integer, Integer> addSpeciesNodeList,
           ZoneNodes zoneNodes)
@@ -575,8 +575,7 @@ public class ATNEngine {
 
       SpeciesZoneType szt;
       String nodeConfig = null;
-      SimJob job = new SimJob();
-//{70=2494, 5=2000, 42=240, 14=1752, 31=1415}
+
       for (int node_id : addSpeciesNodeList.keySet()) {
           int addedBiomass = addSpeciesNodeList.get(node_id);
 

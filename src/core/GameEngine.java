@@ -396,6 +396,45 @@ public class GameEngine {
         }
     }
     
+    public void removeSpeciesFromZone(Player player, Map<Integer, Integer> speciesListForRemoval, Ecosystem ecosystem){
+        for (Entry<Integer, Integer> entry : speciesListForRemoval.entrySet()) {
+            int species_id = entry.getKey(), biomass = entry.getValue();
+
+            SpeciesType speciesType = ServerResources.getSpeciesTable().getSpecies(species_id);
+
+            for (int node_id : speciesType.getNodeList()) {
+            	ecosystem.removeNode(node_id);
+            }
+            
+            Species species = null;
+
+            if (ecosystem.containsSpecies(species_id)) {
+                species = ecosystem.getSpecies(species_id);
+
+                for (SpeciesGroup group : species.getGroups().values()) {
+
+                    EcoSpeciesDAO.removeSpecies(group.getID());
+                    group.setBiomass(0);
+                    if(!Constants.DEBUG_MODE){
+	                    ResponseSpeciesCreate response = new ResponseSpeciesCreate(Constants.REMOVE_STATUS_DEFAULT, ecosystem.getID(), group);
+	                    NetworkFunctions.sendToLobby(response, lobby.getID());
+                    }
+                }
+                
+            } 
+            ecosystem.removeSpecies(species_id);
+            ecosystem.removeEntry(species_id);
+
+            // Logging Purposes
+            int player_id = player.getID(), zone_id = ecosystem.getID();
+
+            try {
+                StatsDAO.createStat(species_id, getCurrentMonth(), "Remove", biomass, player_id, zone_id);
+            } catch (SQLException ex) {
+                Log.println_e(ex.getMessage());
+            }
+        }    	
+    }
     /**
      * 
      * @param runnable 

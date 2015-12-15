@@ -29,6 +29,7 @@ import model.Player;
 import model.Species;
 import model.SpeciesType;
 import model.ZoneNodes;
+import simulation.config.ManipulationActionType;
 import simulation.simjob.FormCustomSim;
 import simulation.simjob.SimJob;
 import util.ConfigureException;
@@ -149,7 +150,7 @@ class WOBGameControl extends JFrame  implements UpdatePredictionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
             	System.out.println("You pressed " + functions[3]);
-            	//decreaseBiomass();
+            	decreaseBiomass();
             }
         });
         content.add(button,3);
@@ -160,7 +161,7 @@ class WOBGameControl extends JFrame  implements UpdatePredictionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
             	System.out.println("You pressed " + functions[4]);
-            	//addNewSpecies();
+            	addNewSpecies();
             }
         });
         content.add(button,4);
@@ -171,7 +172,7 @@ class WOBGameControl extends JFrame  implements UpdatePredictionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
             	System.out.println("You pressed " + functions[5]);
-            	//deleteSpecies();
+            	deleteSpecies();
             }
         });
         content.add(button,5);
@@ -226,13 +227,25 @@ class WOBGameControl extends JFrame  implements UpdatePredictionListener {
 	       SpeciesType.loadSimTestLinkParams(Constants.ECOSYSTEM_TYPE);
        }
     }
-    public void updateNodeConfig(HashMap<String, String> newSpeciesMap, int timesteps){
+    public void updateNodeConfig(HashMap<String, String> newSpeciesMap, int timesteps, ManipulationActionType actionType){
     	HashMap<Integer, Integer> newNodeIdList = new HashMap<Integer, Integer>();
 		for(Map.Entry<String, String> entry : newSpeciesMap.entrySet()){
-			newNodeIdList.put(Integer.valueOf(entry.getKey()), Integer.valueOf(entry.getValue()));
+			if(actionType.equals(ManipulationActionType.SPECIES_PROLIFERATION)){
+				newNodeIdList.put(Integer.valueOf(entry.getKey()), Integer.valueOf(entry.getValue()));
+			}else if(actionType.equals(ManipulationActionType.SPECIES_EXPLOIT)){
+				newNodeIdList.put(Integer.valueOf(entry.getKey()), -1 * Integer.valueOf(entry.getValue()));
+			}else if(actionType.equals(ManipulationActionType.SPECIES_INVASION)){
+				newNodeIdList.put(Integer.valueOf(entry.getKey()), Integer.valueOf(entry.getValue()));
+			}else if(actionType.equals(ManipulationActionType.SPECIES_REMOVAL)){
+				newNodeIdList.put(Integer.valueOf(entry.getKey()), Integer.valueOf(entry.getValue()));
+			}
 		}
 		HashMap<Integer, Integer> newSpeciesIdList = lobby.getGameEngine().getSpeciesIdFromNodeIds(newNodeIdList);
-        lobby.getGameEngine().createSpeciesByPurchase(player, newSpeciesIdList, ecosystem);
+		if(actionType.equals(ManipulationActionType.SPECIES_REMOVAL)){
+			lobby.getGameEngine().removeSpeciesFromZone(player, newSpeciesIdList, ecosystem);
+		}else{
+			lobby.getGameEngine().createSpeciesByPurchase(player, newSpeciesIdList, ecosystem);
+		}
         lobby.getGameEngine().forceSimulation(timesteps);   
         lobby.getGameEngine().setUpdatePredictionlistener(this);
     }
@@ -246,11 +259,60 @@ class WOBGameControl extends JFrame  implements UpdatePredictionListener {
         HashMap<Integer, Integer> result = gameEngine.getBiomassOfSpeciesInEcosystem();
         return result;
     }
+    
+    public void deleteSpecies(){
+    	ATNResultModel result = null;
+    	if(gameEngine != null){
+    		result = gameEngine.getSpeciesInEcosystem();
+    		result.setMainpulationActionType(ManipulationActionType.SPECIES_REMOVAL); //SPECIES_REMOVAL(0, "Removing ")
+    		result.setTitle(functions[5]);
+    		
+	        getContentPane().setVisible(false);
+	        cFormFormUpdateNodeConfig = new FormUpdateNodeConfig((Frame) this, true, result);
+	        cFormFormUpdateNodeConfig.setVisible(true);
+	        getContentPane().setVisible(true);
+    	}else{
+    		System.out.println("Game Engine is not intitalized. Please Start");
+    	}     	
+    }
+    
+    public void addNewSpecies(){
+    	ATNResultModel result = null;
+    	if(gameEngine != null){
+    		result = gameEngine.getSpeciesInEcosystem();
+    		result.setMainpulationActionType(ManipulationActionType.SPECIES_INVASION); //SPECIES_INVASION(1, "Adding ")
+    		result.setTitle(functions[4]);
+    		
+	        getContentPane().setVisible(false);
+	        cFormFormUpdateNodeConfig = new FormUpdateNodeConfig((Frame) this, true, result);
+	        cFormFormUpdateNodeConfig.setVisible(true);
+	        getContentPane().setVisible(true);
+    	}else{
+    		System.out.println("Game Engine is not intitalized. Please Start");
+    	}    	
+    }
+    
+    public void decreaseBiomass(){
+    	ATNResultModel result = null;
+    	if(gameEngine != null){
+    		result = gameEngine.getSpeciesInEcosystem();
+    		result.setMainpulationActionType(ManipulationActionType.SPECIES_EXPLOIT);	//SPECIES_EXPLOIT(2, "Reducing "),
+    		result.setTitle(functions[3]);
+    		
+	        getContentPane().setVisible(false);
+	        cFormFormUpdateNodeConfig = new FormUpdateNodeConfig((Frame) this, true, result);
+	        cFormFormUpdateNodeConfig.setVisible(true);
+	        getContentPane().setVisible(true);
+    	}else{
+    		System.out.println("Game Engine is not intitalized. Please Start");
+    	}   	
+    }
     public void increaseBiomass(){
     	ATNResultModel result = null;
     	if(gameEngine != null){
     		result = gameEngine.getSpeciesInEcosystem();
-
+    		result.setMainpulationActionType(ManipulationActionType.SPECIES_PROLIFERATION); //SPECIES_PROLIFERATION(3, "Increasing "),
+    		result.setTitle(functions[2]);
 	        getContentPane().setVisible(false);
 	        cFormFormUpdateNodeConfig = new FormUpdateNodeConfig((Frame) this, true, result);
 	        cFormFormUpdateNodeConfig.setVisible(true);
