@@ -61,7 +61,7 @@ public class SimJob {
 //    public static final double DFLT_PP_AR = 1.0;
 //    public static final double DFLT_PP_FR = 0.1;
 
-    public static final int DFLT_TIMESTEPS = 200;
+    public static final int DFLT_TIMESTEPS = 20;
     public static final int NO_ID = -1;
     public static final boolean DFLT_USE_SIMTESTNODE_VALS = true;
 

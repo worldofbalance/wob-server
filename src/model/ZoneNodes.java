@@ -27,7 +27,6 @@ public class ZoneNodes {
 
     private Map<Integer, SpeciesZoneType> nodes = new HashMap<Integer, SpeciesZoneType>();
     private Map<Integer, SpeciesZoneType> plantNodes = new HashMap<Integer, SpeciesZoneType>();
-    private Ecosystem zone;
     private double k = 10000, kPerNode = 10000;
 
     /**

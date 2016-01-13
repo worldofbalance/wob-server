@@ -94,6 +94,7 @@ public class PredictionRunnable implements Runnable {
 
                 Log.printf("Total Time (Simulation): %.2f seconds", 
                         Math.round((System.currentTimeMillis() - executionTime) / 10.0) / 100.0);
+                gameEngine.deleteSimulationIds();
             } catch (SimulationException ex) {
                 Log.println_e(ex.getMessage());
             }

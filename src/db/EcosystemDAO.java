@@ -136,6 +136,33 @@ public final class EcosystemDAO {
         return status;
     }
     
+    public static int getTimeStep(int eco_id){
+    	int timestep = 0;
+    	String query = "Select `current_time_step` from  `ecosystem` WHERE `eco_id` = ?";
+    	//SELECT current_time_step FROM `ecosystem` WHERE eco_id = 239 
+    	
+    	Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = GameDB.getConnection();
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, eco_id);
+
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+            	timestep = rs.getInt("current_time_step");
+            }
+        } catch (SQLException ex) {
+            Log.println_e(ex.getMessage());
+        } finally {
+            GameDB.closeConnection(con, pstmt, rs);
+        }
+        System.out.println("EcosystemDAO.getTimeStep() timestep " + timestep);
+        return timestep;
+    }
     public static boolean updateTimeStep(int eco_id, int time_step) {
         boolean status = false;
 

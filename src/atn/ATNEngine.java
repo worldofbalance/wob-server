@@ -54,6 +54,7 @@ import simulation.simjob.NodeTimesteps;
 import simulation.simjob.PathTable;
 import simulation.simjob.SimJob;
 import simulation.simjob.SimJobSZT;
+import simulation.simjob.SimTestNode;
 import util.CSVParser;
 import util.Log;
 import core.GameServer;
@@ -530,9 +531,10 @@ public class ATNEngine {
        SimJob job = new SimJob();
        job.setJob_Descript("atn1");
        //job.setNode_Config("2,[5],2000,1.000,0,0,[70],2494,13.000,1,X=0.155,0");	//Info comes from client
-       job.setNode_Config("5,[5],2000,1.000,1,K=9431.818,0,[14],1751,20.000,1,X=0.273,0,[31],1415,0.008,1,X=1.000,0,[42],240,0.205,1,X=0.437,0,[70],2494,13.000,1,X=0.155,0");
+       //job.setNode_Config("5,[5],2000,1.000,1,K=9431.818,0,[14],1751,20.000,1,X=0.273,0,[31],1415,0.008,1,X=1.000,0,[42],240,0.205,1,X=0.437,0,[70],2494,13.000,1,X=0.155,0");
+       job.setNode_Config("5,[5],2000,1.0,1,K=9431.818,0,[14],1752,20.0,1,X=0.273,0,[31],1415,0.008,1,X=1.000,0,[42],240,0.205,1,X=0.437,0,[70],2494,13.0,1,X=0.155,0");
        job.setManip_Timestamp((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date()));
-       job.setTimesteps(401);
+       job.setTimesteps(200);
        String atnManipId = UUID.randomUUID().toString();
        job.setATNManipulationId(atnManipId);
        atn.processSimJob(job);
@@ -548,22 +550,10 @@ public class ATNEngine {
 
        return szt;
    }
-   
-   public void setSpeciesBiomass(SpeciesZoneType szt, double perSpeciesBiomass, String ecosystemManipulationId){
-	   //int node_id, int perSpeciesBiomass
-	   //If first time the ecosystemManipulationId may be null
-	   if(szt != null){
-		   szt.setPerSpeciesBiomass(perSpeciesBiomass);
-	   }
-   }
-   
-   public void setParameters(List<SpeciesZoneType> mSpecies, String ecosystemManipulationId){
-	   
-   }
-   
-   /*5/5/14, JTC, added persistent species data for players; system parameter masterSpeciesList,
-   replaces mSpecies.  
-   Get previous timestep biomass for all species from web service*/
+
+   /*//HJR Concept orginally borrowed from Simulation engine and modified to 
+    * work for ATN Engine
+    */
   public HashMap<Integer, SpeciesZoneType> getPrediction(String networkOrManipulationId,
           int startTimestep, int runTimestep, Map<Integer, Integer> addSpeciesNodeList,
           ZoneNodes zoneNodes)
@@ -571,7 +561,7 @@ public class ATNEngine {
       long milliseconds = System.currentTimeMillis();
 
       Log.printf("\nPrediction at %d\n", startTimestep);
-
+      
       //Get previous timestep biomass for all species from web service
       //JTC, use new HashMap containing all current settings from zoneNodes, masterSpeciesList
       //HJR changing to make a deep copy here , I am getting a null while iterating
@@ -585,8 +575,7 @@ public class ATNEngine {
 
       SpeciesZoneType szt;
       String nodeConfig = null;
-      SimJob job = new SimJob();
-//{70=2494, 5=2000, 42=240, 14=1752, 31=1415}
+
       for (int node_id : addSpeciesNodeList.keySet()) {
           int addedBiomass = addSpeciesNodeList.get(node_id);
 
@@ -668,8 +657,6 @@ public class ATNEngine {
 
       // get new predicted biomass
       try {
-          //JTC - changed variable from "mSpecies = " to "mUpdateBiomass = "
-          //mUpdateBiomass = getBiomass(networkOrManipulationId, 0, startTimestep + runTimestep);
     	  if(!masterSpeciesList.isEmpty() || !mNewSpecies.isEmpty()){
     		  mUpdateBiomass = submitManipRequest("ATN", nodeConfig, startTimestep + runTimestep, false, null);
     	  }
@@ -677,12 +664,10 @@ public class ATNEngine {
           Log.println_e(ex.getMessage());
           return null;
       }
-//      getBiomassInfo(networkOrManipulationId);
 
-      //JTC - add loop to update persistent player species biomass information
       SpeciesZoneType updS;
       for (SpeciesZoneType priorS : masterSpeciesList.values()) {
-    	  System.out.println("priorS.nodeIndex " + priorS.nodeIndex);
+    	  //System.out.println("priorS.nodeIndex " + priorS.nodeIndex);
           updS = mUpdateBiomass.get(priorS.nodeIndex);
           if (updS != null && updS.currentBiomass != 0) {
               masterSpeciesList.get(priorS.nodeIndex).setCurrentBiomass(Math.ceil(updS.getCurrentBiomass()));
@@ -697,7 +682,23 @@ public class ATNEngine {
 
       return (HashMap) zoneNodes.getNodes();
   }
-
+  
+     public String getExistingNodeConfig(ZoneNodes zoneNodes){
+        HashMap<Integer, SpeciesZoneType> masterSpeciesList = new HashMap<Integer, SpeciesZoneType>(zoneNodes.getNodes());
+        String nodeConfig = null;
+        try {
+      	  nodeConfig = addMultipleSpeciesType(
+                    null,
+                    masterSpeciesList,
+                    0,
+                    false,
+                    null
+            );
+        } catch (Exception ex) {
+            Log.println_e(ex.getMessage());
+        }
+        return nodeConfig;
+     }
 	  /**
 	   * Add multiple new nodes (SpeciesZoneType objects) to a manipulation and
 	   * then submit. HJR
@@ -731,24 +732,31 @@ public class ATNEngine {
 //				  In addMultipleSpeciesType: node [14], biomass 1752, K = -1, R = -1.0000, X = 0.0010
 	        StringBuilder builder = new StringBuilder();
 	        builder.append(fullSpeciesMap.size()).append(",");
-	        for (SpeciesZoneType species : fullSpeciesMap.values()) {
-	            System.out.printf("In addMultipleSpeciesType: node [%d], "
-	                    + "biomass %d, K = %d, R = %6.4f, X = %6.4f\n", species.getNodeIndex(),
-	                    +(int) species.getCurrentBiomass(), (int) species.getParamK(),
-	                    species.getParamR(), species.getParamX());
+	        Object[] keys = fullSpeciesMap.keySet().toArray();
+	        Arrays.sort(keys);
+	        for (Object nodeIndex : keys) {
+	        	SpeciesZoneType species = fullSpeciesMap.get(nodeIndex);
+	        	Map<Integer, SimTestNode> simTestNodeParams = species.getSpeciesType().getSimTestNodeParams();
+	        	SimTestNode nodeParams = simTestNodeParams.get(species.getNodeIndex());
+//	            System.out.printf("In addMultipleSpeciesType: node [%d], "
+//	                    + "biomass %d, perbiomass = %6.4f, K = %d, R = %6.4f, X = %6.4f\n", species.getNodeIndex(),
+//	                    +(int) species.getCurrentBiomass(), roundToThreeDigits(nodeParams.getPerUnitBiomass()), (int) species.getParamK(),
+//	                    species.getParamR(), species.getParamX());
+	            //System.out.printf("K = %6.4f, R = %6.4f, X = %6.4f\n", nodeParams.getParamK(), nodeParams.getParamR(), nodeParams.getParamX());
 	            
 	        	builder.append("[").append(species.getNodeIndex()).append("]").append(",");
 	        	builder.append((int) species.getCurrentBiomass()).append(",");
-	        	builder.append(roundToThreeDigits(species.getPerSpeciesBiomass())).append(",");
+	        	builder.append(roundToThreeDigits(nodeParams.getPerUnitBiomass())).append(",");
 	        	
 	        	String systemParam = this.setSystemParameters(
 	                    species, 
 	                    fullSpeciesMap,
 	                    timestep);
 	        	builder.append(systemParam);
-	        	System.out.println(builder);
+	        	//System.out.println(builder);
 	        }
 	        String node_config = builder.substring(0, builder.length()-1);
+	        System.out.println("NodeConfig : "+ node_config);
 	        //call processsim job here
 	        return node_config;
 	  }
@@ -900,7 +908,7 @@ public class ATNEngine {
 			            	builder.append(sParams.get(i));
 			            	builder.append(",");
 			            }
-			            System.out.println(builder);
+			            //System.out.println(builder);
 		            }
 		      }
 		      return builder.toString();
