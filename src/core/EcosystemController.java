@@ -44,6 +44,9 @@ public class EcosystemController {
     private static EcosystemController controller;
     // Reference Tables
     private final Map<Integer, Ecosystem> ecosystems = new HashMap<Integer, Ecosystem>(); // Ecosystem ID -> Ecosystem
+    private static EcosystemLobby lobby;
+    private static List<Zone> zones;
+    private static Ecosystem ecosystem;
 
     private EcosystemController() {
     }
@@ -109,7 +112,7 @@ public class EcosystemController {
         ScoreDAO.updateEnvironmentScore(ecosystem.getID(), env_score, env_score);
         // Generate CSVs from Web Services
         if(Constants.useSimEngine){
-        	createCSVs(ecosystem);
+//        	createCSVs(ecosystem);
         }
         // Logging Purposes Only
         {
@@ -171,16 +174,16 @@ public class EcosystemController {
         for (int node_id : nodeBiomassList.keySet()) {
             nodeList[i++] = node_id;
         }
-        try {
-            //ecosystem.setManipulationID(se.createAndRunSeregenttiSubFoodweb(nodeList, networkName, 0, 0, false));
-        	//HJR
-            SimulationIds simIds = se.createAndRunSeregenttiSubFoodwebForSimJob(nodeList, 
-            		networkName, 0, 0, true);
-            ecosystem.setManipulationID(simIds.getManipId());
-            ecosystem.setNetworkId(simIds.getNetId());
-        } catch (SimulationException ex) {
-            System.err.println(ex.getMessage());
-        }
+//        try {
+//            //ecosystem.setManipulationID(se.createAndRunSeregenttiSubFoodweb(nodeList, networkName, 0, 0, false));
+//        	//HJR
+//            SimulationIds simIds = se.createAndRunSeregenttiSubFoodwebForSimJob(nodeList, 
+//            		networkName, 0, 0, true);
+//            ecosystem.setManipulationID(simIds.getManipId());
+//            ecosystem.setNetworkId(simIds.getNetId());
+//        } catch (SimulationException ex) {
+//            System.err.println(ex.getMessage());
+//        }
         // Update Zone Database
         EcosystemDAO.updateManipulationID(ecosystem.getID(), ecosystem.getManipulationID());
         // Initialize Biomass and Additional Parameters
@@ -229,11 +232,15 @@ public class EcosystemController {
         Ecosystem ecosystem = EcosystemDAO.getEcosystem(player.getWorld().getID(), player.getID());
         if (ecosystem == null) {
             return;
+        }else{
+        	setEcosystem(ecosystem);
         }
         // Get Ecosystem Zones
         List<Zone> zones = WorldZoneDAO.getZoneList(player.getWorld().getID(), player.getID());
         if (zones.isEmpty()) {
             return;
+        }else{
+        	setZones(zones);
         }
         // Load Ecosystem Score History
         ecosystem.setScoreCSV(CSVParser.convertCSVtoArrayList(CSVDAO.getScoreCSV(ecosystem.getID())));
@@ -243,13 +250,17 @@ public class EcosystemController {
         EcosystemLobby lobby = LobbyController.getInstance().createEcosystemLobby(player, ecosystem);
         if (lobby == null) {
             return;
+        }else{
+        	setLobby(lobby);
         }
         // Send Ecosystem to Player
-        ResponseEcosystem response = new ResponseEcosystem();
-        response.setEcosystem(ecosystem.getID(), ecosystem.getType(), ecosystem.getScore());
-        response.setPlayer(player);
-        response.setZones(zones);
-        NetworkFunctions.sendToPlayer(response, player.getID());
+        if(!Constants.DEBUG_MODE){
+	        ResponseEcosystem response = new ResponseEcosystem();
+	        response.setEcosystem(ecosystem.getID(), ecosystem.getType(), ecosystem.getScore());
+	        response.setPlayer(player);
+	        response.setZones(zones);
+	        NetworkFunctions.sendToPlayer(response, player.getID());
+        }
         // Load Existing Species
         for (Species species : EcoSpeciesDAO.getSpecies(ecosystem.getID())) {
             lobby.getGameEngine().initializeSpecies(species, ecosystem);
@@ -262,4 +273,29 @@ public class EcosystemController {
         // Update Last Access
         EcosystemDAO.updateTime(ecosystem.getID());
     }
+
+	private static void setLobby(EcosystemLobby l) {
+		lobby = l;
+	}
+
+	private static void setZones(List<Zone> z) {
+		zones = z;
+	}
+	private static void setEcosystem(Ecosystem e) {
+		ecosystem = e;
+	}
+	
+	public static Ecosystem getEcosystem() {
+		return ecosystem;
+	}
+	
+	public static EcosystemLobby getLobby() {
+		return lobby;
+	}
+
+	public static List<Zone> getZones() {
+		return zones;
+	}
+
+
 }

@@ -1295,7 +1295,7 @@ public class SimulationEngine{
             Log.println_e(ex.getMessage());
             return null;
         }
-//        getBiomassInfo(networkOrManipulationId);
+///        getBiomassInfo(networkOrManipulationId);
 
         //JTC - add loop to update persistent player species biomass information
         SpeciesZoneType updS;
@@ -1304,7 +1304,8 @@ public class SimulationEngine{
             if (updS != null && updS.currentBiomass != 0) {
                 masterSpeciesList.get(priorS.nodeIndex).
                         setCurrentBiomass(Math.ceil(updS.getCurrentBiomass()));
-            } else {
+            } 
+            else {
                 zoneNodes.removeNode(priorS.nodeIndex);
             }
         }

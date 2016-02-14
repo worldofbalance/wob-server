@@ -412,3 +412,352 @@ Grass and herbs [5],2000.0
 Interpreting Biomass Results...
   Crickets Species[14] decreased by 343
     Node[14] decreased by 343
+    
+    
+    
+    
+    
+String node_config = "5,[70],2494,13.0,1,X=0.123,0,[5],2000,40.0,1,K=10000.0,0,[42],240,0.205,1,X=0.348,0,[31],1415,0.007,1,X=0.795,0,[14],1752,20.0,1,X=0.001,0";   
+> Loading Species...1.15E-5
+0.04
+0.0075
+Done!
+> Loading Species...Oct 10, 2015 7:29:17 PM atn.test.ATNTest test5
+INFO: Initialize tables for global use
+1.15E-5
+0.04
+0.0075
+Done!
+> Loading Worlds...Done!
+> Loading Experience Table...Done!
+Oct 10, 2015 7:29:17 PM atn.test.ATNTest test5
+INFO: ------RequestLogin------
+Oct 10, 2015 7:29:17 PM atn.test.ATNTest test5
+INFO: Initialize player and login simulation
+Oct 10, 2015 7:29:17 PM atn.test.ATNTest test5
+INFO: Getting world
+Oct 10, 2015 7:29:17 PM atn.test.ATNTest test5
+INFO: Verify World ID
+Oct 10, 2015 7:29:17 PM atn.test.ATNTest test5
+INFO: Enter World
+Oct 10, 2015 7:29:17 PM atn.test.ATNTest test5
+INFO: Let us assign zone_id = 1 to player_id = 1
+Oct 10, 2015 7:29:17 PM atn.test.ATNTest test5
+INFO: Player id already owns zone_id 1
+Oct 10, 2015 7:29:17 PM atn.test.ATNTest test5
+INFO: ------RequestPlayerSelect------
+Oct 10, 2015 7:29:17 PM atn.test.ATNTest test5
+INFO: ------RequestWorld------
+Oct 10, 2015 7:29:17 PM atn.test.ATNTest test5
+INFO: Getting Player ecosystem
+Oct 10, 2015 7:29:17 PM atn.test.ATNTest test5
+INFO: ------RequestSpeciesAction------
+Oct 10, 2015 7:29:17 PM atn.test.ATNTest test5
+INFO: Adding nodes to ecosystem
+Creating ATN Engine ...
+Oct 10, 2015 7:29:17 PM atn.test.ATNTest test5
+INFO: EcosystemController.startEcosystem() functionality
+Oct 10, 2015 7:29:17 PM atn.test.ATNTest test5
+INFO: Get Ecosystem Zones
+Oct 10, 2015 7:29:17 PM atn.test.ATNTest test5
+INFO: Load Ecosystem Score History
+Oct 10, 2015 7:29:17 PM atn.test.ATNTest test5
+INFO: Creating lobby to Contain Ecosystem
+Oct 10, 2015 7:29:17 PM atn.test.ATNTest test5
+INFO: Load Existing Species
+
+Prediction at 1
+
+Oct 10, 2015 7:29:17 PM atn.test.ATNTest test5
+INFO: ecosystem.updateEcosystemScore() functionality
+In addMultipleSpeciesType: node [70], biomass 2945, K = -1, R = -1.0000, X = 0.1233
+Oct 10, 2015 7:29:17 PM atn.test.ATNTest test5
+INFO: lobby.getGameEngine().createSpeciesByPurchase(player,speciesList,ecosystem) functionality
+1,X=0.123,0,
+5,[70],2945,13.0,1,X=0.123,0,
+In addMultipleSpeciesType: node [5], biomass 733, K = 10000, R = 1.0000, X = 0.5000
+5,[70],2945,13.0,1,X=0.123,0,[5],733,40.0,1,K=10000.0,0,
+In addMultipleSpeciesType: node [42], biomass 391, K = -1, R = -1.0000, X = 0.3478
+1,X=0.348,0,
+5,[70],2945,13.0,1,X=0.123,0,[5],733,40.0,1,K=10000.0,0,[42],391,0.205,1,X=0.348,0,
+In addMultipleSpeciesType: node [31], biomass 4209, K = -1, R = -1.0000, X = 0.7953
+1,X=0.795,0,
+5,[70],2945,13.0,1,X=0.123,0,[5],733,40.0,1,K=10000.0,0,[42],391,0.205,1,X=0.348,0,[31],4209,0.007,1,X=0.795,0,
+In addMultipleSpeciesType: node [14], biomass 577, K = -1, R = -1.0000, X = 0.0010
+1,X=0.001,0,
+5,[70],2945,13.0,1,X=0.123,0,[5],733,40.0,1,K=10000.0,0,[42],391,0.205,1,X=0.348,0,[31],4209,0.007,1,X=0.795,0,[14],577,20.0,1,X=0.001,0,
+Ecosystem output will be written to:
+Network output will be written to:
+src/log/atn/ATN_20.csv
+> biomassCSV for -1 Manipulation_id: 16977bb2-f0af-4673-a3a8-428ac88e50ff
+
+,1,2
+African Clawless Otter [70],2945.0,3122.0
+Grass and Herbs [5],733.0,397.0
+African Grey Hornbill [42],391.0,459.0
+Crickets [14],577.0,299.0
+Tree Mouse [31],4209.0,5997.0
+
+node,link?,prey list
+  70,x,31, 42
+   5,x,
+  42,x,5, 14
+  31,x,5, 14, 31
+  14,x,5, 14
+
+
+,,shortest path,,,,,path length,,,,,# paths,,,,,
+node,#links,70,5,42,31,14,70,5,42,31,14,70,5,42,31,14
+70,5,,dd,d,d,dd,0,2,1,1,2,1,4,3,3,4
+5,5,yy,,y,y,y,2,0,1,1,1,4,1,4,4,3
+42,5,y,d,,dy,d,1,1,0,2,1,3,4,1,5,4
+31,5,y,d,dy,c,d,1,1,2,0,1,3,4,5,2,4
+14,5,yy,d,y,y,c,2,1,1,1,0,4,3,4,4,2
+
+
+Time... 0 seconds
+
+priorS.nodeIndex 70
+priorS.nodeIndex 5
+priorS.nodeIndex 42
+priorS.nodeIndex 31
+priorS.nodeIndex 14
+Total Time (Get Prediction): 0.05 seconds
+Running Prediction Step...
+Interpreting Biomass Results...
+
+Prediction at 1
+
+node_id 70 currentBiomass 2945 nextBiomass 3122
+node_id 5 currentBiomass 733 nextBiomass 397
+node_id 42 currentBiomass 391 nextBiomass 459
+In addMultipleSpeciesType: node [70], biomass 2494, K = -1, R = -1.0000, X = 0.1233
+node_id 14 currentBiomass 577 nextBiomass 299
+node_id 31 currentBiomass 4209 nextBiomass 5997
+1,X=0.123,0,
+5,[70],2494,13.0,1,X=0.123,0,
+In addMultipleSpeciesType: node [5], biomass 2000, K = 10000, R = 1.0000, X = 0.5000
+  Crickets Species[14] decreased by 278
+5,[70],2494,13.0,1,X=0.123,0,[5],2000,40.0,1,K=10000.0,0,
+In addMultipleSpeciesType: node [42], biomass 240, K = -1, R = -1.0000, X = 0.3478
+    Node[14] decreased by 278
+1,X=0.348,0,
+5,[70],2494,13.0,1,X=0.123,0,[5],2000,40.0,1,K=10000.0,0,[42],240,0.205,1,X=0.348,0,
+In addMultipleSpeciesType: node [31], biomass 1415, K = -1, R = -1.0000, X = 0.7953
+1,X=0.795,0,
+5,[70],2494,13.0,1,X=0.123,0,[5],2000,40.0,1,K=10000.0,0,[42],240,0.205,1,X=0.348,0,[31],1415,0.007,1,X=0.795,0,
+In addMultipleSpeciesType: node [14], biomass 1752, K = -1, R = -1.0000, X = 0.0010
+1,X=0.001,0,
+5,[70],2494,13.0,1,X=0.123,0,[5],2000,40.0,1,K=10000.0,0,[42],240,0.205,1,X=0.348,0,[31],1415,0.007,1,X=0.795,0,[14],1752,20.0,1,X=0.001,0,
+Ecosystem output will be written to:
+Network output will be written to:
+src/log/atn/ATN_21.csv
+  African Grey Hornbill Species[42] increased by 68
+    Node[42] increased by 68
+  African Clawless Otter Species[2] increased by 177
+    Node[70] increased by 177
+  Tree Mouse Species[31] increased by 1788
+    Node[31] increased by 1788
+  Grass and Herbs Species[1005] decreased by 336
+    Node[5] decreased by 336
+Total Time (Prediction Step): 0.02 seconds
+Total Time (Simulation): 0.07 seconds
+> biomassCSV for -1 Manipulation_id: b3945e69-4bb4-434b-a228-efd8959ecf3c
+
+,1,2
+African Clawless Otter [70],2494.0,2631.0
+Grass and Herbs [5],2000.0,1563.0
+African Grey Hornbill [42],240.0,283.0
+Crickets [14],1752.0,1327.0
+Tree Mouse [31],1415.0,2044.0
+
+node,link?,prey list
+  70,x,31, 42
+   5,x,
+  42,x,5, 14
+  31,x,5, 14, 31
+  14,x,5, 14
+
+
+,,shortest path,,,,,path length,,,,,# paths,,,,,
+node,#links,70,5,42,31,14,70,5,42,31,14,70,5,42,31,14
+70,5,,dd,d,d,dd,0,2,1,1,2,1,4,3,3,4
+5,5,yy,,y,y,y,2,0,1,1,1,4,1,4,4,3
+42,5,y,d,,dy,d,1,1,0,2,1,3,4,1,5,4
+31,5,y,d,dy,c,d,1,1,2,0,1,3,4,5,2,4
+14,5,yy,d,y,y,c,2,1,1,1,0,4,3,4,4,2
+
+
+Time... 0 seconds
+
+priorS.nodeIndex 70
+priorS.nodeIndex 5
+priorS.nodeIndex 42
+priorS.nodeIndex 31
+priorS.nodeIndex 14
+Total Time (Get Prediction): 0.03 seconds
+Running Prediction Step...
+Interpreting Biomass Results...
+node_id 70 currentBiomass 3122 nextBiomass 2631
+node_id 5 currentBiomass 397 nextBiomass 1563
+node_id 42 currentBiomass 459 nextBiomass 283
+node_id 14 currentBiomass 299 nextBiomass 1327
+node_id 31 currentBiomass 5997 nextBiomass 2044
+  Grass and Herbs Species[1005] increased by 1166
+    Node[5] increased by 1166
+  African Clawless Otter Species[2] decreased by 491
+    Node[70] decreased by 491
+  African Grey Hornbill Species[42] decreased by 176
+    Node[42] decreased by 176
+  Tree Mouse Species[31] decreased by 3953
+    Node[31] decreased by 3953
+  Crickets Species[14] increased by 1028
+    Node[14] increased by 1028
+Total Time (Prediction Step): 0.01 seconds
+Total Time (Simulation): 0.04 seconds
+    
+    
+    
+    
+    
+    
+> Loading Species...1.15E-5
+0.04
+0.0075
+Done!
+> Loading Species...Oct 11, 2015 10:21:39 PM atn.test.ATNTest test5
+INFO: Initialize tables for global use
+1.15E-5
+0.04
+0.0075
+Done!
+> Loading Worlds...Done!
+> Loading Experience Table...Done!
+Oct 11, 2015 10:21:39 PM atn.test.ATNTest test5
+INFO: ------RequestLogin------
+Oct 11, 2015 10:21:39 PM atn.test.ATNTest test5
+INFO: Initialize player and login simulation
+Oct 11, 2015 10:21:39 PM atn.test.ATNTest test5
+INFO: Getting world
+Oct 11, 2015 10:21:39 PM atn.test.ATNTest test5
+INFO: Verify World ID
+Oct 11, 2015 10:21:39 PM atn.test.ATNTest test5
+INFO: Enter World
+Oct 11, 2015 10:21:39 PM atn.test.ATNTest test5
+INFO: Let us assign zone_id = 1 to player_id = 1
+Oct 11, 2015 10:21:39 PM atn.test.ATNTest test5
+INFO: Player id already owns zone_id 1
+Oct 11, 2015 10:21:39 PM atn.test.ATNTest test5
+INFO: ------RequestPlayerSelect------
+Oct 11, 2015 10:21:39 PM atn.test.ATNTest test5
+INFO: ------RequestWorld------
+Oct 11, 2015 10:21:39 PM atn.test.ATNTest test5
+INFO: Getting Player ecosystem
+Oct 11, 2015 10:21:39 PM atn.test.ATNTest test5
+INFO: ------RequestSpeciesAction------
+Oct 11, 2015 10:21:39 PM atn.test.ATNTest test5
+INFO: Adding nodes to ecosystem
+Creating ATN Engine ...
+Oct 11, 2015 10:21:39 PM atn.test.ATNTest test5
+INFO: EcosystemController.startEcosystem() functionality
+addNodeList 0
+
+Prediction at 1
+
+Total Time (Get Prediction): 0.00 seconds
+Running Prediction Step...
+Interpreting Biomass Results...
+Total Time (Prediction Step): 0.00 seconds
+Total Time (Simulation): 0.01 seconds
+Oct 11, 2015 10:21:50 PM atn.test.ATNTest test5
+INFO: lobby.getGameEngine().createSpeciesByPurchase(player,speciesList,ecosystem) functionality
+setNewSpeciesNode 70 2494
+addNodeList 70-2494
+setNewSpeciesNode 5 2000
+addNodeList 5-2000
+setNewSpeciesNode 42 240
+addNodeList 42-240
+setNewSpeciesNode 14 1752
+addNodeList 14-1752
+setNewSpeciesNode 31 1415
+addNodeList 31-1415
+addNodeList 5
+
+Prediction at 1
+
+In addMultipleSpeciesType: node [70], biomass 2494, K = -1, R = -1.0000, X = 0.1233
+1,X=0.123,0,
+5,[70],2494,13.0,1,X=0.123,0,
+In addMultipleSpeciesType: node [5], biomass 2000, K = 10000, R = 1.0000, X = 0.5000
+5,[70],2494,13.0,1,X=0.123,0,[5],2000,40.0,1,K=10000.0,0,
+In addMultipleSpeciesType: node [42], biomass 240, K = -1, R = -1.0000, X = 0.3478
+1,X=0.348,0,
+5,[70],2494,13.0,1,X=0.123,0,[5],2000,40.0,1,K=10000.0,0,[42],240,0.205,1,X=0.348,0,
+In addMultipleSpeciesType: node [31], biomass 1415, K = -1, R = -1.0000, X = 0.7953
+1,X=0.795,0,
+5,[70],2494,13.0,1,X=0.123,0,[5],2000,40.0,1,K=10000.0,0,[42],240,0.205,1,X=0.348,0,[31],1415,0.007,1,X=0.795,0,
+In addMultipleSpeciesType: node [14], biomass 1752, K = -1, R = -1.0000, X = 0.0010
+1,X=0.001,0,
+5,[70],2494,13.0,1,X=0.123,0,[5],2000,40.0,1,K=10000.0,0,[42],240,0.205,1,X=0.348,0,[31],1415,0.007,1,X=0.795,0,[14],1752,20.0,1,X=0.001,0,
+Ecosystem output will be written to:
+Network output will be written to:
+src/log/atn/ATN_24.csv
+> biomassCSV for -1 Manipulation_id: 3fdd06ff-fa96-4d4f-8d7e-f2e6738c37af
+
+,1,2
+African Clawless Otter [70],2494.0,2631.0
+Grass and Herbs [5],2000.0,1563.0
+African Grey Hornbill [42],240.0,283.0
+Crickets [14],1752.0,1327.0
+Tree Mouse [31],1415.0,2044.0
+
+node,link?,prey list
+  70,x,31, 42
+   5,x,
+  42,x,5, 14
+  31,x,5, 14, 31
+  14,x,5, 14
+
+
+,,shortest path,,,,,path length,,,,,# paths,,,,,
+node,#links,70,5,42,31,14,70,5,42,31,14,70,5,42,31,14
+70,5,,dd,d,d,dd,0,2,1,1,2,1,4,3,3,4
+5,5,yy,,y,y,y,2,0,1,1,1,4,1,4,4,3
+42,5,y,d,,dy,d,1,1,0,2,1,3,4,1,5,4
+31,5,y,d,dy,c,d,1,1,2,0,1,3,4,5,2,4
+14,5,yy,d,y,y,c,2,1,1,1,0,4,3,4,4,2
+
+
+Time... 0 seconds
+
+priorS.nodeIndex 70
+priorS.nodeIndex 5
+priorS.nodeIndex 42
+priorS.nodeIndex 31
+priorS.nodeIndex 14
+Total Time (Get Prediction): 0.05 seconds
+removeNewSpeciesNode 70 2494
+removeNewSpeciesNode 5 2000
+removeNewSpeciesNode 42 240
+removeNewSpeciesNode 14 1752
+removeNewSpeciesNode 31 1415
+Running Prediction Step...
+Interpreting Biomass Results...
+node_id 70 currentBiomass 2494 nextBiomass 2631
+node_id 5 currentBiomass 2000 nextBiomass 1563
+node_id 42 currentBiomass 240 nextBiomass 283
+node_id 14 currentBiomass 1752 nextBiomass 1327
+node_id 31 currentBiomass 1415 nextBiomass 2044
+  Crickets Species[14] decreased by 425
+    Node[14] decreased by 425
+  African Clawless Otter Species[2] increased by 137
+    Node[70] increased by 137
+  African Grey Hornbill Species[42] increased by 43
+    Node[42] increased by 43
+  Tree Mouse Species[31] increased by 629
+    Node[31] increased by 629
+  Grass and Herbs Species[1005] decreased by 437
+    Node[5] decreased by 437
+Total Time (Prediction Step): 0.02 seconds
+Total Time (Simulation): 0.09 seconds
+    

@@ -28,14 +28,14 @@ public class SpeciesZoneType {
     };
 
     protected String name;
-    protected int nodeIndex;
+    public int nodeIndex;
     protected List<Integer> lPreyIndex;
     protected List<Integer> lPredatorIndex;
     protected List<SpeciesType> lPrey;
     protected List<SpeciesType> lPredator;
     protected int speciesCount;
     protected double perSpeciesBiomass;
-    protected double currentBiomass;
+    public double currentBiomass;
     protected SpeciesTypeEnum type;
     protected double trophicLevel;
     public boolean biomassUpdated = false;
@@ -56,6 +56,8 @@ public class SpeciesZoneType {
     protected List<ParamValue> paramQ = new ArrayList<ParamValue>();
     ;  // functional response control parameter      
     protected List<ParamValue> paramA = new ArrayList<ParamValue>();
+    ;  // functional response control parameter      
+    protected List<ParamValue> paramB0 = new ArrayList<ParamValue>();
     ;  // relative half saturation density
     //Y, added by JTC
     protected List<ParamValue> paramY = new ArrayList<ParamValue>();
@@ -434,6 +436,27 @@ public class SpeciesZoneType {
         }
         return null;
     }
+    
+    public List<ParamValue> getParamB0() {
+        return paramB0;
+    }
+
+    public void setParamB0(List<ParamValue> paramB0) {
+        this.paramB0 = paramB0;
+    }
+    
+    public ParamValue getParamB0(int preyIdx) {
+        if (paramB0 == null) {
+            return null;
+        }
+
+        for (ParamValue val : paramB0) {
+            if (val.getPreyIdx() == preyIdx) {
+                return val;
+            }
+        }
+        return null;
+    }
 
     public List<ParamValue> getParamE() {
         return paramE;
@@ -495,6 +518,15 @@ public class SpeciesZoneType {
         this.paramD.add(pv);
     }
 
+    /**
+     * Add individual element to paramB0 list. HJR
+     *
+     * @param pv
+     */
+    public void setParamB0(ParamValue pv) {
+        this.paramB0.add(pv);
+    }
+    
     /**
      * Add individual element to paramQ list. 4/5/2014, JTC.
      *

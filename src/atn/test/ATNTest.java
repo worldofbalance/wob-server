@@ -102,11 +102,34 @@ public class ATNTest {
 	       //test7();	//Root mean square error
 	       //test8(); 	//Root mean square percentage error
 	       
-	       test6();  //Testing biomass chart display for 1 job and saving the chart to a jpeg file
+	       //test6();  //Testing biomass chart display for 1 job and saving the chart to a jpeg file
 	       
 	       //Going forward we set Constants.useAtnEngine = false
-	       //test5(); //Testing EcosystemController
+	       test5(); //Testing EcosystemController
+	       //test9(); //Node Config testing
+	       //test10();
 	       
+	   }
+	   
+	   public static void test10(){
+		   //String node_config = "5,[70],2631,13.0,1,X=0.123,0,[5],1563,40.0,1,K=10000.0,0,[42],283,0.205,1,X=0.348,0,[31],2044,0.007,1,X=0.795,0,[14],1327,20.0,1,X=0.001,0";
+		   String node_config = "5,[70],2494,13.0,1,X=0.123,0,[5],2000,40.0,1,K=10000.0,0,[42],240,0.205,1,X=0.348,0,[31],1415,0.007,1,X=0.795,0,[14],1752,20.0,1,X=0.001,0";
+	       SimJob job = new SimJob();
+	       job.setJob_Descript("atn1");
+	       job.setNode_Config(node_config);
+	       job.setManip_Timestamp((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date()));
+	       job.setTimesteps(401);	//Atleast at the minimum start with 2 
+	       String atnManipId = UUID.randomUUID().toString();
+	       job.setATNManipulationId(atnManipId);
+	       try {
+			atn.processSimJob(job);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+	       System.out.println("Processing complete.");
+	   }
+	   public static void test9(){
+		   String node_config = "5,[70],2494,13.0,1,X=0.123,10,[31],B0=0.5,[31],D=0.0,[31],E=1.0,[31],Q=0.0,[31],Y=6.0,[42],B0=0.5,[42],D=0.0,[42],E=1.0,[42],Q=0.0,[42],Y=6.0,[5],2000,40.0,1,K=10000.0,0,[42],240,0.205,1,X=0.348,10,[14],B0=0.5,[14],D=0.0,[14],E=1.0,[14],Q=0.0,[14],Y=6.0,[5],B0=0.5,[5],D=0.0,[5],E=1.0,[5],Q=0.0,[5],Y=6.0,[31],1415,0.007,1,X=0.795,15,[14],B0=0.5,[14],D=0.0,[14],E=1.0,[14],Q=0.0,[14],Y=6.0,[31],B0=0.5,[31],D=0.0,[31],E=1.0,[31],Q=0.0,[31],Y=6.0,[5],B0=0.5,[5],D=0.0,[5],E=1.0,[5],Q=0.0,[5],Y=6.0,[14],1752,20.0,1,X=0.001,10,[14],B0=0.5,[14],D=0.0,[14],E=1.0,[14],Q=0.0,[14],Y=6.0,[5],B0=0.5,[5],D=0.0,[5],E=1.0,[5],Q=0.0,[5],Y=6.0";
 	   }
 	   
 	   public static void test5(){
@@ -200,46 +223,22 @@ public class ATNTest {
 	        } 
 	        
 	        logger.info("EcosystemController.startEcosystem() functionality");
-	        // Get Player Ecosystem
-	        ecosystem = EcosystemDAO.getEcosystem(player.getWorld().getID(), player.getID());
-	        if (ecosystem == null) {
-	            return;
-	        }
+	        EcosystemController.startEcosystem(player);
+			lobby = EcosystemController.getLobby();
+			ecosystem = EcosystemController.getEcosystem();
 	        
-	        // Get Ecosystem Zones
-	        logger.info("Get Ecosystem Zones");
-	        List<Zone> zones = WorldZoneDAO.getZoneList(player.getWorld().getID(), player.getID());
-	        if (zones.isEmpty()) {
-	            return;
-	        }
-	        // Load Ecosystem Score History
-	        logger.info("Load Ecosystem Score History");
-	        ecosystem.setScoreCSV(CSVParser.convertCSVtoArrayList(CSVDAO.getScoreCSV(ecosystem.getID())));
-	        // Ecosystem Reference
-	        player.setEcosystem(ecosystem);
-	        // Create Lobby to Contain Ecosystem
-	        logger.info("Creating lobby to Contain Ecosystem");
-	        lobby = LobbyController.getInstance().createEcosystemLobby(player, ecosystem);
-	        if (lobby == null) {
-	            return;
-	        }
-    
-	        // Load Existing Species
-	        logger.info("Load Existing Species");
-	        for (Species species : EcoSpeciesDAO.getSpecies(ecosystem.getID())) {
-	        	ecosystem.setSpecies(species);
-	        }
+	        //We need to map the speciesList in the ecosystem to the zoneNodes in the ecosystem
+	        lobby.getGameEngine().forceSimulation();
 	        
-	        logger.info("ecosystem.updateEcosystemScore() functionality");
-	        ecosystem.updateEcosystemScore();
-	        EcosystemDAO.updateTime(ecosystem.getID());
-
-	        HashMap<Integer, Integer> speciesList = new HashMap<Integer, Integer>();
+	        addDelay();
+	        
+	        HashMap<Integer, Integer> speciesList = new HashMap<Integer, Integer>();	//SpeciesID, Biomass
 	        speciesList.put(1005, 2000);	//To start we start with 1000 and add another 1000 to keep it consistent
 	        speciesList.put(2, 2494);		//African Clawless Otter
 	        speciesList.put(42, 240);		//African Grey Hornbill
 	        speciesList.put(31, 1415);		//Tree Mouse 	
 	        speciesList.put(14, 1752);		//Crickets
+//	        speciesList.put(1, 1000);
 	        
 	        //lobby.getGameEngine().createSpeciesByPurchase(player,speciesList,ecosystem);		// We need to add to the ecosystem's addNodeList variable via the ecosystem.setNewSpeciesNode
 	        logger.info("lobby.getGameEngine().createSpeciesByPurchase(player,speciesList,ecosystem) functionality");
@@ -257,8 +256,8 @@ public class ATNTest {
 	                species = ecosystem.getSpecies(species_id);
 
 	                for (SpeciesGroup group : species.getGroups().values()) {
+	                	//HJR below line needs to be tested
 	                    group.setBiomass(group.getBiomass() + biomassValue / species.getGroups().size());
-
 	                    EcoSpeciesDAO.updateBiomass(group.getID(), group.getBiomass());
 	                }	                
 	            } else {
@@ -288,6 +287,13 @@ public class ATNTest {
 	       	        
 	   }
 	   
+	   public static void addDelay(){
+		   try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	   }
 	   public static void test8() throws FileNotFoundException, SQLException, SimulationException {
 	        List<Integer> simJobs = null;
 	        SimJob job = null;

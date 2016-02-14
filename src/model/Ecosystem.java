@@ -183,6 +183,8 @@ public class Ecosystem {
     }
 
     public Map<Integer, Integer> getAddSpeciesList() {
+    	int size = (addNodeList == null) ?  0 : addNodeList.size();
+    	System.out.println("addNodeList " + size);
         return addNodeList;
     }
 
@@ -192,12 +194,13 @@ public class Ecosystem {
         return nodeList;
     }
 
-    public void setAddNodeList(HashMap<Integer, Integer> addNodeList) {
+    public void setAddNodeList(Map<Integer, Integer> addNodeList) {
         this.addNodeList = addNodeList;
     }
 
     public void setNewSpeciesNode(int node_id, int amount) {
         try {
+        	System.out.println("setNewSpeciesNode " + node_id + " " + amount);
             if (addNodeList.containsKey(node_id)) {
                 addNodeList.put(node_id, addNodeList.get(node_id) + amount);
                 ZoneNodeAddDAO.updateAmount(eco_id, node_id, addNodeList.get(node_id));
@@ -205,6 +208,7 @@ public class Ecosystem {
                 addNodeList.put(node_id, amount);
                 ZoneNodeAddDAO.createEntry(eco_id, node_id, amount);
             }
+            System.out.println("addNodeList " + node_id + "-" + addNodeList.get(node_id));
         } catch (SQLException ex) {
             System.err.println(ex.getMessage());
         }
@@ -223,6 +227,7 @@ public class Ecosystem {
                     ZoneNodeAddDAO.removeEntry(eco_id, node_id);
                 }
             }
+            System.out.println("removeNewSpeciesNode " + node_id + " " + amount);
         } catch (SQLException ex) {
             System.err.println(ex.getMessage());
         }

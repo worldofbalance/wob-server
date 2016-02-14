@@ -296,12 +296,20 @@ public class GameEngine {
     }
 
     public void initializeSpecies(Species species, Ecosystem ecosystem) {
-        for (SpeciesGroup group : species.getGroups().values()) {
-            ResponseSpeciesCreate response = new ResponseSpeciesCreate(Constants.CREATE_STATUS_DEFAULT, ecosystem.getID(), group);
-            NetworkFunctions.sendToLobby(response, lobby.getID());
-        }
-
+    	if(!Constants.DEBUG_MODE){
+	        for (SpeciesGroup group : species.getGroups().values()) {
+	            ResponseSpeciesCreate response = new ResponseSpeciesCreate(Constants.CREATE_STATUS_DEFAULT, ecosystem.getID(), group);
+	            NetworkFunctions.sendToLobby(response, lobby.getID());
+	        }
+    	}
         ecosystem.setSpecies(species);
+        SpeciesType type = species.getSpeciesType();
+        for (Entry<Integer, Float> entry : type.getNodeDistribution().entrySet()) {
+            int node_id = entry.getKey(), biomass = (int) (species.getTotalBiomass() * entry.getValue());
+
+            SpeciesZoneType szt = atnEngine.createSpeciesZoneType(node_id, biomass);
+            ecosystem.getZoneNodes().addNode(node_id, szt);
+        }
     }
     
     public void createSpeciesByPurchase(Player player, Map<Integer, Integer> speciesList, Ecosystem ecosystem) {
@@ -365,14 +373,14 @@ public class GameEngine {
             zone.removeNewSpeciesNode(node_id, biomass);
         }
         // Execute the most recent Prediction request; drop all before it.
-        waitList.remove(runnable);
-        if (!waitList.isEmpty()) {
-            for (int i = 0; i < waitList.size() - 1; i++) {
-                PredictionRunnable r = waitList.poll();
+        atnWaitList.remove(runnable);
+        if (!atnWaitList.isEmpty()) {
+            for (int i = 0; i < atnWaitList.size() - 1; i++) {
+                ATNPredictionRunnable r = atnWaitList.poll();
                 Log.printf("Dropped Prediction Step [%d]", r.getID());
             }
 
-            PredictionRunnable nextRunnable = waitList.poll();
+            ATNPredictionRunnable nextRunnable = atnWaitList.poll();
             lastSimulationTime = nextRunnable.initialize();
             predictionThreadPool.submit(nextRunnable);
         }
@@ -395,6 +403,7 @@ public class GameEngine {
 
                 if (currentSpeciesNodeList.containsKey(node_id)) {
                     int currentBiomass = currentSpeciesNodeList.get(node_id);
+                    System.out.println("node_id " + node_id + " currentBiomass " + currentBiomass + " nextBiomass " + nextBiomass);
                     nodeDifference.put(node_id, nextBiomass - currentBiomass);
                 } else {
                     nodeDifference.put(node_id, nextBiomass);

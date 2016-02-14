@@ -90,6 +90,7 @@ public class ATNPredictionRunnable implements Runnable {
              //JTC, zoneNodes passed as parameter to getPrediction
              nextSpeciesNodeList = atnEngine.getPrediction(manipulation_id, 
                      startTimestep, runTimestep, newSpeciesNodeList, zoneNodes);
+             atnEngine.updateBiomass(zone, nextSpeciesNodeList);
              gameEngine.updateATNPrediction(this);
 
              Log.printf("Total Time (Simulation): %.2f seconds", 

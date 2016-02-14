@@ -25,18 +25,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 
+import org.datacontract.schemas._2004._07.ManipulationParameter.ManipulatingNode;
+import org.datacontract.schemas._2004._07.ManipulationParameter.ManipulatingNodeProperty;
+import org.datacontract.schemas._2004._07.ManipulationParameter.ManipulatingParameter;
 import org.datacontract.schemas._2004._07.ManipulationParameter.NodeBiomass;
 
 import metadata.Constants;
+import model.Ecosystem;
+import model.Species;
+import model.SpeciesGroup;
 import model.SpeciesType;
 import model.ZoneNodes;
+import simulation.ParamValue;
 import simulation.SimulationException;
 import simulation.SpeciesZoneType;
+import simulation.SpeciesZoneType.SpeciesTypeEnum;
+import simulation.config.ManipulatingParameterName;
+import simulation.config.ManipulationActionType;
 import simulation.simjob.ConsumeMap;
 import simulation.simjob.EcosystemTimesteps;
 import simulation.simjob.NodeTimesteps;
@@ -47,6 +58,7 @@ import util.CSVParser;
 import util.Log;
 import core.GameServer;
 //WOB_Server imports
+import db.EcoSpeciesDAO;
 
 /**
 *
@@ -103,7 +115,7 @@ public class ATNEngine {
 	} 
 
    //loop through current job/results, assembling dataset
-   private void genSpeciesDataset(SimJob job,
+   private HashMap<Integer, SpeciesZoneType> genSpeciesDataset(SimJob job,
            EcosystemTimesteps ecosysTimesteps,
            Map<Integer, NodeRelationships> ecosysRelationships
    ) {
@@ -214,7 +226,7 @@ public class ATNEngine {
        for (int j = 1; j <= maxTimestep; j++) {
            biomassCSV += "," + j;
        }
-       
+       HashMap<Integer, SpeciesZoneType> mSpecies = new HashMap<Integer, SpeciesZoneType>();
        //loop through each species
        for (int i = 0; i < speciesCnt; i++) {
            if(Constants.useSimEngine){
@@ -242,7 +254,7 @@ public class ATNEngine {
 //               }
 //               psATN.println();
 //           }
-           
+
            float extinction = 1.E-15f;          
        	   SimJobSZT sjSzt = job.getSpeciesZoneByNodeId(speciesID[i]);
            //add nodes to list in the order that they are received from infos
@@ -255,6 +267,21 @@ public class ATNEngine {
 
                if (biomass > 0) {
                    tempStr += biomass > extinction ? Math.ceil(biomass) : 0;
+               }
+               
+               if (t == maxTimestep -1) {
+            	   SpeciesZoneType szt = null;
+                   if (!mSpecies.containsKey(sjSzt.getNodeIndex())) {
+                       szt = new SpeciesZoneType(sjSzt.getName(), 
+                    		   sjSzt.getNodeIndex(),
+                               0, 0, biomass, null);
+                       mSpecies.put(sjSzt.getNodeIndex(), szt);
+
+                   } else { //update existing species current biomass
+                       szt = mSpecies.get(sjSzt.getNodeIndex());
+
+                       szt.setCurrentBiomass(biomass);
+                   }
                }
            }
            biomassCSV += "\n" + tempStr;
@@ -274,6 +301,7 @@ public class ATNEngine {
        job.setBiomassCsv(biomassCSV);
        
        //System.out.println(biomassCSV);
+       return mSpecies;
    }
 
    /*
@@ -378,7 +406,7 @@ public class ATNEngine {
        psATN = Functions.getPrintStream("ATN", Constants.ATN_CSV_SAVE_PATH);
    }
  	
-	public void processSimJob(SimJob job) throws SQLException, SimulationException {
+	public HashMap<Integer, SpeciesZoneType> processSimJob(SimJob job) throws SQLException, SimulationException {
 		
 	  this.setSimJob(job);
        //init ecosystem data sets
@@ -415,10 +443,11 @@ public class ATNEngine {
        long start = System.nanoTime();
 
        //generate data for current job
-       genSpeciesDataset(job, ecosysTimesteps, ecosysRelationships);
+       HashMap<Integer, SpeciesZoneType> mSpecies = genSpeciesDataset(job, ecosysTimesteps, ecosysRelationships);
 
        System.out.printf("\nTime... %d seconds\n\n", (System.nanoTime() - start)
                / (long) Math.pow(10, 9));
+       return mSpecies;
 	}
 	
    public void createEcoSysRelationships(
@@ -549,7 +578,8 @@ public class ATNEngine {
 
       //Get previous timestep biomass for all species from web service
       //JTC, use new HashMap containing all current settings from zoneNodes, masterSpeciesList
-      HashMap<Integer, SpeciesZoneType> masterSpeciesList = (HashMap) zoneNodes.getNodes();
+      //HJR changing to make a deep copy here , I am getting a null while iterating
+      HashMap<Integer, SpeciesZoneType> masterSpeciesList = new HashMap<Integer, SpeciesZoneType>(zoneNodes.getNodes());     
 
       HashMap<Integer, SpeciesZoneType> mNewSpecies = new HashMap<Integer, SpeciesZoneType>();
       //JTC, mUpdateBiomass renamed from mUpdateSpecies
@@ -558,8 +588,9 @@ public class ATNEngine {
       HashMap<Integer, SpeciesZoneType> mUpdateParams = new HashMap<Integer, SpeciesZoneType>();
 
       SpeciesZoneType szt;
+      String nodeConfig = null;
       SimJob job = new SimJob();
-
+//{70=2494, 5=2000, 42=240, 14=1752, 31=1415}
       for (int node_id : addSpeciesNodeList.keySet()) {
           int addedBiomass = addSpeciesNodeList.get(node_id);
 
@@ -576,79 +607,76 @@ public class ATNEngine {
           }
       }
 
-      //JTC, separated this to capture biomass updates made to ZoneNodes that
-      //are not received through addSpeciesNodeList (biomass and param updates)
-      for (SpeciesZoneType species : masterSpeciesList.values()) {
-          //param update also updates biomass, so insert into that list
-          //preferentially; o/w use biomass update list
-          if (species.paramUpdated) {
-              mUpdateParams.put(species.getNodeIndex(), species);
-              species.setParamUpdated(false);
-          } else if (species.biomassUpdated) {
-              mUpdateBiomass.put(species.getNodeIndex(), species);
-              //species.setBiomassUpdated(false);
-          }
-      }
+//      //JTC, separated this to capture biomass updates made to ZoneNodes that
+//      //are not received through addSpeciesNodeList (biomass and param updates)
+//      for (SpeciesZoneType species : masterSpeciesList.values()) {
+//          //param update also updates biomass, so insert into that list
+//          //preferentially; o/w use biomass update list
+//          if (species.paramUpdated) {
+//              mUpdateParams.put(species.getNodeIndex(), species);
+//              species.setParamUpdated(false);
+//          } else if (species.biomassUpdated) {
+//              mUpdateBiomass.put(species.getNodeIndex(), species);
+//              species.setBiomassUpdated(false);
+//          }
+//      }
 
       // Insert new species using web services
       if (!mNewSpecies.isEmpty()) {
-          try {
-//              addMultipleSpeciesType(
-//                      mNewSpecies,
-//                      masterSpeciesList,
-//                      startTimestep,
-//                      false,
-//                      networkOrManipulationId
-//              );
-        	  
-        	  List<SpeciesZoneType> tempList= new ArrayList<SpeciesZoneType>();
-        	  for(SpeciesZoneType speciesZoneType : mNewSpecies.values()){
-        		  tempList.add(speciesZoneType);
-        	  }
-        	  job.setSpeciesZoneList(tempList);
-          } catch (Exception ex) {
-              Log.println_e(ex.getMessage());
-          }
           zoneNodes.addNodes(mNewSpecies);
       }
-      // Update biomass changes to existing species using web services
-      if (!mUpdateBiomass.isEmpty()) {
-          List<NodeBiomass> lNodeBiomass = new ArrayList<NodeBiomass>();
-          for (SpeciesZoneType s : mUpdateBiomass.values()) {
-              Log.printf("Updating Biomass: [%d] %s %f\n", s.getNodeIndex(), s.getName(),
-                      s.getCurrentBiomass() / Constants.BIOMASS_SCALE);
-              lNodeBiomass.add(new NodeBiomass(
-                      s.getCurrentBiomass() / Constants.BIOMASS_SCALE, s.getNodeIndex()));
-          }
-          try {
-//              updateBiomass(networkOrManipulationId, lNodeBiomass, startTimestep);
-          } catch (Exception ex) {
-              Log.println_e(ex.getMessage());
-          }
+      try {
+    	  nodeConfig = addMultipleSpeciesType(
+                  mNewSpecies,
+                  masterSpeciesList,
+                  startTimestep,
+                  false,
+                  networkOrManipulationId
+          );
+      } catch (Exception ex) {
+          Log.println_e(ex.getMessage());
       }
+//      // Update biomass changes to existing species using web services
+//      if (!mUpdateBiomass.isEmpty()) {
+//          List<NodeBiomass> lNodeBiomass = new ArrayList<NodeBiomass>();
+//          for (SpeciesZoneType s : mUpdateBiomass.values()) {
+//              Log.printf("Updating Biomass: [%d] %s %f\n", s.getNodeIndex(), s.getName(),
+//                      s.getCurrentBiomass() / Constants.BIOMASS_SCALE);
+//              lNodeBiomass.add(new NodeBiomass(
+//                      s.getCurrentBiomass() / Constants.BIOMASS_SCALE, s.getNodeIndex()));
+//          }
+//          try {
+////              updateBiomass(networkOrManipulationId, lNodeBiomass, startTimestep);
+//          } catch (Exception ex) {
+//              Log.println_e(ex.getMessage());
+//          }
+//      }
 
-      // JTC Update changes to existing species parameters using web services (also
-      // resubmits biomass, but couldn't find a way to do params w/o biomass
-      if (!mUpdateParams.isEmpty()) {
-          try {
-//              increaseMultipleSpeciesType(
-//                      mUpdateBiomass,
-//                      masterSpeciesList,
-//                      startTimestep,
-//                      false,
-//                      networkOrManipulationId
-//              );
-          } catch (Exception ex) {
-              Log.println_e(ex.getMessage());
-          }
-      }
+//      // JTC Update changes to existing species parameters using web services (also
+//      // resubmits biomass, but couldn't find a way to do params w/o biomass
+//      if (!mUpdateParams.isEmpty()) {
+//          try {
+////              increaseMultipleSpeciesType(
+////                      mUpdateBiomass,
+////                      masterSpeciesList,
+////                      startTimestep,
+////                      false,
+////                      networkOrManipulationId
+////              );
+//          } catch (Exception ex) {
+//              Log.println_e(ex.getMessage());
+//          }
+//      }
 
 //      run(startTimestep, runTimestep, networkOrManipulationId);
 
       // get new predicted biomass
       try {
           //JTC - changed variable from "mSpecies = " to "mUpdateBiomass = "
-//          mUpdateBiomass = getBiomass(networkOrManipulationId, 0, startTimestep + runTimestep);
+          //mUpdateBiomass = getBiomass(networkOrManipulationId, 0, startTimestep + runTimestep);
+    	  if(!masterSpeciesList.isEmpty() || !mNewSpecies.isEmpty()){
+    		  mUpdateBiomass = submitManipRequest("ATN", nodeConfig, startTimestep + runTimestep, false, null);
+    	  }
       } catch (Exception ex) {
           Log.println_e(ex.getMessage());
           return null;
@@ -658,11 +686,12 @@ public class ATNEngine {
       //JTC - add loop to update persistent player species biomass information
       SpeciesZoneType updS;
       for (SpeciesZoneType priorS : masterSpeciesList.values()) {
-//          updS = mUpdateBiomass.get(priorS.nodeIndex);
-//          if (updS != null && updS.currentBiomass != 0) {
-//              masterSpeciesList.get(priorS.nodeIndex).
-//                      setCurrentBiomass(Math.ceil(updS.getCurrentBiomass()));
-//          } else {
+    	  System.out.println("priorS.nodeIndex " + priorS.nodeIndex);
+          updS = mUpdateBiomass.get(priorS.nodeIndex);
+          if (updS != null && updS.currentBiomass != 0) {
+              masterSpeciesList.get(priorS.nodeIndex).setCurrentBiomass(Math.ceil(updS.getCurrentBiomass()));
+          } 
+//          else {
 //              zoneNodes.removeNode(priorS.nodeIndex);
 //          }
       }
@@ -673,4 +702,275 @@ public class ATNEngine {
       return (HashMap) zoneNodes.getNodes();
   }
 
+	  /**
+	   * Add multiple new nodes (SpeciesZoneType objects) to a manipulation and
+	   * then submit. HJR
+	   *
+	   * @param manipSpeciesMap - species being added
+	   * @param fullSpeciesMap - full list; for predator/prey info
+	   * @param timestep
+	   * @param isFirstManipulation
+	   * @param networkOrManipulationId
+	   * @return manipulation ID (String)
+	   * @throws SimulationException
+	   */
+	  public String addMultipleSpeciesType(
+	          HashMap<Integer, SpeciesZoneType> manipSpeciesMap,
+	          HashMap<Integer, SpeciesZoneType> fullSpeciesMap,
+	          int timestep,
+	          boolean isFirstManipulation,
+	          String networkOrManipulationId){
+
+		  //job.setNode_Config("5,
+		  //[5],2000,1.000,1,K=9431.818,0,
+		  //[14],1751,20.000,1,X=0.273,0,
+		  //[31],1415,0.008,1,X=1.000,0,
+		  //[42],240,0.205,1,X=0.437,0,
+		  //[70],2494,13.000,1,X=0.155,0");
+		  
+//		  		  In addMultipleSpeciesType: node [70], biomass 2494, K = -1, R = -1.0000, X = 0.1233
+//				  In addMultipleSpeciesType: node [5], biomass 2000, K = 10000, R = 1.0000, X = 0.5000
+//				  In addMultipleSpeciesType: node [42], biomass 240, K = -1, R = -1.0000, X = 0.3478
+//				  In addMultipleSpeciesType: node [31], biomass 1415, K = -1, R = -1.0000, X = 0.7953
+//				  In addMultipleSpeciesType: node [14], biomass 1752, K = -1, R = -1.0000, X = 0.0010
+	        StringBuilder builder = new StringBuilder();
+	        builder.append(fullSpeciesMap.size()).append(",");
+	        for (SpeciesZoneType species : fullSpeciesMap.values()) {
+	            System.out.printf("In addMultipleSpeciesType: node [%d], "
+	                    + "biomass %d, K = %d, R = %6.4f, X = %6.4f\n", species.getNodeIndex(),
+	                    +(int) species.getCurrentBiomass(), (int) species.getParamK(),
+	                    species.getParamR(), species.getParamX());
+	            
+	        	builder.append("[").append(species.getNodeIndex()).append("]").append(",");
+	        	builder.append((int) species.getCurrentBiomass()).append(",");
+	        	builder.append(roundToThreeDigits(species.getPerSpeciesBiomass())).append(",");
+	        	
+	        	String systemParam = this.setSystemParameters(
+	                    species, 
+	                    fullSpeciesMap,
+	                    timestep);
+	        	builder.append(systemParam);
+	        	System.out.println(builder);
+	        }
+	        String node_config = builder.substring(0, builder.length()-1);
+	        //call processsim job here
+	        return node_config;
+	  }
+	  
+
+	    /**
+	     * Submit manipulation request. HJR 
+	     *
+	     * @param sysParamList
+	     * @param lManipulatingNodeProperty
+	     * @param nodes
+	     * @param timestep
+	     * @param isFirstManipulation
+	     * @param networkOrManipulationId
+	     * @param manipDescript
+	     * @return manipulation ID (String)
+	     * @throws SimulationException
+	     */
+	    public HashMap<Integer, SpeciesZoneType> submitManipRequest(
+	    		String job_descript,
+	            String node_config,
+	            int timestep, 
+	            boolean isFirstManipulation,
+	            String networkOrManipulationId){
+	    	HashMap<Integer, SpeciesZoneType> mSpecies = null;
+	        SimJob job = new SimJob();
+	        job.setJob_Descript("ATN");
+	        job.setNode_Config(node_config);
+	        job.setManip_Timestamp((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date()));
+	        job.setTimesteps(timestep);
+	        String atnManipId = UUID.randomUUID().toString();
+	        job.setATNManipulationId(atnManipId);
+	        try {
+	        	mSpecies = processSimJob(job);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} 
+	        return mSpecies;
+	    }
+  
+	    /* Set all system parameters for a node (SpeciesZoneType) for a simulation run.
+	    HJR, original version of this, getSystemParameter() has some problems 
+	    with how it submits link parameters.  (1) orig uses call to SZT.getlPreyIndex(), 
+	    which is not active (set by prior call to SpeciesType.getPreyIndex, which returns 
+	    empty list) i.e. never actually submits any link params, default or otherwise! */
+	    @SuppressWarnings("unused")
+		private String setSystemParameters(
+		          SpeciesZoneType species,
+		          HashMap<Integer, SpeciesZoneType> fullSpeciesMap,
+		          int timestepIdx) {
+		
+		      SpeciesTypeEnum type = species.getType();
+		      int nodeIdx = species.getNodeIndex();
+		
+		      List<String> sParams = new ArrayList<String>();
+	          StringBuilder builder = new StringBuilder();
+		      if (type == SpeciesTypeEnum.PLANT) {
+		            // Carrying capacity(k) and GrowthRate(r) are only effective when species is plant
+		            // Higher Carrying capacity means higher biomass
+		            // for example, if carrying capacity is 10, maximum biomass of species is 10.
+		            // Higher growth rate means that species with higher growth rate will gain biomass faster.
+		            // Metabolic rate (x) are effective for both animals and plants
+		            // higher metabolic rate means that biomass of species will decrease compared to other species
+
+		            //YES, need to divide by Constants.BIOMASS_SCALE.	    	  
+		            setSystemParametersNode(sParams, timestepIdx, nodeIdx,
+		                    species.getParamK(),
+		                    ManipulatingParameterName.k, "carryingCapacityDefault");
+		            if(false){	//HJR Currently I have turned off R and X
+			            setSystemParametersNode(sParams, timestepIdx, nodeIdx, species.getParamR(),
+			                    ManipulatingParameterName.r, "growthRateDefault");
+			            setSystemParametersNode(sParams, timestepIdx, nodeIdx, species.getParamX(),
+			                    ManipulatingParameterName.x, "metabolicRateDefault");
+		            }
+		            //Pack everything
+		    	  	//[5],2000,1.000,1,K=9431.818,0,
+		            //[K=10.0, R=1.0, X=0.5]
+		            builder.append(sParams.size()).append(",");
+		            for(int i = 0; i< sParams.size() ; i++){
+		            	 builder.append(sParams.get(i)).append(",");
+		            }
+		            builder.append("0").append(",");
+		      }
+		      else if (type == SpeciesTypeEnum.ANIMAL) {
+		    	    // Metabolic rate (x) are effective for both animals and plants
+		            // higher metabolic rate means that biomass of species will decrease compared to other species
+		            // Assimilation efficiency (e) is only available for animals.
+		            // higher assimilation efficiency means that biomass of species will increase.
+		            setSystemParametersNode(sParams, timestepIdx, nodeIdx, species.getParamX(),
+		                    ManipulatingParameterName.x, "metabolicRateDefault");
+		            builder.append(sParams.size()).append(",");
+		            for(int i = 0; i< sParams.size() ; i++){
+		            	builder.append(sParams.get(i));
+		            	builder.append(",");
+		            }
+		            sParams.clear();
+		            //loop through prey, adding link parameters
+		            if (Integer.valueOf(propertiesConfig.getProperty("submitLinkParameterSettings")) == 1) {
+		                int preyCnt = species.getSpeciesType().getPreyNodeIDs().size();
+		                for (int preyIdx : species.getSpeciesType().getPreyNodeIDs()) {
+		                    if (fullSpeciesMap == null || !fullSpeciesMap.containsKey(preyIdx)) {
+		                        continue;
+		                    }
+		                    /* separate note: there appear to be a limited number of link params
+		                    that can be submitted, over which an "axis fault" error will occur.  Varies
+		                    with number of species in the ecosystem; on a test of a 15 species ecosystem,
+		                    only 3 link params could be used.  Have disabled all, as I am not using them
+		                    at this time.  Not fully evaluated, obviously, but these were not implemented
+		                    at all previously.
+		                    */
+	
+		                    /* default values that mimic web-services internal defaults are:
+		                    predatorInterferenceDefault = 0
+		                    assimilationEfficiencyAnimalDefault=1
+		                    assimilationEfficiencyPlantDefault=1
+		                    functionalResponseControlParameterDefault=0
+		                    halfSaturationDensityDefault=0.5
+		                    maximumIngestionRateDefault=6
+		                    
+		                    >consistent default values were not found for the following and there is some
+		                    confusion about their role - based on prior code, parameter "a" matches
+		                    relativeHalfSaturationDensityDefault.
+		                    parameter "a" does not appear in any of the equations that I've seen, (possibly 
+		                    omega - consumption rate?), 
+		                    but DOES impact the simulation results.  No single value (0-1.0) gives result consistent
+		                    to omitting the value, suggesting that species are distinguished somehow.
+		                    Animal/Plant division was tested, but did not yield consistent results.
+		                    relativeHalfSaturationDensityDefault=1.0
+		                    relativeHalfSaturationDensity = 0.01
+		                    */
+		                    //// sequence is linkParamCnt,[prey_Id0],paramID0=value0,[prey_Id1],paramID1=value1,...[prey_IdN],paramIDN=valueN
+		                    //setSystemParametersLink(sParams, timestepIdx, nodeIdx, preyIdx, species.getParamA(preyIdx),
+		                    //        ManipulatingParameterName.a, "relativeHalfSaturationDensityDefault", preyCnt);
+		                    if (false) {
+		                        setSystemParametersLink(sParams, timestepIdx, nodeIdx, preyIdx, species.getParamB0(preyIdx),
+		                                ManipulatingParameterName.b0, "halfSaturationDensityDefault", preyCnt);
+		                        setSystemParametersLink(sParams, timestepIdx, nodeIdx, preyIdx, species.getParamD(preyIdx),
+		                                ManipulatingParameterName.d, "predatorInterferenceDefault", preyCnt);
+	                            setSystemParametersLink(sParams, timestepIdx, nodeIdx, preyIdx, species.getParamE(preyIdx),
+	                                ManipulatingParameterName.e, "assimilationEfficiencyPlantDefault", preyCnt);
+		                        setSystemParametersLink(sParams, timestepIdx, nodeIdx, preyIdx, species.getParamQ(preyIdx),
+		                                ManipulatingParameterName.q, "functionalResponseControlParameterDefault", preyCnt);
+		                        setSystemParametersLink(sParams, timestepIdx, nodeIdx, preyIdx, species.getParamY(preyIdx),
+		                                ManipulatingParameterName.y, "maximumIngestionRateDefault", preyCnt);
+		                    }
+		                }
+			            builder.append(sParams.size()).append(",");
+			            for(int i = 0; i< sParams.size() ; i++){
+			            	builder.append(sParams.get(i));
+			            	builder.append(",");
+			            }
+			            System.out.println(builder);
+		            }
+		      }
+		      return builder.toString();
+		  }
+	  
+	    /* adds individual node parameter to list of Manipulating Paramaters.
+	     HJR, pulled out of getSystemParameter*/
+	    private void setSystemParametersNode(List<String> sParams,
+	            int timestepIdx, int nodeIdx, double value,
+	            ManipulatingParameterName manipParam, String dfltValProp) {
+	    	String nodeParam = new String();
+	    	nodeParam = manipParam.name().toUpperCase() + "=";
+	        /* node parameters can't have negative value. if they have negative value, it means
+	         that data is not assigned yet. */
+	        if (value < 0) {
+	        	//sParams.append(Double.valueOf(propertiesConfig.getProperty(dfltValProp)));
+	        } else {
+	        	nodeParam +=roundToThreeDigits(value);
+	        }
+	        sParams.add(nodeParam);
+	    }
+	    
+	    /* adds individual link parameter to list of ManipulatingParameters.
+	     HJR, pulled out of getSystemParameter. */
+	    private void setSystemParametersLink(
+	            List<String> sParams,
+	            int timestepIdx, 
+	            int predIdx, 
+	            int preyIdx, 
+	            ParamValue pvalue,
+	            ManipulatingParameterName manipParam, 
+	            String dfltValProp,
+	            int preyCnt
+	    ) {	 
+	    	String linkParam = new String();
+	    	linkParam = "[" + preyIdx + "],";
+	    	linkParam += manipParam.name().toUpperCase()+"=";
+	        /* node parameters can't have negative value. if they have negative value, it means
+	         that data is not assigned yet. */
+	        if (pvalue != null) {    
+	        	linkParam +=pvalue.getParamValue();
+	        } else {
+	        	linkParam +=Double.valueOf(propertiesConfig.getProperty(dfltValProp));
+	        }
+	        sParams.add(linkParam);
+	    }
+	    
+	    protected double roundToThreeDigits(double val) {
+	        val = Math.round(1000 * val) / 1000.0;
+	        if (val == 0) {
+	            val = 0.001;
+	        }
+	        return val;
+	    }
+
+		public void updateBiomass(Ecosystem ecosystem, Map<Integer, SpeciesZoneType> nextSpeciesNodeList) {
+	        for (Entry<Integer, SpeciesZoneType> entry : nextSpeciesNodeList.entrySet()) {
+	            int species_id = entry.getKey();
+	            SpeciesZoneType szt = entry.getValue();
+				int biomassValue = (int) entry.getValue().getCurrentBiomass();
+				Species species = ecosystem.getSpecies(szt.getSpeciesType().getID());
+		          for (SpeciesGroup group : species.getGroups().values()) {
+		              group.setBiomass(biomassValue);
+	
+		              EcoSpeciesDAO.updateBiomass(group.getID(), group.getBiomass());
+		          }
+				}
+		}
 }
