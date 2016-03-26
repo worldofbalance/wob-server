@@ -69,6 +69,7 @@ public final class SpeciesDAO {
                     continue;
                 }
 
+                
                 type.setName(rs.getString("name"));
                 type.setOrganismType(rs.getInt("organism_type"));
                 type.setCost(rs.getInt("cost"));
@@ -80,6 +81,23 @@ public final class SpeciesDAO {
                 type.setTrophicLevel(rs.getFloat("trophic_level"));
                 type.setGrowthRate(rs.getFloat("growth_rate"));
                 type.setModelID(rs.getInt("model_id"));
+
+                // Columns at smurf.sfsu.edu server
+                // type.setName(rs.getString("name"));
+                // type.setOrganismType(rs.getInt("organism_type"));
+                // type.setCost(rs.getInt("cost"));
+                // type.setDescription(rs.getString("description"));
+                // type.setCategory(rs.getString("category"));
+                // type.setAvgBiomass(rs.getInt("max_biomass"));
+                // type.setWaterNeedFrequency(rs.getInt("water_need_frequency"));
+                // type.setLightNeedFrequency(rs.getInt("light_need_frequency"));
+                // type.setGrowRadius(rs.getFloat("grow_radius"));
+                // type.setCarryingCapacity(rs.getFloat("carrying_capacity"));
+                // type.setTrophicLevel(rs.getFloat("trophic_level"));
+                // type.setGrowthRate(rs.getFloat("growth_rate"));
+                // type.setModelID(rs.getInt("model_id"));
+                // type.setHealChance(rs.getFloat("heal_chance"));
+                // type.setGroupCapacity(rs.getInt("group_capacity"));
 
                 // Node Distribution
                 Map<Integer, Float> nodeDistribution = new HashMap<Integer, Float>();
