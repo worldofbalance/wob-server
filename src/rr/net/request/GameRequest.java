@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Other Imports
-import shared.core.GameClient;
+import rr.core.GameClient;
 import rr.net.response.GameResponse;
 
 /**

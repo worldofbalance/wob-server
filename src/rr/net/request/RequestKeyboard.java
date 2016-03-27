@@ -5,7 +5,7 @@
  */
 package rr.net.request;
 
-import shared.core.GameServer;
+import rr.core.GameServer;
 import java.io.IOException;
 import rr.net.response.ResponseKeyboard;
 import shared.util.DataReader;

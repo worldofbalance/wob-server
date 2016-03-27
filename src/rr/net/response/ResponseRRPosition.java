@@ -4,8 +4,8 @@
  * and open the template in the editor.
  */
 package rr.net.response;
-import shared.metadata.Constants;
-import shared.util.GamePacket;
+import rr.metadata.Constants;
+import rr.util.GamePacket;
 
 /**
  *

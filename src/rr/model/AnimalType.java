@@ -1,7 +1,7 @@
 package rr.model;
 
 import java.lang.reflect.Field;
-import shared.metadata.Constants;
+import rr.metadata.Constants;
 
 public class AnimalType extends SpeciesType {
 

@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import shared.metadata.Constants;
+import rr.metadata.Constants;
 
 // Other imports
 import rr.race.RacePlayer;

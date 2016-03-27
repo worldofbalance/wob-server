@@ -1,7 +1,7 @@
 package rr.model;
 
 // Other Imports
-import shared.core.GameClient;
+import rr.core.GameClient;
 
 /**
  * The Player class holds important information about the player including, most

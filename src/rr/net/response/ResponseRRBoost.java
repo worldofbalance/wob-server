@@ -5,7 +5,7 @@
  */
 package rr.net.response;
 
-import shared.util.GamePacket;
+import rr.util.GamePacket;
 
 /**
  *

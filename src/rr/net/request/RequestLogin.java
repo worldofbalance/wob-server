@@ -4,9 +4,9 @@ package rr.net.request;
 import java.io.IOException;
 
 // Other Imports
-import shared.core.GameClient;
-import shared.core.GameServer;
-import shared.metadata.Constants;
+import rr.core.GameClient;
+import rr.core.GameServer;
+import rr.metadata.Constants;
 import rr.model.Player;
 import rr.net.response.ResponseLogin;
 import shared.util.DataReader;

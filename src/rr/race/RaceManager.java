@@ -6,15 +6,15 @@
 package rr.race;
 
 import java.util.HashMap;
-import shared.core.GameServer;
-import shared.core.NetworkManager;  // rr.core.NetworkManager
+import rr.core.GameServer;
+import rr.core.NetworkManager;  // rr.core.NetworkManager
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import rr.model.Player;
-import rr.networking.response.ResponseRaceInit;
+import rr.net.response.ResponseRaceInit;
 import java.util.Random;
-import rr.networking.response.ResponseRREndGame;
+import rr.net.response.ResponseRREndGame;
 
 /**
  *

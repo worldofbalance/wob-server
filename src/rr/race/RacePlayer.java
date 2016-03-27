@@ -1,7 +1,7 @@
 package rr.race;
 
 // Other Imports
-import shared.core.GameClient;
+import rr.core.GameClient;
 import rr.model.Player;
 
 /**

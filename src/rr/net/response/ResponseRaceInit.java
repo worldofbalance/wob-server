@@ -6,9 +6,9 @@
 
 package rr.net.response;
 
-import shared.metadata.Constants;
+import rr.metadata.Constants;
 import rr.model.Player;
-import shared.util.GamePacket;
+import rr.util.GamePacket;
 
 /**
  *

@@ -4,8 +4,6 @@ package rr.core;
 import rr.model.Player;
 import rr.net.response.GameResponse;
 import shared.util.Log;
-import shared.core.GameClient;
-import shared.core.GameServer;
 
 public class NetworkManager {
 

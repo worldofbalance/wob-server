@@ -5,7 +5,7 @@
  */
 package rr.net.request;
 
-import shared.core.GameServer;
+import rr.core.GameServer;
 import rr.db.RaceDAO;
 import java.io.IOException;
 import rr.net.response.ResponseRRPosition;

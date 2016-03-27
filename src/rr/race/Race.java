@@ -1,16 +1,16 @@
 package rr.race;
 
-import shared.core.GameServer;
+import rr.core.GameServer;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.sql.SQLException;
 import rr.model.Player;
-import rr.networking.response.ResponseRRStartGame;
-import shared.metadata.Constants;
+import rr.net.response.ResponseRRStartGame;
+import rr.metadata.Constants;
 import java.io.IOException;
 import rr.db.RaceDAO;
-import shared.utility.Log;
+import shared.util.Log;
 
 /*
  * To change this license header, choose License Headers in Project Properties.

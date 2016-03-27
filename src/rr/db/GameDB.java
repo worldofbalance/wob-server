@@ -4,14 +4,13 @@ package rr.db;
 import javax.sql.DataSource;
 
 // Other Imports
-import shared.config.DBConf;
-import shared.core.GameServer;
+import rr.config.DBConf;
+import rr.core.GameServer;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.security.CodeSource;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import shared.db.ConnectionPool;
 import shared.util.ConfFileParser;
 
 /**

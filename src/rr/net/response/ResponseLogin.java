@@ -1,9 +1,9 @@
 package rr.net.response;
 
 // Other Imports
-import shared.metadata.Constants;
+import rr.metadata.Constants;
 import rr.model.Player;
-import shared.util.GamePacket;
+import rr.util.GamePacket;
 
 /**
  * The ResponseLogin class contains information about the authentication
