@@ -5,7 +5,7 @@
  */
 package rr.net.request;
 
-import shared.core.GameServer;
+import rr.core.GameServer;
 import java.io.IOException;
 import rr.net.response.RRResponseSpecies;
 import rr.race.RaceManager;
@@ -15,7 +15,7 @@ import shared.util.DataReader;
  *
  * @author Sbc-ComEx
  */
-public class RRRequestSpecies extends GameRequest {
+public class RequestSpecies extends GameRequest {
     
     private int id;
     private int p_id;
