@@ -23,6 +23,11 @@ public class Session {
         this.player_id = player_id;
     }
 
+    public Session(String session_id, int player_id) {
+                this.id = player_id;
+		this.session_id = session_id;
+		this.player_id = player_id;
+    }
     public int getID() {
         return id;
     }

@@ -96,6 +96,20 @@ public class NetworkCode {
     public final static short PLAY_GAME = 193;
     public final static short END_GAME = 194;
 
+    // Cards of the wild 
+    public final static short MATCH_INIT= 201;
+    public final static short MATCH_STATUS = 202;
+    public final static short GET_DECK = 203;
+    public final static short SUMMON_CARD = 204;
+    public final static short CARD_ATTACK = 205;
+    public final static short QUIT_MATCH = 206;
+    public final static short MATCH_OVER = 207;
+    public final static short END_TURN = 208;
+    public final static short DEAL_CARD = 209;
+    public final static short TREE_ATTACK = 210;
+    public final static short MATCH_ACTION = 211;
+    public final static short MATCH_START = 212;
+    public final static short RETURN_LOBBY = 213;
     /**
      * Check for duplicate values, if any.
      */

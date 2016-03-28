@@ -146,4 +146,12 @@ public class Constants {
 	public static boolean useSimEngine = false;		//To run both the simulation engine and the atn engine set useSimEngine =true && useAtnEngine == true
 	public static boolean useAtnEngine = true;
 	public static final boolean DEBUG_MODE = true;
+
+    //for use in Cards of the Wild
+    //public static final boolean SINGLE_PLAYER = true;
+    public static final boolean SINGLE_PLAYER = false;
+    public static final short  STATUS_NO_MATCH = 2;
+    //for use in SimJob and Cards of Wild
+    public static final short STATUS_SUCCESS_CARDS = 0;
+    public static final short STATUS_FAILURE_CARDS = 1;
 }
