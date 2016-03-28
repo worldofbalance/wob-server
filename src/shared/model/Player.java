@@ -1,6 +1,7 @@
 package shared.model;
 
 // Other Imports
+import cow.model.CardDeck;
 import shared.core.GameClient;
 import lby.core.Lobby;
 import lby.core.world.World;
@@ -21,7 +22,7 @@ public class Player {
     private World world;
     private Ecosystem ecosystem;
     private Lobby lobby;
-    
+    private CardDeck deck = null;
     public Player(int player_id) {
         this.player_id = player_id;
     }
@@ -121,4 +122,11 @@ public class Player {
     public Lobby setLobby(Lobby lobby) {
         return this.lobby = lobby;
     }
+    public CardDeck getPlayerDeck() {
+		return this.deck;
+	}
+	
+	public void givePlayerADeck(CardDeck deck) {
+		this.deck = deck;
+	}
 }
