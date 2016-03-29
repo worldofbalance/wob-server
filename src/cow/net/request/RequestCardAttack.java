@@ -33,7 +33,7 @@ public class RequestCardAttack extends GameRequest {
     
     @Override
     public void process() throws Exception {
-
+        Log.printf("RequestCardAttack with playerId:%d,attackersPosition:%d,attackedPosition:%d", playerID,attackedPosition,attackedPosition);
         ResponseCardAttack response = new ResponseCardAttack();
         MatchManager manager = MatchManager.getInstance();
         Match match = manager.getMatchByPlayer(playerID);

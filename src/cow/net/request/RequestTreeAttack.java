@@ -32,6 +32,7 @@ public class RequestTreeAttack extends GameRequest {
     
     @Override
     public void process() throws Exception {
+        Log.printf("Request Tree Attack with playerId:%d,attackersPosition:%d", playerID,attackersPosition);
         ResponseTreeAttack response = new ResponseTreeAttack();
         MatchAction action = new MatchAction();
         

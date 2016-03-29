@@ -34,6 +34,7 @@ public class RequestMatchOver extends GameRequest {
 	
 	@Override
     public void process() throws Exception {
+        Log.printf("RequestMatchOver with playerid:%d,wonGame:%d", playerID,wonGame);
         ResponseMatchOver response = new ResponseMatchOver();
         MatchAction action = new MatchAction();
         

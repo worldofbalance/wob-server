@@ -41,7 +41,7 @@ public class RequestQuitMatch extends GameRequest {
         MatchManager manager = MatchManager.getInstance();
         Match match = manager.getMatchByPlayer(playerID);
         
-        Log.printf("Client quit unexpectedly. End of match");
+        Log.printf("RequestQuitMatch Client quit unexpectedly. End of match");
 
         response.setStatus((short)0);
         

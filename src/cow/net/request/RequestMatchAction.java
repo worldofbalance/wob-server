@@ -24,7 +24,7 @@ public class RequestMatchAction extends GameRequest {
 
 	@Override
 	public void process() throws Exception {
-		//Log.printf("Getting match action, playerID:%d" , playerID);
+		//Log.printf("Getting request match action, playerID:%d" , playerID);
 		 
 		ResponseMatchAction response= new ResponseMatchAction();
 		 MatchManager manager = MatchManager.getInstance();
@@ -33,7 +33,7 @@ public class RequestMatchAction extends GameRequest {
 		     if (match.actionWaiting(playerID)){
 		    	 MatchAction action = match.getMatchAction(playerID);
 		
-		    	 Log.printf("Action waiting ID: %d", action.getActionID());
+		    	 //Log.printf("Action waiting ID: %d", action.getActionID());
 		    	 
 		    	 response.setCode(action.getActionID());
 		    	 response.setIntCount(action.getIntCount());

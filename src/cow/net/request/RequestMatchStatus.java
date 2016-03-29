@@ -26,7 +26,7 @@ public class RequestMatchStatus extends GameRequest {
 
 	@Override
 	public void process() throws Exception {
-		Log.printf("Setting match status for player '%d, %s'", playerID, playerName);
+		Log.printf("RequestMatchStatus Setting match status for player '%d, %s'", playerID, playerName);
 		
 		MatchManager manager = MatchManager.getInstance();
 		Match match = manager.getMatchByPlayer(playerID);

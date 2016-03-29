@@ -27,7 +27,7 @@ public class RequestEndTurn extends GameRequest {
     
     @Override
     public void process() throws Exception {
-    	Log.printf("End of turn");
+    	Log.printf("RequestEndTurn End of turn");
         
     	ResponseEndTurn response = new ResponseEndTurn();
         MatchManager manager = MatchManager.getInstance();

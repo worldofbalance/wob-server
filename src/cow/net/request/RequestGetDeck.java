@@ -32,7 +32,7 @@ public class RequestGetDeck extends GameRequest {
         Match match = manager.getMatchByPlayer(playerID);
         
         ResponseGetDeck opponentResponse = new ResponseGetDeck();    
-        Log.printf("Player '%d' is gettting Deck ", playerID);
+        Log.printf("RequestGetDeck Player '%d' is gettting Deck for match %d", playerID,match.getMatchID());
         
         CardDeck cardDeck = match.getPlayer(playerID).getDeck();
         opponentResponse.setNumCards(cardDeck.getDeckSize());

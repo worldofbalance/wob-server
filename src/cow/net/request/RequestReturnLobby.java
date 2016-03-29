@@ -6,6 +6,7 @@ import java.io.IOException;
 import shared.core.GameServer;
 import lby.net.request.GameRequest;
 import cow.net.response.ResponseReturnLobby;
+import shared.util.Log;
 
 public class RequestReturnLobby extends GameRequest {
 
@@ -18,6 +19,7 @@ public class RequestReturnLobby extends GameRequest {
 	@Override
 	public void process() throws Exception {
 		// TODO Auto-generated method stub
+                Log.printf("RequestReturnToLobby");
 		ResponseReturnLobby response = new ResponseReturnLobby();
 		short status = 0;
 		response.setStatus(status);

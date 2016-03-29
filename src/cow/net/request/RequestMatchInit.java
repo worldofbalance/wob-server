@@ -27,7 +27,7 @@ public class RequestMatchInit extends GameRequest {
         MatchManager manager = MatchManager.getInstance();
         short status;
 
-        Log.printf("matchID = %d", matchID);
+        Log.printf("RequestMatchInit matchID = %d,playerid=%d", matchID,playerID);
 
 		// Assume player is in DB otherwise 
         //Match match = manager.createMatch(playerID1, playerID2);

@@ -22,6 +22,7 @@ public class RequestMatchStart extends GameRequest {
 
 	@Override
 	public void process() throws Exception {
+                Log.printf("RequestMatchStart with sessionId:%s", sessionID);
 		ResponseMatchStart response = new ResponseMatchStart();
 		MatchManager manager = MatchManager.getInstance();
 		Match match;

@@ -30,7 +30,7 @@ public class RequestDealCard extends GameRequest {
 
     @Override
     public void process() throws Exception {
-     
+        Log.printf("RequestDealCard: playerID,handposition = %d, %d\n", playerID,handPosition);
         ResponseDealCard response = new ResponseDealCard();   
         MatchManager manager = MatchManager.getInstance();
         Match match = manager.getMatchByPlayer(playerID);
