@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 // Other Imports
-import shared.metadata.Constants;
+import rr.metadata.Constants;
 import rr.metadata.GameRequestTable;
 import rr.model.Player;
 import rr.race.RacePlayer;
