@@ -1,0 +1,13 @@
+#This is the configuration file for the database of this game server.
+
+#Database URL
+DBURL smurf.sfsu.edu
+
+#Database name
+DBName wob
+
+#Database user name
+DBUsername wob
+
+#Database user password
+DBPassword asd123
