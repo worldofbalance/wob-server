@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import cow.model.Card;
+import cow.model.CardType;
 import shared.db.GameDB;
 import shared.util.Log;
 
@@ -16,14 +17,27 @@ public final class CardDAO {
     	
     }
 
+    /**
+     * Create a card in the database card table
+     * @param species_id
+     * @param health
+     * @param attack
+     * @param level
+     * @param cardType Must be one of the types defined in CardType enum
+     * @return The card that was created
+     * @throws SQLException
+     * @throws IllegalArgumentException When the cardType parameter is wrong
+     */
 	public static Card createCard(int species_id, 
 			                      int health, 
 			                      int attack, 
-			                      int level) throws SQLException {
+			                      int level,
+                                  CardType cardType) throws SQLException { //cardType must be one of five: "c", "h", "o", "f", "w"
+
 		Card card = null;
 		int card_id = 0;
 
-        String query1 = "INSERT INTO `card` (`species_id`, `health`, `attack`, `level`) VALUES (?, ?, ?, ?)";
+        String query1 = "INSERT INTO `card` (`species_id`, `health`, `attack`, `level`, `card_type`) VALUES (?, ?, ?, ?, ?)";
         String query2 = "SELECT * FROM `species` WHERE `species_id` = ?";
 
         Connection connection = null;
@@ -37,13 +51,14 @@ public final class CardDAO {
         	sql.setInt(2, health);
         	sql.setInt(3, attack);
         	sql.setInt(4, level);
+            sql.setString(5, cardType.getType());
         	sql.executeUpdate();
 
         	results = sql.getGeneratedKeys();
 
             if (results.next()) {
                 card_id = results.getInt(1);
-                card = new Card(card_id, species_id, health, attack, level);
+                card = new Card(card_id, species_id, health, attack, level, cardType);
             }
         } catch (SQLException e) {
             Log.println_e(e.getMessage());
@@ -105,7 +120,8 @@ public final class CardDAO {
 
             if (results.next()) {
                 try {
-                    card = new Card(results.getInt("card_id"), results.getInt("species_id"), results.getInt("health"), results.getInt("attack"), results.getInt("level"));
+                    CardType type = CardType.convertCardType(results.getString("card_type"));
+                    card = new Card(results.getInt("card_id"), results.getInt("species_id"), results.getInt("health"), results.getInt("attack"), results.getInt("level"), type);
                     species_id = results.getInt("species_id");
                 } catch (NumberFormatException e) {
                     Log.println_e(e.getMessage());
