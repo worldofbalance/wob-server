@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import shared.util.ConfFileParser;
 import shared.util.Log;
 
 /**
@@ -19,7 +20,8 @@ import shared.util.Log;
 public class MiniGameServers {
     
     private static MiniGameServers sServers;
-    private final Map<String, MiniGame> miniGames = new HashMap<String, MiniGame>();
+    private final Map<String, MiniGame> miniGames = new HashMap<>();
+    private int minigamesPort;
     
     public static MiniGameServers getInstance() {
         if (sServers == null) {
@@ -29,6 +31,7 @@ public class MiniGameServers {
     }
     
     public MiniGameServers() {
+        minigamesPort = 20038;
         initMiniGames();
         
         int totalAvailables = 0;
@@ -51,14 +54,19 @@ public class MiniGameServers {
     }
     
     private void initMiniGames() {
-        MiniGame game;
-
-        game = new MiniGame("Running Rhino");
-        game.setAsMultiPlayerGame("mini_game_server_jar/Speed_Server.jar", 20039);
-        miniGames.put(game.getName(), game);
+        ConfFileParser confFileParser = new ConfFileParser("conf/minigames.conf");
+        Map<String, String> minigamesConfig = confFileParser.parse();
         
-        /*game = new MiniGame("Cards of the Wild");
-        game.setAsMultiPlayerGame("mini_game_server_jar/Cards_Server.jar", 20038);
-        miniGames.put(game.getName(), game);*/
+        minigamesConfig.entrySet().stream().map(
+            (entry) -> { return entry; }
+        ).forEach((entry) -> {
+            initMiniGame(entry.getKey(), entry.getValue());
+        });
+    }
+    
+    private void initMiniGame(String name, String location) {
+        MiniGame game = new MiniGame(name);
+        game.setAsMultiPlayerGame(location, minigamesPort++);
+        miniGames.put(game.getName(), game);
     }
 }
