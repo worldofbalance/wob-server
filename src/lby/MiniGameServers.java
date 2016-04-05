@@ -47,9 +47,10 @@ public class MiniGameServers {
             }
         } catch (IOException ex) {
             Logger.getLogger(MiniGameServers.class.getName()).log(Level.SEVERE, null, ex);
-        }            
+        }
+       
     }
-    
+
     private void initMiniGames() {
         MiniGame game;
         
