@@ -90,8 +90,7 @@ public class ATNEngine {
        //load properties file containing ATN model parameter values
        propertiesConfig = new Properties();
        try {
-           propertiesConfig.load(new FileInputStream(
-                     "src/shared/atn/SimJobConfig.properties"));
+           propertiesConfig.load(new FileInputStream("src/shared/atn/SimJobConfig.properties"));
        } catch (FileNotFoundException ex) {
            Logger.getLogger(ATNEngine.class.getName()).log(
                    Level.SEVERE, null, ex);
