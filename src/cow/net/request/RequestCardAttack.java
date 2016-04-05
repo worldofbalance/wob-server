@@ -27,8 +27,8 @@ public class RequestCardAttack extends GameRequest {
     @Override
 	public void parse(DataInputStream dataInput) throws IOException {
 	   playerID = DataReader.readInt(dataInput);
-       attackersPosition = DataReader.readInt(dataInput);
-       attackedPosition = DataReader.readInt(dataInput);
+            attackersPosition = DataReader.readInt(dataInput);
+            attackedPosition = DataReader.readInt(dataInput);
 	}
     
     @Override

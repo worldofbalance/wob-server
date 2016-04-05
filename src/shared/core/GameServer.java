@@ -87,7 +87,7 @@ public class GameServer {
      * Establishes each connection and stores it into a GameClient to manage
      * incoming and outgoing activity.
      */
-    private void run() {
+    public void run() {
         Log.consoleln("Now accepting connections...");
         // Loop indefinitely to establish multiple connections
         while (isActive) {

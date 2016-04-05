@@ -88,17 +88,10 @@ public class MiniGame {
         ProcessBuilder pb = new ProcessBuilder("java", "-jar", this.absServerPath);
         pb.directory(new File(filePath));
         try {
-            this.process = pb.start();            
-            {
-                LogStreamReader lsr = new LogStreamReader(this.process.getInputStream(), this.name);
-                Thread thread = new Thread(lsr, "LogStreamReader");
-                thread.start();
-            }
-            {
-                LogStreamReader lsr = new LogStreamReader(this.process.getErrorStream(), this.name);
-                Thread thread = new Thread(lsr, "LogStreamReader");
-                thread.start();
-            }
+            this.process = pb.start();
+            LogStreamReader lsr = new LogStreamReader(this.process.getInputStream(), this.name);
+            Thread thread = new Thread(lsr, "LogStreamReader");
+            thread.start();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -31,7 +31,7 @@ public class ResponseGetDeck extends GameResponse {
 	        packet.addInt32(card.getHealth());
 	        packet.addInt32(card.getAttack());
 	        packet.addInt32(card.getLevel());
-	        packet.addInt32(card.getDietType());
+	        packet.addString(card.getDietType());
 	        packet.addString(card.getSpeciesName());
 	        packet.addString(card.getDescription());
 	    }
