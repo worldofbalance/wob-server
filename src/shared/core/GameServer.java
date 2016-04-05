@@ -114,6 +114,7 @@ public class GameServer {
                 Log.println_e(ex.getMessage());
             }
         }
+       
     }
 
     public void shutdown() {
@@ -228,7 +229,8 @@ public class GameServer {
             Log.println_e("Server Crashed!");
             Log.println_e(ex.getMessage());
         }
-
+       
+        
         System.exit(0);
     }
 }

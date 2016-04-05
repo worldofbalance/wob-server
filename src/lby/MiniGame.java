@@ -92,10 +92,14 @@ public class MiniGame {
             LogStreamReader lsr = new LogStreamReader(this.process.getInputStream(), this.name);
             Thread thread = new Thread(lsr, "LogStreamReader");
             thread.start();
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
+    
     }
+    
+  
 }
 
 class LogStreamReader implements Runnable {
