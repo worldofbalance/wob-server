@@ -146,4 +146,8 @@ public class Constants {
 	public static boolean useSimEngine = false;		//To run both the simulation engine and the atn engine set useSimEngine =true && useAtnEngine == true
 	public static boolean useAtnEngine = true;
 	public static final boolean DEBUG_MODE = true;
+
+    // DH change
+    // Multiplayer Convergence
+    public static boolean SINGLE_PLAYER = false;
 }
