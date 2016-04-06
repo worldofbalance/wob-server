@@ -39,7 +39,7 @@ public class RequestConvergeGetOtherScore extends GameRequest {
         MCMatchManager manager = MCMatchManager.getInstance();
         MCMatch match = manager.getMatchByPlayer(otherPlayerID);
         playerList = match.getPlayers();
-        otherPlayer = playerList.getPlayer(otherPlayerID);
+        otherPlayer = playerList.get(otherPlayerID);
         scores = otherPlayer.getScores();
         Log.println("This player is: " + client.getPlayerID());
         Log.println("The other player is: " + otherPlayerID);

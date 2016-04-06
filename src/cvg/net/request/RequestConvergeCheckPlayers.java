@@ -57,7 +57,7 @@ public class RequestConvergeCheckPlayers extends GameRequest {
         Iterator<Integer> it = playerList.keySet().iterator();
         while ((it.hasNext()) && (!anyBet)) {
             Integer key = it.next();
-            MCMatchPlayer player1 = playerList.getPlayer(key);
+            MCMatchPlayer player1 = playerList.get(key);
             if (player1.getBetStatus() != 0) {
                 anyBet = true;
             }
@@ -75,7 +75,7 @@ public class RequestConvergeCheckPlayers extends GameRequest {
             it = playerList.keySet().iterator();
             while(it.hasNext()) {
                 Integer key = it.next();
-                MCMatchPlayer player1 = playerList.getPlayer(key);
+                MCMatchPlayer player1 = playerList.get(key);
                 int improve1 = player1.getImproveAmount();
                 Log.println("RCCP: Looking at player: " + player1.getPlayerName());
                 if (player1.getBetStatus() == 2) {  // only consider if he is betting
@@ -89,7 +89,7 @@ public class RequestConvergeCheckPlayers extends GameRequest {
                 }
                 if (player1.getBetStatus() == 0) {
                     Log.println("RCCP: Removed player: " + player1.getPlayerName());
-                    playerList.removePlayer(key);                
+                    playerList.remove(key);                
                     // Start over again on the list
                     it = playerList.keySet().iterator();
                     totalBet = 0; 
@@ -106,7 +106,7 @@ public class RequestConvergeCheckPlayers extends GameRequest {
                 int dividedBet = totalBet / tieCount;
                 short won = 1;
                 short lost = 0;            
-                for (Map.Entry<Integer, MCMatchPlayer> entry : playerList.getEntrySet()) {
+                for (Map.Entry<Integer, MCMatchPlayer> entry : playerList.entrySet()) {
                     MCMatchPlayer player1 = getValue(entry);
                     ResponseConvergeBetUpdate response1 = player1.getResponse();
                     Log.println("This player improved: " + player1.getImproveAmount());

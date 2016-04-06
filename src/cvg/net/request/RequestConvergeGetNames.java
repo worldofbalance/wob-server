@@ -36,7 +36,7 @@ public class RequestConvergeGetNames extends GameRequest {
         MCMatch match = manager.getMatchByPlayer(player_id);
         Map<Integer, MCMatchPlayer> playersList = match.getPlayers();
         Log.println("RequestConvergeGetNames, player id/name");
-        for (Map.Entry<Integer, MCMatchPlayer> entry : playersList.getEntrySet()) {
+        for (Map.Entry<Integer, MCMatchPlayer> entry : playersList.entrySet()) {
             Integer key = entry.getKey();
             if (key != player_id) {
                 MCMatchPlayer value = getValue(entry);

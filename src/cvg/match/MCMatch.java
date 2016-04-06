@@ -183,7 +183,7 @@ public class MCMatch {
 	public MCMatchPlayer getPlayer(int playerID){
 		return playerList.get(playerID);
 	}
-        
+        /* NetBeans problem methods
         public Map<Integer, MCMatchPlayer> removePlayer(int PlayerID) {
             return playerList.remove(PlayerID);
         }
@@ -191,7 +191,7 @@ public class MCMatch {
         public Map.Entry<Integer, MCMatchPlayer> getEntrySet() {
             return playerList.entrySet();
         }
-	
+	*/
 	
 	
 	/**

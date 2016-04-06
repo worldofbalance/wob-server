@@ -54,7 +54,7 @@ public class RequestConvergeBetUpdate extends GameRequest {
         match = manager.getMatch(match_id);
         playerList = match.playerList;
         Integer i1 = new Integer(player_id);
-        player = playerList.getPlayer(player_id);
+        player = playerList.get(player_id);
         // MCMatchPlayer BetStatus
         // 0 -> no response yet
         // 1 -> response, not betting
@@ -75,7 +75,7 @@ public class RequestConvergeBetUpdate extends GameRequest {
         totalBet = 0; 
         tieCount = 1;
         bestImprove = -1000000;
-        for (Map.Entry<Integer, MCMatchPlayer> entry : playerList.getEntrySet()) {
+        for (Map.Entry<Integer, MCMatchPlayer> entry : playerList.entrySet()) {
             // Integer key = entry.getKey();
             MCMatchPlayer player1 = getValue(entry);
             int improve1 = player1.getImproveAmount();
@@ -100,7 +100,7 @@ public class RequestConvergeBetUpdate extends GameRequest {
             int dividedBet = totalBet / tieCount;
             short won = 1;
             short lost = 0;            
-            for (Map.Entry<Integer, MCMatchPlayer> entry : playerList.getEntrySet()) {
+            for (Map.Entry<Integer, MCMatchPlayer> entry : playerList.entrySet()) {
                 MCMatchPlayer player1 = getValue(entry);
                 ResponseConvergeBetUpdate response1 = player1.getResponse();
                 Log.println("This player improved: " + player1.getImproveAmount());

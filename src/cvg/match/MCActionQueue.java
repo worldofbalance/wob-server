@@ -1,4 +1,4 @@
-package convergegame.match;
+package cvg.match;
 
 import java.util.LinkedList;
 import java.util.Queue;

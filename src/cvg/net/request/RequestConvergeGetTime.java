@@ -47,7 +47,7 @@ public class RequestConvergeGetTime extends GameRequest {
         Map<Integer, MCMatchPlayer> playersList = match.getPlayers();
         Log.println("RequestConvergeGetTime, bet status values");
         Log.println("player id: " + player_id);
-        for (Map.Entry<Integer, MCMatchPlayer> entry : playersList.getEntrySet()) {
+        for (Map.Entry<Integer, MCMatchPlayer> entry : playersList.entrySet()) {
             Integer key = entry.getKey();
             if (key != player_id) {
                 MCMatchPlayer value = getValue(entry);
