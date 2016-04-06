@@ -54,14 +54,14 @@ public class MiniGameServers {
     }
     
     private void initMiniGames() {
-        ConfFileParser confFileParser = new ConfFileParser("conf/minigames.conf");
-        Map<String, String> minigamesConfig = confFileParser.parse();
-        
-        minigamesConfig.entrySet().stream().map(
-            (entry) -> { return entry; }
-        ).forEach((entry) -> {
-            initMiniGame(entry.getKey(), entry.getValue());
-        });
+//        ConfFileParser confFileParser = new ConfFileParser("conf/minigames.conf");
+//        Map<String, String> minigamesConfig = confFileParser.parse();
+//
+//        minigamesConfig.entrySet().stream().map(
+//            (entry) -> { return entry; }
+//        ).forEach((entry) -> {
+//            initMiniGame(entry.getKey(), entry.getValue());
+//        });
     }
     
     private void initMiniGame(String name, String location) {
