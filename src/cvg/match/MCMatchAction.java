@@ -1,5 +1,5 @@
 
-package convergegame.match;
+package cvg.match;
 
 import java.util.ArrayList;
 import java.util.List;
