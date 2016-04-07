@@ -24,7 +24,7 @@ public class RequestSummonCard extends GameRequest {
 
 	private int playerID;
 	private int cardID;
-    private int diet;
+    private String diet;
     private int level;
     private int attack;
     private int health;
@@ -36,7 +36,7 @@ public class RequestSummonCard extends GameRequest {
 	public void parse(DataInputStream dataInput) throws IOException {
         playerID = DataReader.readInt(dataInput);
         cardID = DataReader.readInt(dataInput);
-        diet = DataReader.readInt(dataInput);
+        diet = DataReader.readString(dataInput);
         level= DataReader.readInt(dataInput);
         attack = DataReader.readInt(dataInput);
         health = DataReader.readInt(dataInput);
@@ -52,10 +52,10 @@ public class RequestSummonCard extends GameRequest {
         ResponseSummonCard response = new ResponseSummonCard();
         MatchAction action = new MatchAction();
         action.setActionID(NetworkCode.SUMMON_CARD);
-        action.setIntCount(5);
-        action.setStringCount(3);
+        action.setIntCount(4);
+        action.setStringCount(4);
         action.addInt(cardID);
-        action.addInt(diet);
+        action.addString(diet);
         action.addInt(level);
         action.addInt(attack);
         action.addInt(health);

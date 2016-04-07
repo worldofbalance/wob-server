@@ -110,6 +110,7 @@ public class NetworkCode {
     public final static short MATCH_ACTION = 211;
     public final static short MATCH_START = 212;
     public final static short RETURN_LOBBY = 213;
+    public final static short APPLY_FOOD = 214;
     /**
      * Check for duplicate values, if any.
      */

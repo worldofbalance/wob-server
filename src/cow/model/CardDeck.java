@@ -111,7 +111,9 @@ public class CardDeck {
 	public static void main(String[] args) {
 		ArrayList<Integer> card_ids = new ArrayList<Integer>();
 		ArrayList<Integer> id_list = new ArrayList<Integer>();
-		card_ids.add(15);
+		
+                
+                card_ids.add(15);
 		card_ids.add(15);
 		card_ids.add(17);
 		card_ids.add(13);
