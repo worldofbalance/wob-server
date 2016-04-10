@@ -17,12 +17,16 @@ public class PlayTimePlayer extends Player {
 
     private int raceID, // race ID that player is currently in
             runnerSpeciesID, // ID of selected species
+            maxHealth, //maximum health of player (can be changed by upgrades)
             health, // health of species
             status, // status of species (from items/boosts)
-            itemID, // currently held item (0 if not holding anything)
-            numItems, // number of items collected
+            //itemID, // currently held item (0 if not holding anything)
+            //numItems, // number of items collected
             time, // current time of player
-            score; // current score of player
+            score, // current score of player
+            stomach, //current stomach of player
+            maxStamina, //maximum stamina
+            stamina; // stamina (used for character sprinting)
     private float x, // x position of player
             y, // y position of player
             speed, // current speed of player
@@ -43,8 +47,8 @@ public class PlayTimePlayer extends Player {
         runnerSpeciesID = 31;
         health = 100;
         status = 0;
-        itemID = 1;
-        numItems = 0;
+        //itemID = 1;
+        //numItems = 0;
         time = 0;
         score = 0;
         x = 0;
@@ -74,6 +78,14 @@ public class PlayTimePlayer extends Player {
         this.runnerSpeciesID = runnerSpeciesID;
     }
     
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+    
+    public void setMaxHealth(int maxHealth) {
+        this.maxHealth = maxHealth;
+    }
+    
     public int getHealth() {
         return health;
     }
@@ -90,13 +102,13 @@ public class PlayTimePlayer extends Player {
         this.status = status;
     }
     
-    public int getItemID() {
-        return itemID;
-    }
-    
-    public void setItemID(int itemID) {
-        this.itemID = itemID;
-    }
+//    public int getItemID() {
+//        return itemID;
+//    }
+//    
+//    public void setItemID(int itemID) {
+//        this.itemID = itemID;
+//    }
     
     public int getTime() {
         return time;
@@ -152,6 +164,14 @@ public class PlayTimePlayer extends Player {
         this.speed = speed;
     }
     
+    public int getStomach() {
+        return this.stomach;
+    }
+    
+    public void setStomach(int stomach) {
+        this.stomach = stomach;
+    }
+    
     public float getPower() {
         return power;
     }
@@ -188,19 +208,19 @@ public class PlayTimePlayer extends Player {
         this.left = left;
     }
 
-    /**
-     * @return if player jumped
-     */
-    public boolean isJump() {
-        return jump;
-    }
-
-    /**
-     * @param jump is player jumping?
-     */
-    public void setJump(boolean jump) {
-        this.jump = jump;
-    }
+//    /**
+//     * @return if player jumped
+//     */
+//    public boolean isJump() {
+//        return jump;
+//    }
+//
+//    /**
+//     * @param jump is player jumping?
+//     */
+//    public void setJump(boolean jump) {
+//        this.jump = jump;
+//    }
 
     /**
      * @return usedItem
@@ -219,16 +239,16 @@ public class PlayTimePlayer extends Player {
     /**
      * @return number of collected items
      */
-    public int getNumItems() {
-        return numItems;
-    }
-
-    /**
-     * @param numItems number of collected items
-     */
-    public void setNumItems(int numItems) {
-        this.numItems = numItems;
-    }
+    //public int getNumItems() {
+//        return numItems;
+//    }
+//
+//    /**
+//     * @param numItems number of collected items
+//     */
+//    public void setNumItems(int numItems) {
+//        this.numItems = numItems;
+//    }
     
     /**
      * @return the opponent
