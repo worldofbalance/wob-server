@@ -24,8 +24,8 @@ public class GameRequestTable {
         // Populate the table using request codes and class names
         add(Constants.CMSG_AUTH, "RequestLogin");
         add(Constants.CMSG_RACE_INIT, "RequestPlayInit");
-        add(Constants.CMSG_SDENDGAME, "RequestRREndGame");
-        add(Constants.CMSG_SDSTARTGAME, "RequestRRStartGame");
+        add(Constants.CMSG_SDENDGAME, "RequestSDEndGame");
+        add(Constants.CMSG_SDSTARTGAME, "RequestSDStartGame");
      
            
     }
