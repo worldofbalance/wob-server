@@ -20,7 +20,7 @@ public final class SessionDAO {
 
     private SessionDAO() {
     }
-
+    
     public static Session createSession(String session_id, int player_id) {
         Session session = null;
 

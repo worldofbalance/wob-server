@@ -58,7 +58,7 @@ public class MiniGameServers {
         MiniGame game;
         
         game = new MiniGame("Cards of the Wild");
-        game.setAsMultiPlayerGame("mini_game_server_jar/WoC_Server/dist/Cards_Server.jar", 20038);
+        game.setAsMultiPlayerGame("mini_game_server_jar/WoC_Server/dist/COW_Server.jar", 20038);
         miniGames.put(game.getName(), game);
 
         game = new MiniGame("Running Rhino");
