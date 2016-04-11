@@ -27,7 +27,7 @@ public class GameDB {
     /**
      * Configures the database connection.
      */
-    private GameDB() {
+    public GameDB() {
         // Load the configuration file into memory
         configure();
         // Create a connection to the database
