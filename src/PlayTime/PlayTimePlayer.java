@@ -15,7 +15,7 @@ import model.Player;
 public class PlayTimePlayer extends Player {
 
 
-    private int raceID, // race ID that player is currently in
+    private int raceID, // play ID that player is currently in
             runnerSpeciesID, // ID of selected species
             maxHealth, //maximum health of player (can be changed by upgrades)
             health, // health of species
@@ -84,6 +84,22 @@ public class PlayTimePlayer extends Player {
     
     public void setMaxHealth(int maxHealth) {
         this.maxHealth = maxHealth;
+    }
+    
+    public int getMaxStamina() {
+        return this.maxStamina;
+    }
+    
+    public void setMaxStamina(int maxStamina){
+        this.maxStamina = maxStamina;
+    }
+    
+    public int getStamina() {
+        return this.stamina;
+    }
+    
+    public void setStamina(int stamina) {
+        this.stamina = stamina;
     }
     
     public int getHealth() {
