@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TimerTask;
+import lby.core.LobbyController;
 
 import shared.core.GameResources;
 import shared.core.ServerResources;
@@ -15,6 +16,8 @@ import shared.metadata.Constants;
 import shared.model.Player;
 import shared.model.SpeciesType;
 import lby.net.response.shop.ResponseShopAction;
+import shared.core.GameEngine;
+import shared.model.Ecosystem;
 import shared.util.Clock;
 import shared.util.EventListener;
 import shared.util.EventType;
@@ -37,6 +40,7 @@ public class World {
     private final GameTimer worldTimer = new GameTimer();
     private final GameTimer shopTimer = new GameTimer();
     private final Clock clock;
+    private GameEngine gameEngine;
 
     public World(int world_id, String name, short type, float time_rate, int day) {
         this.world_id = world_id;
@@ -154,6 +158,10 @@ public class World {
         for (int item_id : itemList.keySet()) {
             SpeciesType species = ServerResources.getSpeciesTable().getSpecies(item_id);
 
+            List<SpeciesType> speciesArray = ServerResources.getSpeciesTable().getSpecies();
+            
+            
+            Log.println("item_id = " + item_id);
             if (species != null) {
                 int biomass = itemList.get(item_id);
                 totalCost += species.getCost() * Math.ceil(biomass / species.getBiomass());
@@ -161,9 +169,12 @@ public class World {
                 return -1;
             }
         }
-
+         
+      //cost is absurdly high, most transactions fail because of this
+        Log.println("total cost before: " + totalCost);
+        Log.println("player credits: " + player.getCredits());
         if (GameResources.useCredits(player, totalCost)) {
-            // LobbyController.getInstance().getLobby(this).getEventHandler().execute(EventTypes.SPECIES_BOUGHT, itemList.size());
+             //LobbyController.getInstance().getLobby(this).getEventHandler().execute(EventTypes.SPECIES_BOUGHT, itemList.size());
 
             int totalBiomass = 0;
             for (int item_id : itemList.keySet()) {
@@ -200,8 +211,8 @@ public class World {
         } else {
             totalCost = -1;
         }
-
-        Log.println("Order has been placed! Total cost = " + Integer.toString(totalCost));
+        
+        Log.println("Order has been placed! Total cost = " + totalCost);
         return totalCost;
     }
 
@@ -211,10 +222,12 @@ public class World {
      */
     public void processShopOrder(Player player) {
         // Retrieve starting Zone
-//        Ecosystem ecosystem = gameEngine.getZone();
-//        gameEngine.createSpeciesByPurchase(player, shopList, ecosystem);
-//        gameEngine.forceSimulation();
-
+        Ecosystem ecosystem = player.getEcosystem();
+        gameEngine.createSpeciesByPurchase(player, shopList, ecosystem);
+        gameEngine.forceSimulation();
+        
+        
+        Log.println("process order");
         String tempList = "";
 
         int index = 0;
