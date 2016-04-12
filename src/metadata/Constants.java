@@ -23,4 +23,11 @@ public class Constants {
     public final static short SMSG_SDSTARTGAME = 602;
     public final static short CMSG_SDENDGAME = 503;
     public final static short SMSG_SDENDGAME = 603;
+    
+    
+    public final static short CMSG_KEYBOARD = 108;
+    public final static short SMSG_KEYBOARD = 208;
+ 
+    public final static short CMSG_POSITION = 110;
+    public final static short SMSG_POSITION = 210;
 }

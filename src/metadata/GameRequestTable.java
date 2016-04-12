@@ -25,9 +25,7 @@ public class GameRequestTable {
         add(Constants.CMSG_AUTH, "RequestLogin");
         add(Constants.CMSG_RACE_INIT, "RequestPlayInit");
         add(Constants.CMSG_SDENDGAME, "RequestSDEndGame");
-        add(Constants.CMSG_SDSTARTGAME, "RequestSDStartGame");
-     
-           
+        add(Constants.CMSG_SDSTARTGAME, "RequestSDStartGame");       
     }
 
     /**
