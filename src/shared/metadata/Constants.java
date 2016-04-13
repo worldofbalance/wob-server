@@ -68,8 +68,10 @@ public class Constants {
     public final static int DAY_DURATION = 6;
     public final static int MONTH_DURATION = 180;
     public final static int MAX_SPECIES_SIZE = 10;
-    public final static String CSV_SAVE_PATH = "src/log/sim/";
-    public final static String ATN_CSV_SAVE_PATH = "src/log/atn/";
+    public final static String CSV_SAVE_PATH = "src/shared/log/sim/";
+    public final static String ATN_CSV_SAVE_PATH = "src/shared/log/atn/";
+    public final static String ATN_GENERATED_CSV_SAVE_PATH = "src/shared/log/atn/generated_atn/";
+    public final static String ATN_ACCEPTED_CSV_SAVE_PATH = "src/shared/log/atn/accepted_atn_files/";
     public final static int MAX_CLIENT_THREADS = 10;
     public final static int ECOSYSTEM_TYPE = 1;
     public final static int TICK_RATE = 30;
