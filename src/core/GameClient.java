@@ -51,7 +51,7 @@ public class GameClient implements Runnable{
         this.session_id = session_id;
         this.clientSocket = clientSocket;
 
-      //  updates = new LinkedList<GameResponse>();
+        updates = new LinkedList<GameResponse>();
 
         inputStream = clientSocket.getInputStream();
         outputStream = clientSocket.getOutputStream();
