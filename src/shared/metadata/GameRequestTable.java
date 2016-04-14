@@ -97,7 +97,8 @@ public class GameRequestTable {
 	add(NetworkCode.CLASH_PLAYER_VIEW, "cos.net.request.RequestClashPlayerView");
 	add(NetworkCode.CLASH_INITIATE_BATTLE, "cos.net.request.RequestClashInitiateBattle");
 	add(NetworkCode.CLASH_END_BATTLE, "cos.net.request.RequestClashEndBattle");
-
+        
+        
         Log.println("Done!");
     }
 

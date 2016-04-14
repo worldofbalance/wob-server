@@ -95,7 +95,10 @@ public class MiniGame {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    
     }
+    
+  
 }
 
 class LogStreamReader implements Runnable {

@@ -147,7 +147,11 @@ public class Constants {
 	public static boolean useAtnEngine = true;
 	public static final boolean DEBUG_MODE = true;
 
-    // DH change
-    // Multiplayer Convergence
-    public static boolean SINGLE_PLAYER = false;
+        //for use in Cards of the Wild and Convergence
+    //public static final boolean SINGLE_PLAYER = true;
+    public static final boolean SINGLE_PLAYER = false;
+    public static final short  STATUS_NO_MATCH = 2;
+    
+    public static final short STATUS_SUCCESS_CARDS = 0;
+    public static final short STATUS_FAILURE_CARDS = 1;
 }
