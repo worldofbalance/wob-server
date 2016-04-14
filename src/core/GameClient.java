@@ -146,7 +146,7 @@ public class GameClient implements Runnable{
 
      public void removePlayerData() {
         GameServer.getInstance().removeActivePlayer(player.getPlayer_id());
-        Log.printf("User '%s' has logged off.");
+        Log.printf("User '%s' has logged off.", player.getUsername());
     }
      
      public void send(GameResponse response) throws IOException {

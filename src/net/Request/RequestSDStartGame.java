@@ -43,7 +43,7 @@ public class RequestSDStartGame extends GameRequest {
         Log.println("The race the user belongs to is '" +  PlayManager.manager.getRaceByPlayerID(client.getUserID()).getID() + "'");
         
         PlayManager.manager.getRaceByPlayerID(client.getUserID()).startRace(client.getUserID());
-        
+
     }
 
 

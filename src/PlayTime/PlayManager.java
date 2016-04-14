@@ -121,6 +121,9 @@ public class PlayManager {
             ResponseSDEndGame response = new ResponseSDEndGame();
             response.setHighestScore(winningScore);
 
+            // set the winner player to avoid null exception - Revisit this logic.
+            response.setWinningPlayer(String.valueOf(playerID));
+ 
             // send responses to both players
             for (int p_id : play.getPlayers().keySet()) {
                 if (playerID == p_id) {

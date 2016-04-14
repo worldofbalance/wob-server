@@ -10,6 +10,7 @@ import utility.DataReader;
 import net.Response.ResponseSDEndGame;
 import PlayTime.Play;
 import PlayTime.PlayManager;
+import utility.Log;
 
 /**
  *
@@ -26,6 +27,7 @@ public class RequestSDEndGame extends GameRequest{
     public RequestSDEndGame() {
         gameCompleted = false;
         finalScore = "";
+        Log.println("A ResponseSDEndGame has been sent out");
     }
 
     @Override
