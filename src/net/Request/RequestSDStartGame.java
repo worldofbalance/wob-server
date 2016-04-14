@@ -44,10 +44,6 @@ public class RequestSDStartGame extends GameRequest {
         
         PlayManager.manager.getRaceByPlayerID(client.getUserID()).startRace(client.getUserID());
         
-        p_id2 = PlayManager.manager.getRaceByPlayerID(client.getPlayer().getPlayer_id())
-                .getOpponent(client.getPlayer()).getPlayer_id();
-         GameServer.getInstance().getThreadByPlayerID(p_id1).send(responseStart);
-         GameServer.getInstance().getThreadByPlayerID(p_id2).send(responseStart);
     }
 
 

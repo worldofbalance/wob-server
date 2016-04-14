@@ -31,6 +31,10 @@ public class RequestPlayInit extends GameRequest {
 
     @Override
     public void doBusiness() throws Exception {
+        
+        Log.println("Trying to start Race: PlayerID[" +
+                player_id + "], RoomID[" + room_id + "]");
+        
         Play play = PlayManager.getInstance().createRace(player_id, room_id);
         
         Log.println("Trying to start Race: PlayerID[" +
@@ -44,6 +48,9 @@ public class RequestPlayInit extends GameRequest {
             
             Log.println("Race created with players: " + play.getPlayers().keySet().toString());
         }
+        
+        
+        
     }
     
 

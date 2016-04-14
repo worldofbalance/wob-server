@@ -37,7 +37,7 @@ public class GameClient implements Runnable{
     private Queue<GameResponse> updates; // Temporarily store responses for client
     private boolean isDone;
     private Player player;
-    // Queue<GameResponse> updates; // Temporarily store responses for client
+    //Queue<GameResponse> updates; // Temporarily store responses for client
     
     /**
      * Initialize the GameClient using the client socket and creating both input
@@ -51,7 +51,7 @@ public class GameClient implements Runnable{
         this.session_id = session_id;
         this.clientSocket = clientSocket;
 
-      //  updates = new LinkedList<GameResponse>();
+        updates = new LinkedList<GameResponse>();
 
         inputStream = clientSocket.getInputStream();
         outputStream = clientSocket.getOutputStream();

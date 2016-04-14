@@ -5,6 +5,7 @@
  */
 package core;
 
+import PlayTime.PreySpawning;
 import java.util.concurrent.Executors;
 import metadata.Constants;
 import utility.Log;
@@ -60,6 +61,9 @@ public class GameServer {
        // initialize();
         // Thread Pool for Clients
         clientThreadPool = Executors.newCachedThreadPool();
+        // generate random spawning points 
+        Log.printf("Spawning prey location saved");
+        PreySpawning.getInstance().spawn();
         //TODO: Instantiate the PreyTimeManager
     }
      

@@ -76,7 +76,8 @@ public class PlayManager {
         Play play = this.playList.get(playID);
 
         if (play == null) {
-            System.out.println("Creating a Race with id = [" + playID + "]");
+
+    System.out.println("Creating a Race with id = [" + playID + "]");
             play = new Play(playID);
             Random randomGenerator = new Random();
             play.setMapID(randomGenerator.nextInt(101));
