@@ -65,9 +65,7 @@ public class MiniGameServers {
 //        });
 //    }
     
-    private void initMiniGame(String name, String location) {
-        MiniGame game = new MiniGame(name);
-        game.setAsMultiPlayerGame(location, minigamesPort++);
+    private void initMiniGames() {
         MiniGame game;
         
         game = new MiniGame("Cards of the Wild");
