@@ -55,18 +55,18 @@ public class MiniGameServers {
     }
 
     private void initMiniGames() {
-        MiniGame game;
-        
-        game = new MiniGame("Cards of the Wild");
-        game.setAsMultiPlayerGame("mini_game_server_jar/WoC_Server/dist/Cards_Server.jar", 20038);
-        miniGames.put(game.getName(), game);
-
-        game = new MiniGame("Running Rhino");
-        game.setAsMultiPlayerGame("mini_game_server_jar/Speed_Server/dist/Speed_Server.jar", 20039);
-        miniGames.put(game.getName(), game);
-        
-        game = new MiniGame("Sea Divided");
-        game.setAsMultiPlayerGame("mini_game_server_jar/SeaDividedServer/dist/SeaDivided.jar", 20040);
-        miniGames.put(game.getName(), game);
+//        MiniGame game;
+//
+//        game = new MiniGame("Cards of the Wild");
+//        game.setAsMultiPlayerGame("mini_game_server_jar/WoC_Server/dist/Cards_Server.jar", 20038);
+//        miniGames.put(game.getName(), game);
+//
+//        game = new MiniGame("Running Rhino");
+//        game.setAsMultiPlayerGame("mini_game_server_jar/Speed_Server/dist/Speed_Server.jar", 20039);
+//        miniGames.put(game.getName(), game);
+//
+//        game = new MiniGame("Sea Divided");
+//        game.setAsMultiPlayerGame("mini_game_server_jar/SeaDividedServer/dist/SeaDivided.jar", 20040);
+//        miniGames.put(game.getName(), game);
     }
 }

@@ -217,7 +217,8 @@ public class GameServer {
             //String serverConf = "conf/gameServer.conf";
             CodeSource codeSource = cow.core.GameServer.class.getProtectionDomain().getCodeSource();
             File jarFile = new File(codeSource.getLocation().toURI().getPath());
-            String serverConf = jarFile.getParentFile().getPath() + "/../conf/gameServer.conf";
+            String separator = System.getProperty("file.separator");
+            String serverConf = jarFile.getParentFile().getPath() + separator + "conf" + separator + "gameServer.conf";
             System.out.println("config file path:"+serverConf);
             File f = new File(serverConf);
             if (!f.exists()) {
