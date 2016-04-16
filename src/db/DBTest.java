@@ -2,6 +2,9 @@
 package db;
 
 import PlayTime.PlayTimePlayer;
+import java.util.Map;
+import model.SDSpecies;
+import utility.Log;
 
 
 /**
@@ -11,21 +14,24 @@ import PlayTime.PlayTimePlayer;
 public class DBTest {
     public static void main(String[] args)
     {
+        Map<Integer, SDSpecies> playSpecies;
+        PlayTimePlayer r1, r2, rx;
         try
         {
             GameDB gameDB =  new GameDB();
-            PlayTimePlayer r1, r2;
+            
             
             // check connection
             if (gameDB.getConnection() != null)
             {
                 System.out.println("Successfully connected to database.\n");
             }
-            
+            playSpecies = SDSpeciesDAO.getSDSpecies();
+            Log.println("max health of id 90 (mackerel):"+playSpecies.get(90).getHealthMax());
             // define two race players
             r1 = new PlayTimePlayer(1, 1);
             r2 = new PlayTimePlayer(2, 1);
-            
+            rx = new PlayTimePlayer(3);
             // race player 1
             r1.setRunnerSpeciesID(31);
             r1.setMaxHealth(100);
@@ -73,15 +79,13 @@ public class DBTest {
             // test race creation, joining, finishing, leaving logic
             //player 1 makes race, player 2 joins
             PlayDAO.createPlay(r1.getRaceID());
-            System.out.println("created race");
             PlayDAO.createPlayer(r1.getPlayer_id(), r1.getRaceID(),2);
             PlayDAO.createPlayer(r2.getPlayer_id(), r2.getRaceID(),1);
-            System.out.println("created players");
             PlayDAO.updatePlay(r1);
             PlayDAO.updatePlay(r2);
+            
             PlayDAO.leavePlay(r1);
             PlayDAO.leavePlay(r2);
-            System.out.println("ended first game");
             //changing the race
             r1.setRaceID(101);
             r1.setRunnerSpeciesID(47);
@@ -90,14 +94,16 @@ public class DBTest {
             r2.setRunnerSpeciesID(74);
             
             PlayDAO.createPlay(r2.getRaceID());
-            System.out.println("created second game");
             PlayDAO.createPlayer(r2.getPlayer_id(), r2.getRaceID(),2);
             PlayDAO.createPlayer(r1.getPlayer_id(), r1.getRaceID(),1);
+            
             
 //            PlayDAO.setPlayerSpecies(r1);
 //            PlayDAO.setPlayerSpecies(r2);
             PlayDAO.updatePlay(r1);
             PlayDAO.updatePlay(r2);
+            rx = PlayInfoDAO.getPlayerInfo(r1.getPlayer_id());
+            Log.println("retrieved max_health"+rx.getMaxHealth());
             
             
             PlayDAO.leavePlay(r1);
