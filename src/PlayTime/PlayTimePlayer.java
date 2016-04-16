@@ -38,7 +38,7 @@ public class PlayTimePlayer extends Player {
             usedItem; // player used item?
     private PlayTimePlayer opponent;
     
-    
+    public PlayTimePlayer(int player_id){super(player_id);}
     public PlayTimePlayer(int player_id, int raceID){
         super(player_id);
         this.raceID = raceID;
@@ -61,7 +61,7 @@ public class PlayTimePlayer extends Player {
         jump = false;
         usedItem = false;
     }
-
+    
     public int getRaceID() {
         return raceID;
     }
