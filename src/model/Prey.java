@@ -12,10 +12,20 @@ package model;
 public class Prey {
     
     int prey_id;
+    int species_id;
     float x;
     float y;
     boolean isAlive;
 
+    public Prey(){}
+    
+    public Prey(int prey_id, float x, float y){
+        this.prey_id=prey_id;
+        this.x = x;
+        this.y =y;
+        isAlive =true;
+    }
+    
     public int getPrey_id() {
         return prey_id;
     }
@@ -24,6 +34,14 @@ public class Prey {
         this.prey_id = prey_id;
     }
 
+    public int getSpecies_id() {
+        return this.species_id;
+    }
+        
+    public void setSpecies_id(int species_id) {
+        this.species_id = species_id;
+    }
+        
     public float getX() {
         return x;
     }
