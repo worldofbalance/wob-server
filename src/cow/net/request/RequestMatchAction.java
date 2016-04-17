@@ -14,7 +14,7 @@ import cow.core.match.MatchAction;
 
 public class RequestMatchAction extends GameRequest {
 	
-	private int playerID;
+	protected int playerID;
 	
 	@Override
 	public void parse(DataInputStream dataInput) throws IOException {
