@@ -169,12 +169,12 @@ public class GameClient {
 
     public void joinPlayer(int playerId)
     {
-        this.account=AccountDAO.getAccount(playerId);//playerid and account id is same in their tables
+        this.account=AccountDAO.getAccountByPlayer(playerId);//playerid and account id is same in their tables
         account.setClient(this);
         
         AccountDAO.updateLogin(account.getID(), this.getIP());
         GameServer.getInstance().setActiveAccount(account);
-        player = PlayerDAO.getPlayerByAccount(playerId);
+        player = PlayerDAO.getPlayer(playerId);
         player.setClient(this);       
         Log.printf("Selecting player: %d", player.getID());
         PlayerDAO.updateLastPlayed(player.getID());

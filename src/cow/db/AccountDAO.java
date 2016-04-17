@@ -106,6 +106,41 @@ public final class AccountDAO {
 
         return account;
     }
+
+    public static Account getAccountByPlayer(int playerId) {
+        Account account = null;
+
+        String query = "SELECT * FROM `account` LEFT JOIN `player` ON `account`.`account_id`=`player`.`account_id` WHERE (`player_id` = ?)";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = GameDB.getConnection();
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, playerId);
+
+
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                account = new Account(rs.getInt("account_id"));
+                account.setUsername(rs.getString("username"));
+                account.setEmail(rs.getString("email"));
+                account.setPassword(rs.getString("password"));
+                account.setPlayTime(rs.getLong("play_time"));
+                account.setActiveTime(rs.getLong("active_time"));
+                account.setLastLogout(rs.getString("last_logout"));
+            }
+        } catch (SQLException ex) {
+            Log.println_e(ex.getMessage());
+        } finally {
+            GameDB.closeConnection(con, pstmt, rs);
+        }
+
+        return account;
+    }
     /**
      * Retrieve account information from the database using both email and
      * password.

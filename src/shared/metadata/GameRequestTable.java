@@ -88,8 +88,25 @@ public class GameRequestTable {
 	add(NetworkCode.CLASH_PLAYER_VIEW, "cos.net.request.RequestClashPlayerView");
 	add(NetworkCode.CLASH_INITIATE_BATTLE, "cos.net.request.RequestClashInitiateBattle");
 	add(NetworkCode.CLASH_END_BATTLE, "cos.net.request.RequestClashEndBattle");
-        
-        
+
+        //Cards of the wild
+        add(NetworkCode.MATCH_INIT, "cow.net.request.RequestMatchInit");
+        add(NetworkCode.MATCH_STATUS, "cow.net.request.RequestMatchStatus");
+        add(NetworkCode.GET_DECK, "cow.net.request.RequestGetDeck");
+        add(NetworkCode.SUMMON_CARD, "cow.net.request.RequestSummonCard");
+        add(NetworkCode.CARD_ATTACK, "cow.net.request.RequestCardAttack");
+        add(NetworkCode.QUIT_MATCH, "cow.net.request.RequestQuitMatch");
+        add(NetworkCode.END_TURN, "cow.net.request.RequestEndTurn");
+        add(NetworkCode.MATCH_OVER, "cow.net.request.RequestMatchOver");
+        add(NetworkCode.DEAL_CARD, "cow.net.request.RequestDealCard");
+        add(NetworkCode.TREE_ATTACK, "cow.net.request.RequestTreeAttack");
+        add(NetworkCode.MATCH_ACTION, "cow.net.request.RequestMatchAction");
+        add(NetworkCode.MATCH_START, "cow.net.request.RequestMatchStart");
+        add(NetworkCode.RETURN_LOBBY, "cow.net.request.RequestReturnLobby");
+        add(NetworkCode.APPLY_FOOD, "cow.net.request.RequestFoodCard");
+
+
+
         Log.println("Done!");
     }
 
