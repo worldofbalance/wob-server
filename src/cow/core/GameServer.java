@@ -218,13 +218,13 @@ public class GameServer {
             CodeSource codeSource = cow.core.GameServer.class.getProtectionDomain().getCodeSource();
             File jarFile = new File(codeSource.getLocation().toURI().getPath());
             String separator = System.getProperty("file.separator");
-            String serverConf = jarFile.getParentFile().getPath() + separator + "conf" + separator + "gameServer.conf";
+            String serverConf = jarFile.getParentFile().getPath() + separator + ".."+separator+"conf" + separator + "gameServer.conf";
             System.out.println("config file path:"+serverConf);
             File f = new File(serverConf);
             if (!f.exists()) {
                 // get current absolute path
                 System.out.println("Error loading config file for COW");
-                //serverConf = "/Users/rujuraj/Desktop/NetbeansProjects/final_csc631/mini_game_server_jar/WoC_Server/conf/gameServer.conf";//jarFile.getParentFile().getPath() + "/../conf/gameServer.conf";
+                serverConf = jarFile.getParentFile().getPath() + separator +"conf" + separator + "gameServer.conf";
             }
         
             GameServerConf config = new GameServerConf(new ConfFileParser(serverConf).parse());
@@ -238,9 +238,10 @@ public class GameServer {
             Log.console("Port %d is in use "+server.getPort());
         } catch (ConfigureException ex) {
             Log.console(ex.getMessage());
+            ex.printStackTrace(System.out);
         } catch (Exception ex) {
             Log.console("Server Crashed!");
-            Log.console(ex.getMessage());
+            ex.printStackTrace(System.out);
         }
 
         System.exit(0);
