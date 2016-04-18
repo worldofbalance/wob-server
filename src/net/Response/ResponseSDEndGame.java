@@ -15,7 +15,7 @@ import utility.GamePacket;
 public class ResponseSDEndGame extends GameResponse{
 
     private String winningPlayer;
-    private String highestScore;    
+    private float highestScore;    
     private boolean win;
  
     
@@ -29,7 +29,7 @@ public class ResponseSDEndGame extends GameResponse{
         GamePacket packet = new GamePacket(responseCode);
 
         packet.addBoolean(isWin());
-        packet.addString(getHighestScore());
+        packet.addFloat(getHighestScore());
         packet.addString(getWinningPlayer());
 
         return packet.getBytes();
@@ -43,11 +43,11 @@ public class ResponseSDEndGame extends GameResponse{
         this.winningPlayer = winningPlayer;
     }
 
-    public String getHighestScore() {
+    public float getHighestScore() {
         return highestScore;
     }
 
-    public void setHighestScore(String highestScore) {
+    public void setHighestScore(float highestScore) {
         this.highestScore = highestScore;
     }
     

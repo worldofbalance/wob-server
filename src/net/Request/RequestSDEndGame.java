@@ -10,6 +10,7 @@ import utility.DataReader;
 import net.Response.ResponseSDEndGame;
 import PlayTime.Play;
 import PlayTime.PlayManager;
+import PlayTime.PlayTimePlayer;
 import utility.Log;
 
 /**
@@ -20,32 +21,66 @@ public class RequestSDEndGame extends GameRequest{
 
 
     private boolean gameCompleted;
-    private String finalScore;
+    private float finalScore;
     private int p_id;
     private ResponseSDEndGame responseSDEndGame;
-
+    private int status;
+    private int flag;
+    private float winningscore;
+    private int winningID;
+    
+   
     public RequestSDEndGame() {
         gameCompleted = false;
-        finalScore = "";
+        finalScore = 0.0f;
         Log.println("A ResponseSDEndGame has been sent out");
     }
 
     @Override
     public void parse() throws IOException {
         gameCompleted = DataReader.readBoolean(dataInput);
-        finalScore = DataReader.readString(dataInput);
+        finalScore = DataReader.readFloat(dataInput);
     }
 
     @Override
     public void doBusiness() throws Exception {
-        // RacePlayer player; // the RacePlayer sending the request
+      
         int thisPlayerID = this.client.getPlayer().getPlayer_id();
+        PlayManager.manager.getRaceByPlayerID(thisPlayerID).getPlayers().get(thisPlayerID).setFinalScore(finalScore);
+       PlayManager.manager.getRaceByPlayerID(thisPlayerID).getPlayers().get(thisPlayerID).setScoreflag(1);
+       
+        flag = PlayManager.manager.getRaceByPlayerID(thisPlayerID).getPlayers().get(thisPlayerID).getScoreflag();
         // end race
         Play play = PlayManager.manager.getRaceByPlayerID(thisPlayerID);
         if (play != null) {
-            PlayManager.manager.endRace(play.getID(), thisPlayerID, finalScore);
+            
+             p_id = PlayManager.manager.getRaceByPlayerID(thisPlayerID)
+                .getOpponent(client.getPlayer()).getPlayer_id();
+             int opponentflag = PlayManager.manager.getRaceByPlayerID(p_id).getPlayers().get(p_id).getScoreflag();
+             // will get executed only when second player calls endgame
+             if((flag==1)&&(opponentflag==1)){
+            float opponentscore = PlayManager.manager.getRaceByPlayerID(thisPlayerID)
+                .getOpponent(client.getPlayer()).getFinalScore();
+            
+            if (finalScore>opponentscore){
+            status = 1; // client calling request wins
+            winningscore = finalScore;
+            winningID = thisPlayerID;
+            }
+            else if(opponentscore>finalScore){
+            status = 2; // opponent won
+            winningscore = opponentscore;
+            winningID = p_id;
+            
+            } else {
+            status = 3; // draw
+            winningscore = finalScore;
+            winningID = 0;
+            }
+             
+            PlayManager.manager.endRace(play.getID(), winningID , winningscore);
+         }
         }
-        
     }
 
 }

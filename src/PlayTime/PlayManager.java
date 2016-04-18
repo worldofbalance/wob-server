@@ -26,7 +26,7 @@ public class PlayManager {
     public static PlayManager manager;
 
     // Regerence Tables
-    private Map<Integer, Play> playList = new HashMap<Integer, Play>(); //RaceID -> play
+    private Map<Integer, Play> playList = new HashMap<Integer, Play>(); //PlayID -> play
     public Map<Integer, Play> playerRaceList = new HashMap<Integer, Play>(); //PlayerID -> play
 
     private List<Player> players = new ArrayList<Player>(); //used to create a play
@@ -100,12 +100,11 @@ public class PlayManager {
     /**
      * This method will end a play and delete the existing instances of a play
      *
-     * @param playID is the caller's play ID
+     * @param playID is the caller's play ID i.e. race id
      * @param playerID is the caller's player ID
-     * @param winningScore this is the caller's winning Score
      * @throws Exception
      */
-    public void endRace(int playID, int playerID, String winningScore) throws Exception {
+    public void endRace(int playID, int playerID, float finalscore) throws Exception {
         Play play = playList.get(playID);
         playList.remove(playID);
         // check if play exists
@@ -119,7 +118,7 @@ public class PlayManager {
 
             // create resposes
             ResponseSDEndGame response = new ResponseSDEndGame();
-            response.setHighestScore(winningScore);
+            response.setHighestScore(finalscore);
 
             // set the winner player to avoid null exception - Revisit this logic.
             response.setWinningPlayer(String.valueOf(playerID));

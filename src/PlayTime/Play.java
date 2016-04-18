@@ -136,12 +136,14 @@ public class Play {
         }
     }
 
-    public void setFinalTime(int playerID, float finalString) {
+    /*
+    public void setWinningScore(int playerID, float finalScore) {
 
         PlayTimePlayer temp = this.rPlayers.get(playerID);
-        temp.setFinalTime(finalString);
+        temp.setFinalScore(finalScore);
         this.rPlayers.put(raceID, temp);
     }
+*/
 
     public int getMapID() {
         return mapID;

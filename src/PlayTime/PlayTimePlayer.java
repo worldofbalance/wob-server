@@ -26,12 +26,13 @@ public class PlayTimePlayer extends Player {
             score, // current score of player
             stomach, //current stomach of player
             maxStamina, //maximum stamina
-            stamina; // stamina (used for character sprinting)
+            stamina, // stamina (used for character sprinting)
+            scoreflag; // to keep track whether score updated or not
     private float x, // x position of player
             y, // y position of player
             speed, // current speed of player
             power, // current power of player
-            finalTime;
+            finalScore;
     private boolean right,
             left,
             jump,
@@ -55,11 +56,20 @@ public class PlayTimePlayer extends Player {
         y = 0;
         speed = 1.0f;
         power = 1.0f;
-        finalTime = 0.0f;
+        finalScore = 0.0f;
+        scoreflag =0;
         right = false;
         left = false;
         jump = false;
         usedItem = false;
+    }
+
+    public int getScoreflag() {
+        return scoreflag;
+    }
+
+    public void setScoreflag(int scoreflag) {
+        this.scoreflag = scoreflag;
     }
     
     public int getRaceID() {
@@ -224,19 +234,6 @@ public class PlayTimePlayer extends Player {
         this.left = left;
     }
 
-//    /**
-//     * @return if player jumped
-//     */
-//    public boolean isJump() {
-//        return jump;
-//    }
-//
-//    /**
-//     * @param jump is player jumping?
-//     */
-//    public void setJump(boolean jump) {
-//        this.jump = jump;
-//    }
 
     /**
      * @return usedItem
@@ -280,12 +277,12 @@ public class PlayTimePlayer extends Player {
         this.opponent = opponent;
     }
     
-    public float getFinalTime() {
-        return finalTime;
+    public float getFinalScore() {
+        return finalScore;
     }
 
-    public void setFinalTime(float finalTime) {
-        this.finalTime = finalTime;
+    public void setFinalScore(float finalScore) {
+        this.finalScore = finalScore;
     }
     
 
