@@ -10,6 +10,8 @@ Relies on WoB_Server source code for objects that store simulation timesteps and
 species information.
 */
 
+import cvg.targetgenerator.DBStructs.SpeciesStruct;
+import cvg.targetgenerator.TargetGeneratorCache;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,10 +33,6 @@ import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 
-import shared.org.datacontract.schemas._2004._07.ManipulationParameter.ManipulatingNode;
-import shared.org.datacontract.schemas._2004._07.ManipulationParameter.ManipulatingNodeProperty;
-import shared.org.datacontract.schemas._2004._07.ManipulationParameter.ManipulatingParameter;
-import shared.org.datacontract.schemas._2004._07.ManipulationParameter.NodeBiomass;
 
 import shared.metadata.Constants;
 import shared.model.Ecosystem;
@@ -47,7 +45,6 @@ import shared.simulation.SimulationException;
 import shared.simulation.SpeciesZoneType;
 import shared.simulation.SpeciesZoneType.SpeciesTypeEnum;
 import shared.simulation.config.ManipulatingParameterName;
-import shared.simulation.config.ManipulationActionType;
 import shared.simulation.simjob.ConsumeMap;
 import shared.simulation.simjob.EcosystemTimesteps;
 import shared.simulation.simjob.NodeTimesteps;
@@ -223,15 +220,15 @@ public class ATNEngine {
        }
        //output data
        //A. print header
-       psATN.printf("timesteps");
-       for (int i = 0; i < timesteps; i++) {
+       //psATN.printf("timesteps");
+       for (int i = 1; i < timesteps; i++) {
            psATN.printf(",%d", i);
        }
        psATN.println();
        
        /* Convert to CSV String */
        String biomassCSV = "";
-       biomassCSV = "Manipulation_id: " + job.getATNManipulationId() +"\n\n";
+       //biomassCSV = "Manipulation_id: " + job.getATNManipulationId() +"\n\n";
        
        int maxTimestep = job.getTimesteps();
        // Create Timestep Labels
@@ -252,7 +249,14 @@ public class ATNEngine {
            
            //B. print combined biomass contributions (i.e. locally calculated biomass)
            //for current species.
-           psATN.printf("i.%d.calc", speciesID[i]);
+           String speciesName = null;
+           for(SpeciesStruct str: TargetGeneratorCache.species){
+               if(str.node_id == speciesID[i]){
+                   speciesName = str.name;
+               }
+           }
+           psATN.printf("%s [%d]", speciesName, speciesID[i]);
+           speciesName = null;
            for (int t = 0; t < timesteps; t++) {
                psATN.printf(",%9.0f", calcBiomass[t][i] * biomassScale);
            }

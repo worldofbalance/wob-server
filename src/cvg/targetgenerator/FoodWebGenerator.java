@@ -25,8 +25,28 @@ public class FoodWebGenerator {
     static int maxTries = 30;
 
     public static void init() {
+        TargetGeneratorCache.init();
         if (consumptionTable == null) {
             consumptionTable = new HashMap<Integer, Table>();
+            
+            for(int j = 0; j < TargetGeneratorCache.consumes.size(); j++){
+                int prey = TargetGeneratorCache.consumes.get(j).prey;
+                int species = TargetGeneratorCache.consumes.get(j).species_id;
+                if (!consumptionTable.containsKey(species)) {
+                        consumptionTable.put(species, new Table());
+                    }
+                    if (!consumptionTable.containsKey(prey)) {
+                        consumptionTable.put(prey, new Table());
+                    }
+
+                    //update tables
+                    Table table = consumptionTable.get(species);
+                    table.prey.add(prey);
+
+                    table = consumptionTable.get(prey);
+                    table.consumedBy.add(species);
+            }
+            /*
             try {
                 Class.forName("com.mysql.jdbc.Driver");
                 //Connection conn = DriverManager.getConnection("jdbc:mysql://smurf.sfsu.edu/deBuggerWeb?"
@@ -59,17 +79,25 @@ public class FoodWebGenerator {
             } catch (Exception e) {
                 System.out.println("Failed to retrieve table");
                 e.printStackTrace();
-            }
+            }*/
         }
-
     }
 
     public static String[] translateFoodWeb(int[] web) {
         String[] speciesNames = new String[web.length];
+        
+        for(int i = 0; i < web.length; i++){
+            for(int j = 0; j < TargetGeneratorCache.species.size(); j++){
+                if(web[i] == TargetGeneratorCache.species.get(j).species_id){
+                    speciesNames[i] = TargetGeneratorCache.species.get(j).name;
+                }
+            }
+            
+        }
+        /*
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection conn = DriverManager.getConnection("jdbc:mysql://smurf.sfsu.edu/deBuggerWeb?"
-                    + "user=deBuggerWeb&password=deBugger");
+            Connection conn = GameDB.getConnection();
             for (int i = 0; i < web.length; i++) {
                 PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `species` WHERE `species_id` = " + web[i]);
                 ResultSet rs = stmt.executeQuery();
@@ -84,6 +112,7 @@ public class FoodWebGenerator {
             System.out.println("Failed to retrieve table");
             e.printStackTrace();
         }
+        */
         return speciesNames;
     }
 
@@ -179,7 +208,7 @@ public class FoodWebGenerator {
         ArrayList<Integer> producers = new ArrayList<Integer>();
         for (Integer current : keys) {
             //check if they prey on anything
-            if (consumptionTable.get(current).prey.size() == 0) {
+            if (consumptionTable.get(current).prey.isEmpty()) {
                 producers.add(current);
             }
         }
@@ -201,11 +230,19 @@ public class FoodWebGenerator {
     }
 
     public static int[] getNodeIds(int[] web) {
-        int[] speciesNames = new int[web.length];
+        int[] speciesNodes = new int[web.length];
+        for(int i = 0; i < web.length; i++){
+            for(int j = 0; j < TargetGeneratorCache.species.size(); j++){
+                if(web[i] == TargetGeneratorCache.species.get(j).species_id){
+                    speciesNodes[i] = TargetGeneratorCache.species.get(j).node_id;
+                }
+            }
+            
+        }
+        /*
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            Connection conn = DriverManager.getConnection("jdbc:mysql://smurf.sfsu.edu/deBuggerWeb?"
-                    + "user=deBuggerWeb&password=deBugger");
+            //Class.forName("com.mysql.jdbc.Driver");
+            Connection conn = GameDB.getConnection();
             //Connection conn = GameDB.getConnection();
             for (int i = 0; i < web.length; i++) {
                 PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `species_nodes` WHERE `species_id` = " + web[i]);
@@ -220,8 +257,8 @@ public class FoodWebGenerator {
         } catch (Exception e) {
             System.out.println("Failed to retrieve table");
             e.printStackTrace();
-        }
-        return speciesNames;
+        }*/
+        return speciesNodes;
     }
 
     /**

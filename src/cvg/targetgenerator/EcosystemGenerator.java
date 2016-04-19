@@ -5,6 +5,7 @@
  */
 package cvg.targetgenerator;
 
+import cvg.targetgenerator.DBStructs.SpeciesStruct;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.sql.Connection;
@@ -27,12 +28,12 @@ import shared.simulation.simjob.SimJob;
  */
 public class EcosystemGenerator {
 
-    static HashMap<Integer, HashMap<String, Object>> savedSpecies;
+    //static HashMap<Integer, HashMap<String, Object>> savedSpecies;
 
     public static void GenerateEcosystems(int numOfSpecies, int numOfEcosystems) {
-        if (savedSpecies == null) {
+       /* if (savedSpecies == null) {
             savedSpecies = new HashMap<Integer, HashMap<String, Object>>();
-        }
+        }*/
         int[] currentNodeWeb, currentSpeciesWeb;
         FoodWebGenerator.init();
         while (numOfEcosystems > 0) {
@@ -95,7 +96,16 @@ public class EcosystemGenerator {
         boolean producer = false;
 
         for (int i = 0; i < currentNodeWeb.length; i++) {
-            if (savedSpecies.containsKey(currentSpeciesWeb[i])) {
+            SpeciesStruct species = null;
+            
+            for(int j = 0; j < TargetGeneratorCache.species.size(); j++){
+                species = TargetGeneratorCache.species.get(j);
+                if(species.species_id == currentSpeciesWeb[i]){
+                    perUnitBiomass = species.biomass;
+                    producer = (species.organism_type == Constants.ORGANISM_TYPE_PLANT);
+                }
+            }
+           /* if (savedSpecies.containsKey(currentSpeciesWeb[i])) {
                 double mass = (double) savedSpecies.get(currentSpeciesWeb[i]).get("biomass");
                 boolean pr = (boolean) savedSpecies.get(currentSpeciesWeb[i]).get("producer");
                 perUnitBiomass = mass;
@@ -121,7 +131,7 @@ public class EcosystemGenerator {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
+            }*/
             //add species node in brackets
             run = run.concat("[" + currentNodeWeb[i] + "],");
 
@@ -130,7 +140,7 @@ public class EcosystemGenerator {
             if(!producer)
                 initialbiomass = 2000 - (int) (Math.random() * 1000);
             else
-                initialbiomass = 8000 - (int) (Math.random() * 7000);
+                initialbiomass = 8000 - (int) (Math.random() * 4000);
             
             run = run.concat(initialbiomass + ",");
 

@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.PrintStream;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,7 +20,6 @@ import java.util.UUID;
 import shared.atn.ATNEngine;
 import shared.atn.Functions;
 import shared.db.ConvergeEcosystemDAO;
-import shared.db.GameDB;
 import shared.metadata.Constants;
 import shared.simulation.simjob.SimJob;
 
@@ -33,16 +33,25 @@ public class TargetGraphGenerator {
     public TargetGraphGenerator() {
 
     }
-    
-    public static void main(String[] args){
+
+    public static void main(String[] args) {
+        TargetGeneratorCache.init();
         writeToMultiplayerDatabase();
+        generateNewMultiplayerFile();
     }
 
     public static void generateNewMultiplayerFile() {
         ResponseConvergeEcosystems response = new ResponseConvergeEcosystems();
         response.setConvergeEcosystems(ConvergeEcosystemDAO.getMultiplayerConvergeEcosystems());
-
+        File file = new File(Constants.ATN_CSV_SAVE_PATH+"converge-ecosystems-mc.txt");
+        if(file.exists()){
+            file.delete();
+        }
         try {
+            file.createNewFile();
+           /* PrintStream ps = new PrintStream(new FileOutputStream(Constants.ATN_CSV_SAVE_PATH + "converge-ecosystems-mc.txt"));
+            ps.write(response.getBytes(), 0, response.getBytes().length);
+            ps.close();*/
             //Harjit writing temporary code to generate "converge-ecosystems-mc.txt" in local computer
             FileOutputStream tempStream = new FileOutputStream(Constants.ATN_CSV_SAVE_PATH + "converge-ecosystems-mc.txt");
             tempStream.write(response.getBytes());
@@ -69,7 +78,7 @@ public class TargetGraphGenerator {
                         String targetParamFileName = Constants.ATN_ACCEPTED_CSV_SAVE_PATH + files[i] + "/" + allFiles[j];
                         String defaultParams = "";
                         String targetParams = "";
-                        String description= "";
+                        String description = "";
                         int initialbiomass = 0, totalconfigured = 0;
                         boolean changeable = false;
                         try {
@@ -137,8 +146,8 @@ public class TargetGraphGenerator {
 
                                     defaultParams = defaultParams.concat(s + ",");
                                     totalconfigured--;
-                                    
-                                }else if(totalconfigured == 0){
+
+                                } else if (totalconfigured == 0) {
                                     initialbiomass = 0;
                                     changeable = false;
                                     defaultParams = defaultParams.concat("0,");
@@ -163,7 +172,7 @@ public class TargetGraphGenerator {
                             String line = "";
 
                             while ((line = reader.readLine()) != null) {
-                                targetCSV = targetCSV.concat(line);
+                                targetCSV = targetCSV.concat(line +"\n");
                             }
 
                             reader.close();
@@ -172,10 +181,10 @@ public class TargetGraphGenerator {
                         }
                         String defaultCSV = "";
                         try {
-                            reader = new BufferedReader(new FileReader(Functions.getLastCSVFilePath()+ ".csv"));
+                            reader = new BufferedReader(new FileReader(Functions.getLastCSVFilePath() + ".csv"));
                             String line = "";
                             while ((line = reader.readLine()) != null) {
-                                defaultCSV = defaultCSV.concat(line);
+                                defaultCSV = defaultCSV.concat(line +"\n");
                             }
                             reader.close();
                         } catch (Exception e) {
@@ -210,19 +219,20 @@ public class TargetGraphGenerator {
 
     private static void addToMultiplayerDB(String description, String defaultParams, String defaultCSV, String targetParams, String targetCSV, int steps) {
         try {
-            Connection conn = GameDB.getConnection();
+            //Connection conn = GameDB.getConnection();
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://smurf.sfsu.edu/wob?"
+                 + "user=wob&password=asd123");
             PreparedStatement stmt;
-            for (int i = 1001; i <= 1005; i++) {
-                try {
-                    stmt = conn.prepareStatement("INSERT INTO `CSC63101`.`converge_ecosystem_mc` (`decription`, `timesteps`, `config_default`, `config_target`, `csv_default`, `csv_target`) VALUES ('"+description+"', '200', '"+defaultParams+"', '"+targetParams+"', '"+defaultCSV+"', '"+targetCSV+"')");
-                    stmt.execute();
-                    stmt.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            try {
+                stmt = conn.prepareStatement("INSERT INTO `wob`.`converge_ecosystem_mc` (`description`, `timesteps`, `config_default`, `config_target`, `csv_default`, `csv_target`) VALUES ('" + description + "', '200', '" + defaultParams + "', '" + targetParams + "', '" + defaultCSV + "', '" + targetCSV + "')");
+                stmt.execute();
+                stmt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         } catch (Exception e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
 
     }

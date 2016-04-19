@@ -10,6 +10,7 @@ import java.util.List;
 
 // Other Imports
 import cvg.ConvergeEcosystem;
+import java.sql.DriverManager;
 import shared.util.Log;
 
 /**
@@ -71,12 +72,14 @@ public final class ConvergeEcosystemDAO {
         ResultSet rs = null;
 
         try {
-            con = GameDB.getConnection();
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://smurf.sfsu.edu/wob?"
+               + "user=wob&password=asd123");
             pstmt = con.prepareStatement(query);
-
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
+                System.out.println("ecosystem: " + rs.getString("config_target"));
                 ConvergeEcosystem ecosystem = new ConvergeEcosystem();
 
                 ecosystem.setEcosystemId(rs.getInt("ecosystem_id"));
@@ -89,10 +92,10 @@ public final class ConvergeEcosystemDAO {
 
                 ecosystems.add(ecosystem);
             }
-        } catch (SQLException ex) {
-            Log.println_e(ex.getMessage());
+        } catch (Exception ex) {
+            ex.printStackTrace();
         } finally {
-            GameDB.closeConnection(con, pstmt, rs);
+
         }
 
         return ecosystems;
