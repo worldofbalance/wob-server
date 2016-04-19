@@ -7,7 +7,8 @@ import rr.core.GameServer;
 // Other Imports
 import rr.net.response.ResponseCurrency;
 import rr.race.RaceManager;
-import shared.util.Log;/*
+import shared.util.Log;
+import shared.db.*;
 
 /**
  *
@@ -34,7 +35,9 @@ public class RequestCurrency extends GameRequest {
         //client.getPlayer().GETCURRENCYPL0X
         
         //Hardcoded unil fixed 
-        currency =9000;
+        //currency =9000;
+        
+        currency = PlayerDAO.getPlayerByPlayerId(client.getUserID()).getCredits();
         
         responseCurrency.setCurrency(currency);
         
