@@ -11,7 +11,8 @@ import shared.util.Log;
 import shared.db.*;
 
 /**
- *
+ *Client Will request their Currency balance upon entering the RR game so
+ * it can be displayed for them
  * @author Jrubin
  */
 public class RequestCurrency extends GameRequest {

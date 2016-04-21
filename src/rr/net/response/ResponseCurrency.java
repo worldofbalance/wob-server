@@ -5,7 +5,8 @@ import rr.util.GamePacket;
 
 
 /**
- *
+ *Responds with a packet containing packet ID and a int32 containing an int
+ * representing Client's currency 
  * @author Jrubin
  */
 public class ResponseCurrency extends GameResponse{
