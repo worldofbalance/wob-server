@@ -36,10 +36,10 @@ public class RequestSDKeyboard extends GameRequest {
         responsekeyboard.setKeyCode(keyCode);
         responsekeyboard.setKeyCombination(keyCombination);
         
-        p_id = PlayManager.manager.getRaceByPlayerID(client.getPlayer().getPlayer_id())
+        p_id = PlayManager.manager.getPlayByPlayerID(client.getPlayer().getPlayer_id())
                 .getOpponent(client.getPlayer()).getPlayer_id();
         
-        player = PlayManager.manager.getRaceByPlayerID(p_id).getPlayers().get(p_id);
+        player = PlayManager.manager.getPlayByPlayerID(p_id).getPlayers().get(p_id);
         
         GameServer.getInstance().getThreadByPlayerID(p_id).send(responsekeyboard);
 

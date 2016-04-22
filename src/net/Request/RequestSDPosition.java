@@ -8,9 +8,11 @@ package net.Request;
 import PlayTime.PlayManager;
 import PlayTime.PlayTimePlayer;
 import core.GameServer;
+import db.PlayDAO;
 import java.io.IOException;
 import net.Response.ResponseSDPosition;
 import utility.DataReader;
+
 
 /**
  *
@@ -38,15 +40,15 @@ public class RequestSDPosition extends GameRequest{
 
    
         //The playerID of the opponent of the player who sent the request
-        p_id = PlayManager.manager.getRaceByPlayerID(client.getPlayer().getPlayer_id())
+        p_id = PlayManager.manager.getPlayByPlayerID(client.getPlayer().getPlayer_id())
                 .getOpponent(client.getPlayer()).getPlayer_id();
               
         
         // get the player and define x and y at the time of request
-        player = PlayManager.manager.getRaceByPlayerID(p_id).getPlayers().get(p_id);
+        player = PlayManager.manager.getPlayByPlayerID(p_id).getPlayers().get(p_id);
         player.setX(x);
         player.setY(y);
-        
+        //PlayDAO.updatePlay(player); this is slowing things substanitially
         GameServer.getInstance().getThreadByPlayerID(p_id).send(responseSDPosition);
         
     }

@@ -40,9 +40,9 @@ public class RequestSDStartGame extends GameRequest {
     public void doBusiness() throws Exception {
         Log.println("request start game from user: '" + client.getUserID() + "' received");
         
-        Log.println("The race the user belongs to is '" +  PlayManager.manager.getRaceByPlayerID(client.getUserID()).getID() + "'");
+        Log.println("The play the user belongs to is '" +  PlayManager.manager.getPlayByPlayerID(client.getUserID()).getID() + "'");
         
-        PlayManager.manager.getRaceByPlayerID(client.getUserID()).startRace(client.getUserID());
+        PlayManager.manager.getPlayByPlayerID(client.getUserID()).startPlay(client.getUserID());
 
     }
 
