@@ -7,11 +7,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import model.Player;
 
 import utility.Log;
 
 /**
- * CURRENTLY UNTESTED: IN PROGRESS
+ * 
  * @author Karl Bigley-Bodlak
  * NOTE: right now this heavily borrows from running rhino, but only for creating
  * a base for a real-time multiplayer game. This will not be a copy of running rhino's
@@ -44,14 +45,14 @@ public class PlayDAO {
         
         try
         {
-            Log.println("Connecting to database...");
+            //Log.println("Connecting to database...");
             
             // establish connection to DB
             // pull out existing records with same race ID
             connection = GameDB.getConnection();
             
-            Log.println("Successfully connected to database.\n"
-                    + "Finding existence of record of play ID " + playID + "...");
+//            Log.println("Successfully connected to database.\n"
+//                    + "Finding existence of record of play ID " + playID + "...");
             
             pstmt = connection.prepareStatement(findExistingPlayQuery);
             pstmt.setInt(1, playID); // ... WHERE `race_id` = ?
@@ -96,7 +97,7 @@ public class PlayDAO {
                 Log.println("Successfully updated number of players of play ID " + playID + "...");
             }
             
-            Log.println("Queries finished. Disconnecting from database...");
+            //Log.println("Queries finished. Disconnecting from database...");
             
             // all done with queries
             rs.close();
@@ -115,7 +116,7 @@ public class PlayDAO {
             if (connection != null)
             {
                 connection.close();
-                Log.println("Successfully disconnected from database.");
+                //Log.println("Successfully disconnected from database.");
             }
         }
     }
@@ -137,7 +138,7 @@ public class PlayDAO {
         
         try
         {
-            Log.println("Connecting to database...");
+            //Log.println("Connecting to database...");
             
             // establish connection to DB
             // set up record for player in selected race (in `runner_raceinfo`)
@@ -174,8 +175,8 @@ public class PlayDAO {
                 throw new Exception("Database error. Failed to create record of play ID " + playID + " for player ID " + playerID + ".");
             }
             
-            Log.println("Successfully created record for play ID " + playID + " of player ID " + playerID + ".\n"
-                    + "Queries finished. Disconnecting from database...");
+//            Log.println("Successfully created record for play ID " + playID + " of player ID " + playerID + ".\n"
+//                    + "Queries finished. Disconnecting from database...");
             
             // all done with queries
             pstmt.close();
@@ -193,7 +194,7 @@ public class PlayDAO {
             if (connection != null)
             {
                 connection.close();
-                Log.println("Successfully disconnected from database.");
+                //Log.println("Successfully disconnected from database.");
             }
         }
         
@@ -232,7 +233,7 @@ public class PlayDAO {
         
         try
         {
-            Log.println("Connecting to database...");
+            //Log.println("Connecting to database...");
             
             // get player ID and ID of race that the player is in
             playerID = player.getPlayer_id();
@@ -280,8 +281,7 @@ public class PlayDAO {
                 throw new Exception("Database error. Failed to update record of player ID " + playerID + " in play ID " + player.getRaceID() + ".");
             }
             
-            Log.println("Successfully updated record of play ID " + playID + " for player ID " + playerID + ".\n"
-                    + "Queries finished. Disconnecting from database...");
+            Log.println("Successfully updated record of play ID " + playID + " for player ID " + playerID + ".\n");
             
             // all done with queries
             pstmt.close();
@@ -299,7 +299,7 @@ public class PlayDAO {
             if (connection != null)
             {
                 connection.close();
-                Log.println("Successfully disconnected from database.");
+                //Log.println("Successfully disconnected from database.");
             }
         }
                 
@@ -312,23 +312,24 @@ public class PlayDAO {
      * updates db with end of match results. This can include winner, scores,
      * and other information for recording matches. Also removes temporary
      * match data from database.
+     * @param playID the play being ended.
      * @throws SQLException 
      */
-    public static void endPlay() throws SQLException{
-        
+    public static void endPlay(int playID) throws SQLException{
+        Connection connection = null;
+        PreparedStatement pstmt;
     }
     
     /**
      * updates db when a player leaves a match
-     * @param player the in-game player leaving the game
+     * @param playerID the in-game player's ID leaving the game
+     * @param playID the game the player is leaving
      * @throws SQLException 
      */
-    public static void leavePlay(PlayTimePlayer player) throws SQLException{
+    public static void leavePlay(int playerID, int playID) throws SQLException{
         Connection connection = null;
         PreparedStatement pstmt;
-        int playID, // ID of play that the player was in
-                playerID, // ID of leaving player
-                currentNumberOfPlayers; // number of players in the race that the player was in (including the player)
+        int currentNumberOfPlayers; // number of players in the race that the player was in (including the player)
         
         // SQL query for deleting record of the race where the player was
         String deletePlayRecordQuery = "DELETE FROM sdv_playinfo_player WHERE player_id = ? ",
@@ -342,11 +343,10 @@ public class PlayDAO {
         
         try
         {
-            Log.println("Connecting to database...");
+            //Log.println("Connecting to database...");
             
             // get player ID and ID of race that the player was in
-            playerID = player.getPlayer_id();
-            playID = player.getRaceID();
+            
             
             // establish connection to DB
             // delete race record of leaving player from `runner_raceinfo`
