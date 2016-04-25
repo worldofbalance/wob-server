@@ -24,18 +24,19 @@ public class TargetGeneratorCache {
     private static DBStructs structs;
 
     public static void init() {
-        consumes = new ArrayList<ConsumeStruct>();
-        species = new ArrayList<SpeciesStruct>();
-        structs = new DBStructs();
-        try {
+        if (consumes == null || species == null || structs == null) {
+            consumes = new ArrayList<ConsumeStruct>();
+            species = new ArrayList<SpeciesStruct>();
             structs = new DBStructs();
-            Connection conn = GameDB.getConnection();
-            GrabConsumesTable(conn);
-            GrabSpeciesTable(conn);
-        } catch (Exception e) {
-            e.printStackTrace();
+            try {
+                structs = new DBStructs();
+                Connection conn = GameDB.getConnection();
+                GrabConsumesTable(conn);
+                GrabSpeciesTable(conn);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-       
 
     }
 

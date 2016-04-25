@@ -112,6 +112,8 @@ public class ATNEngine {
 	       SpeciesType.loadSimTestLinkParams(Constants.ECOSYSTEM_TYPE);
        }
        //Above is not needed SimJobManager does this
+       
+       TargetGeneratorCache.init();
    }
    
    public ATNEngine(boolean generated){
@@ -534,7 +536,7 @@ public class ATNEngine {
    }
    
    public static void main(String args[]) throws FileNotFoundException, SQLException, SimulationException {
-	   LOAD_SIM_TEST_PARAMS = true;
+        LOAD_SIM_TEST_PARAMS = true;
        //get output directory
        JFrame parent = null;
        userInput = new UserInput(parent);
@@ -549,14 +551,14 @@ public class ATNEngine {
        ATNEngine atn = new ATNEngine();
 
        SimJob job = new SimJob();
-       String test = "3,[7],2198,40.0,0,0,[89],1615,470.0,1,R=1.1911334583295456,0,[86],6664,156.0,1,R=0.6425511321641038,0";
+       String test = "11,[2],664.1382861495723,528.0,2,K=1124.298302342037,R=1.0,0,[3],628.0774310402782,528.0,1,K=3094.7497791345336,0,[4],791.2368121645457,528.0,1,K=3096.0324601561038,0,[5],1630.705789023641,1.0,1,K=1466.66878847935,0,[7],399.8390149071922,816.0,1,K=5068.505083411805,0,[49],1429.8563464848974,0.355,1,X=0.9652016142012252,0,[55],677.823631884153,0.213,1,X=0.0031317358585477573,0,[61],472.9850090245784,54.0,1,X=0.1293436247045764,0,[74],1351.1972569167415,50.0,1,X=0.4696245337228393,0,[82],634.9374130808931,50.0,1,X=0.07811152489469675,0,[83],156.88992423564545,103.0,1,X=0.6399526206385862,0";
        job.setJob_Descript("atn1");
        //job.setNode_Config("2,[5],2000,1.000,0,0,[70],2494,13.000,1,X=0.155,0");	//Info comes from client
        //job.setNode_Config("5,[5],2000,1.000,1,K=9431.818,0,[14],1751,20.000,0,0,[31],1415,0.008,1,X=1.000,0,[42],240,0.205,1,X=0.437,0,[70],2494,13.000,1,X=0.155,0");
        job.setNode_Config(test);
        //job.setNode_Config("15,[1],400,1.000,1,K=2000.000,0,[2],1056,20.000,1,K=3000.000,0,[5],2000,1.000,1,K=7000.000,0,[7],1322,40.000,1,K=3000.000,0,[9],1913,0.071,1,X=0.310,0,[12],300,1.000,0,0,[26],1164,0.011,1,X=1.000,0,[45],916,0.425,1,X=0.400,0,[49],1015,0.355,1,X=0.120,0,[55],1849,0.213,1,X=0.480,0,[67],1434,9.600,1,X=0.180,0,[71],564,4.990,1,X=0.220,0,[75],568,1.590,1,X=0.010,0,[80],575,41.500,1,X=0.130,0,[87],240,112.000,1,X=0.100,0");
        job.setManip_Timestamp((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date()));
-       job.setTimesteps(200);
+       job.setTimesteps(1000);
        String atnManipId = UUID.randomUUID().toString();
        job.setATNManipulationId(atnManipId);
        atn.processSimJob(job);

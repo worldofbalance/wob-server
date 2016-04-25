@@ -12,7 +12,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.PrintStream;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,6 +19,7 @@ import java.util.UUID;
 import shared.atn.ATNEngine;
 import shared.atn.Functions;
 import shared.db.ConvergeEcosystemDAO;
+import shared.db.GameDB;
 import shared.metadata.Constants;
 import shared.simulation.simjob.SimJob;
 
@@ -79,7 +79,7 @@ public class TargetGraphGenerator {
                         String defaultParams = "";
                         String targetParams = "";
                         String description = "";
-                        int initialbiomass = 0, totalconfigured = 0;
+                        double initialbiomass = 0, totalconfigured = 0;
                         boolean changeable = false;
                         try {
                             reader = new BufferedReader(new FileReader(targetParamFileName));
@@ -112,7 +112,7 @@ public class TargetGraphGenerator {
                                         }
                                     }
                                 } else if (initialbiomass == 0) {
-                                    initialbiomass = Integer.parseInt(s);
+                                    initialbiomass = Double.parseDouble(s);
                                     //change it randomly
                                     if (Math.random() < .5) {
                                         initialbiomass -= Math.random() * (initialbiomass / 2);
@@ -139,9 +139,6 @@ public class TargetGraphGenerator {
                                     } else if (s.startsWith("X=")) {
                                         newNumber = Math.random();
                                         s = "X=" + newNumber;
-                                    } else if (s.startsWith("R=")) {
-                                        newNumber = Math.random() * 2;
-                                        s = "R=" + newNumber;
                                     }
 
                                     defaultParams = defaultParams.concat(s + ",");
@@ -219,13 +216,13 @@ public class TargetGraphGenerator {
 
     private static void addToMultiplayerDB(String description, String defaultParams, String defaultCSV, String targetParams, String targetCSV, int steps) {
         try {
-            //Connection conn = GameDB.getConnection();
-            Class.forName("com.mysql.jdbc.Driver");
+            Connection conn = GameDB.getConnection();
+            /*Class.forName("com.mysql.jdbc.Driver");
             Connection conn = DriverManager.getConnection("jdbc:mysql://smurf.sfsu.edu/wob?"
-                 + "user=wob&password=asd123");
+                 + "user=wob&password=asd123");*/
             PreparedStatement stmt;
             try {
-                stmt = conn.prepareStatement("INSERT INTO `wob`.`converge_ecosystem_mc` (`description`, `timesteps`, `config_default`, `config_target`, `csv_default`, `csv_target`) VALUES ('" + description + "', '200', '" + defaultParams + "', '" + targetParams + "', '" + defaultCSV + "', '" + targetCSV + "')");
+                stmt = conn.prepareStatement("INSERT INTO `csc63101`.`converge_ecosystem_mc` (`description`, `timesteps`, `config_default`, `config_target`, `csv_default`, `csv_target`) VALUES ('" + description + "', '200', '" + defaultParams + "', '" + targetParams + "', '" + defaultCSV + "', '" + targetCSV + "')");
                 stmt.execute();
                 stmt.close();
             } catch (Exception e) {
