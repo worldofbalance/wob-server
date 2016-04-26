@@ -36,7 +36,7 @@ public class TargetGraphGenerator {
 
     public static void main(String[] args) {
         TargetGeneratorCache.init();
-        writeToMultiplayerDatabase();
+        //writeToMultiplayerDatabase();
         generateNewMultiplayerFile();
     }
 
@@ -92,7 +92,6 @@ public class TargetGraphGenerator {
                             for (int arg = 1; arg < args.length; arg++) {
 
                                 String s = args[arg];
-                                System.out.println("S = " + s);
                                 if (!changeable) {
                                     defaultParams = defaultParams.concat(s + ",");
 
@@ -169,6 +168,13 @@ public class TargetGraphGenerator {
                             String line = "";
 
                             while ((line = reader.readLine()) != null) {
+                                String newline = "";
+                                String[] steps = line.split(",");
+                                for(int k = 0; k < steps.length; k++){
+                                    newline = newline.concat(steps[k].trim() + ",");
+                                }
+                                
+                                line = newline;
                                 targetCSV = targetCSV.concat(line +"\n");
                             }
 
@@ -181,6 +187,13 @@ public class TargetGraphGenerator {
                             reader = new BufferedReader(new FileReader(Functions.getLastCSVFilePath() + ".csv"));
                             String line = "";
                             while ((line = reader.readLine()) != null) {
+                                String newline = "";
+                                String[] steps = line.split(",");
+                                for(int k = 0; k < steps.length; k++){
+                                    newline = newline.concat(steps[k].trim() + ",");
+                                }
+                                
+                                line = newline;
                                 defaultCSV = defaultCSV.concat(line +"\n");
                             }
                             reader.close();
@@ -242,7 +255,7 @@ public class TargetGraphGenerator {
             job.setJob_Descript("atn1");
             job.setNode_Config(node_config);
             job.setManip_Timestamp((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date()));
-            job.setTimesteps(200);
+            job.setTimesteps(1000);
             String atnManipId = UUID.randomUUID().toString();
             job.setATNManipulationId(atnManipId);
             atn.processSimJob(job);

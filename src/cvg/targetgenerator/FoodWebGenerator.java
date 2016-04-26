@@ -22,7 +22,7 @@ import shared.db.GameDB;
 public class FoodWebGenerator {
 
     static HashMap<Integer, Table> consumptionTable;
-    static int maxTries = 30;
+    static int maxTries = 5;
 
     public static void init() {
         TargetGeneratorCache.init();
@@ -181,17 +181,38 @@ public class FoodWebGenerator {
         return getRandomSpeciesNotInWeb(set, web, maxTries);
     }
 
-    static int getRandomSpeciesNotInWeb(ArrayList<Integer> set, int[] web, int triesLeft) {
+    static int getRandomSpeciesNotInWeb(ArrayList<Integer> set, int[] web, int triesLeft) throws Exception{
         if (triesLeft > 0) {
             int randomSeed = (int) (Math.random() * set.size());
             int randomSpecies = set.get(randomSeed);
-            if (!webContains(web, randomSpecies)) {
+            if (!webContains(web, randomSpecies) && !tooManyExistingConnections(web, randomSpecies)) {
                 return randomSpecies;
             } else {
                 return getRandomSpeciesNotInWeb(set, web, triesLeft - 1);
             }
         }
         return -1;
+    }
+    
+    static boolean tooManyExistingConnections(int[] web, int randomSpecies){
+        int maxPreysOn = (int)((double)(web.length/4) * 3);
+        int maxPreyedOn = maxPreysOn;
+        
+        for(int i = 0; i < web.length; i++){
+            if(consumptionTable.get(randomSpecies).prey.contains(web[i])){
+                maxPreysOn--;
+                
+                if(maxPreysOn == 0)
+                    return true;
+            }else if(consumptionTable.get(randomSpecies).consumedBy.contains(web[i])){
+                maxPreyedOn--;
+                
+                if(maxPreyedOn == 0)
+                    return true;
+            }
+        }
+        
+        return false;
     }
 
     static boolean webContains(int[] web, int species) {
@@ -265,8 +286,9 @@ public class FoodWebGenerator {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        FoodWebGenerator analyzer = new FoodWebGenerator();
-        int[] web = analyzer.generateFoodWeb(30);
+        TargetGeneratorCache.init();
+        FoodWebGenerator.init();
+        int[] web = FoodWebGenerator.generateFoodWeb(11);
         String[] translations = FoodWebGenerator.translateFoodWeb(web);
         for (int i = 0; i < web.length; i++) {
             System.out.println(translations[i]);

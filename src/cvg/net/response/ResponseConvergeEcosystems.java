@@ -38,8 +38,8 @@ public class ResponseConvergeEcosystems extends GameResponse {
             packet.addInt32(ecosystem.getTimesteps());
             packet.addString(ecosystem.getConfigDefault());
             packet.addString(ecosystem.getConfigTarget());
-            packet.addString(ecosystem.getCsvDefault());
-            packet.addString(ecosystem.getCsvTarget());
+            packet.addString32(ecosystem.getCsvDefault());
+            packet.addString32(ecosystem.getCsvTarget());
         }
 
         return packet.getBytes();

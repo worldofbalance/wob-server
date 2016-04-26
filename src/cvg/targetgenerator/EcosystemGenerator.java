@@ -148,24 +148,14 @@ public class EcosystemGenerator {
             run = run.concat(perUnitBiomass + ",");
 
             //figure out if you want to configure and make sure they are valid for producer or animal
-            if (producer) {
-                totalconfigured = (int) (Math.random() * 2);
-            } else if (Math.random() > .5) {
+            if (Math.random() > .5) {
                 totalconfigured = 1;
             }
-            //make the changes in correct format for K, R, or X
-            boolean kUsed = false;
-            boolean rUsed = false;
+
             run = run.concat(totalconfigured + ",");
-            while (totalconfigured > 0) {
-                if (producer) {
-                    if ((Math.random() > .5 && !kUsed) || rUsed) {
-                        run = run.concat("K=" + (10000 - (int) (Math.random() * 7000)) + ",");
-                        kUsed = true;
-                    } else {
-                        run = run.concat("R=" + Math.random() * 2 + ",");
-                        rUsed = true;
-                    }
+            if (totalconfigured > 0) {
+                if (producer && Math.random() > .5) {
+                    run = run.concat("K=" + (10000 - (int) (Math.random() * 7000)) + ","); 
                 } else {
                     run = run.concat("X=" + Math.random() + ",");
                 }

@@ -72,9 +72,7 @@ public final class ConvergeEcosystemDAO {
         ResultSet rs = null;
 
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://smurf.sfsu.edu/wob?"
-               + "user=wob&password=asd123");
+            con = GameDB.getConnection();
             pstmt = con.prepareStatement(query);
             rs = pstmt.executeQuery();
 

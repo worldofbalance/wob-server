@@ -45,7 +45,7 @@ public class AtnAnalyzer {
                             String[] info = line.split(",");
                             for (int j = info.length - 10; j < info.length; j++) {
                                 int num = Integer.parseInt(info[j].trim());
-                                if (num <= 3) {
+                                if (num <= 0) {
                                     maxLowSpecies--;
                                 }
                             }
@@ -54,18 +54,9 @@ public class AtnAnalyzer {
                     //if we went through every species and no species dies, add it to the accepted
                     if (maxLowSpecies > 0) {
                         accepted.add(files[i]);
-                    } /*else {
-                        File file = new File(csvFile);
-                        if (file.exists()) {
-                            file.delete();
-                        }
-                        String node_params = csvFile.replace(".csv", "_node_params");
-                        file = new File(node_params);
-
-                        if (file.exists()) {
-                            file.delete();
-                        }
-                    }*/
+                    } else {
+                        deleteFile(csvFile);
+                    }
                     br.close();
                 } catch (Exception e) {
                     if (e instanceof NumberFormatException) {
@@ -75,10 +66,24 @@ public class AtnAnalyzer {
                     } else {
                         e.printStackTrace();
                     }
+                    deleteFile(csvFile);
                 }
             }
         }
 
+    }
+
+    void deleteFile(String csvFile) {
+        File file = new File(csvFile);
+        if (file.exists()) {
+            file.delete();
+        }
+        String node_params = csvFile.replace(".csv", "_node_params");
+        file = new File(node_params);
+
+        if (file.exists()) {
+            file.delete();
+        }
     }
 
     void moveFiles(String directory, String targetDirectory, int numOfSpecies) {
@@ -112,19 +117,6 @@ public class AtnAnalyzer {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        //clear generated files
-        for(int i = 0; i < files.length; i++){
-            try{
-                File file = new File(directory + files[i]);
-                if (file.exists()) {
-                   file.delete();
-                }
-                        
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-        }
     }
 
     boolean validLineNo(int lineno) {
@@ -146,14 +138,14 @@ public class AtnAnalyzer {
     }
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        /*System.out.println("How many species do you want in the ecosystem?");
+        /*Scanner scanner = new Scanner(System.in);
+        System.out.println("How many species do you want in the ecosystem?");
         int n = scanner.nextInt();
         System.out.println("How many attempts do you want?");
         int attempts = scanner.nextInt();*/
-        int attempts = 100;
-        int n = 4;
-        //while (n < 11) {
+        int attempts = 1;
+        int n = 7;
+        while (n < 8) {
 
             EcosystemGenerator.GenerateEcosystems(n, attempts);
             AtnAnalyzer analyzer = new AtnAnalyzer(Constants.ATN_GENERATED_CSV_SAVE_PATH);
@@ -165,10 +157,10 @@ public class AtnAnalyzer {
             }
 
             File file = new File(Constants.ATN_ACCEPTED_CSV_SAVE_PATH + "/" + n + "/");
-            if (file.list().length > 10) {
+            if (file.list().length > 4) {
                 n++;
             }
-        //}
+        }
         //TargetGraphGenerator.writeToMultiplayerDatabase();
 
     }
