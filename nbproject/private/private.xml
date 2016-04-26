@@ -7,11 +7,13 @@
             <file>file:/C:/Users/anu/Documents/NetBeansProjects/SeaDivided/src/model/Prey.java</file>
             <file>file:/C:/Users/anu/Documents/NetBeansProjects/SeaDivided/src/net/Request/RequestSDEndGame.java</file>
             <file>file:/C:/Users/anu/Documents/NetBeansProjects/SeaDivided/src/net/Response/ResponseSDEndGame.java</file>
+            <file>file:/C:/Users/anu/Documents/NetBeansProjects/SeaDivided/src/core/GameServer.java</file>
             <file>file:/C:/Users/anu/Documents/NetBeansProjects/SeaDivided/src/PlayTime/Play.java</file>
             <file>file:/C:/Users/anu/Documents/NetBeansProjects/SeaDivided/src/PlayTime/PlayManager.java</file>
             <file>file:/C:/Users/anu/Documents/NetBeansProjects/SeaDivided/src/net/Request/RequestPrey.java</file>
-            <file>file:/C:/Users/anu/Documents/NetBeansProjects/SeaDivided/src/PlayTime/PlayTimePlayer.java</file>
+            <file>file:/C:/Users/anu/Documents/NetBeansProjects/SeaDivided/src/net/Request/RequestPlayInit.java</file>
             <file>file:/C:/Users/anu/Documents/NetBeansProjects/SeaDivided/src/net/Request/RequestSDPosition.java</file>
+            <file>file:/C:/Users/anu/Documents/NetBeansProjects/SeaDivided/src/net/Request/RequestSDStartGame.java</file>
         </group>
     </open-files>
 </project-private>
