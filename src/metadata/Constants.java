@@ -42,4 +42,6 @@ public class Constants {
     public final static short SMSG_RES_PREY = 604;
     public final static short CMSG_EAT_PREY = 505;
     public static final short SMSG_EAT_PREY = 605;
+    public final static short CMSG_DISCONNECT = 506;
+    public final static short SMSG_DISCONNECT = 606;
 }
