@@ -38,6 +38,7 @@ public class RequestPlayInit extends GameRequest {
         
         if(play != null) {
             ResponsePlayInit response = new ResponsePlayInit();
+            response.setPlayer(play.getPlayer(player_id));
             for(int p_id : play.getPlayers().keySet()) {
                 NetworkManager.addResponseForUser(p_id, response);
             }
