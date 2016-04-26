@@ -7,6 +7,9 @@ package PlayTime;
 
 import core.GameServer;
 import core.NetworkManager;
+import db.PlayDAO;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +18,7 @@ import java.util.Random;
 import model.Player;
 import net.Response.ResponsePlayInit;
 import net.Response.ResponseSDEndGame;
+import utility.Log;
 
 /**
  *
@@ -27,7 +31,7 @@ public class PlayManager {
 
     // Regerence Tables
     private Map<Integer, Play> playList = new HashMap<Integer, Play>(); //PlayID -> play
-    public Map<Integer, Play> playerRaceList = new HashMap<Integer, Play>(); //PlayerID -> play
+    public Map<Integer, Play> playerPlayList = new HashMap<Integer, Play>(); //PlayerID -> play
 
     private List<Player> players = new ArrayList<Player>(); //used to create a play
 
@@ -39,7 +43,7 @@ public class PlayManager {
         return manager;
     }
 
-    public Play createRace(int player_id) {
+    public Play createPlay(int player_id) {
         Play play = null;
 
         if (players.isEmpty()) {
@@ -52,9 +56,9 @@ public class PlayManager {
                 int playID = randomGenerator.nextInt(2001);
                 while (playList.containsKey(playID)) {
                     playID = randomGenerator.nextInt(2001);
-                    System.out.println("Race ID:" + playID);
+                    System.out.println("Play ID:" + playID);
                 }
-                System.out.println("Race ID:" + playID);
+                System.out.println("Play ID:" + playID);
                 players.add(GameServer.getInstance().getActivePlayer(player_id));
                 play = new Play(players, playID);  // fix 2nd parameter
                 play.setMapID(randomGenerator.nextInt(101));
@@ -72,27 +76,46 @@ public class PlayManager {
         return play;
     }
 
-    public Play createRace(int player_id, int playID) {
+    public Play createPlay(int player_id, int playID) throws IOException{
         Play play = this.playList.get(playID);
-
+        ResponsePlayInit response = new ResponsePlayInit();
+        short status;
         if (play == null) {
 
-    System.out.println("Creating a Race with id = [" + playID + "]");
+            System.out.println("Creating a Play with id = [" + playID + "]");
             play = new Play(playID);
             Random randomGenerator = new Random();
             play.setMapID(randomGenerator.nextInt(101));
             playList.put(play.getID(), play);
         } else {
-            System.out.println("Race with id = [" + playID + "] "
+            System.out.println("Play with id = [" + playID + "] "
                     + "already exists, add player " + player_id);
         }
+        //if the game is waiting for a reconnect, prevents others who are not the reconnecting player from joining
+        if(play.getPlayers().size() > 1 && player_id != play.getPlayer(player_id).getPlayer_id())
+        {
+            Log.printf_e("error, play %i is waiting for another player to reconnect", 
+                    playID);
+            status = 1;
+            response.setStatus(status);
+            NetworkManager.addResponseForUser(player_id, response);
+        }else if(play.getPlayers().size() > 1 && player_id == play.getPlayer(player_id).getPlayer_id()){
+            Log.printf_e("reconnecting player %i  to game %i now", player_id, playID);
+            status = 2;
+            response.setStatus(status);
+            play.addPlayer(GameServer.getInstance().getActivePlayer(player_id));
+            for (int p_id : play.getPlayers().keySet()) {
+                NetworkManager.addResponseForUser(p_id, response);
+            }
+        }else
+        {
+            play.addPlayer(GameServer.getInstance().getActivePlayer(player_id));
+            playerPlayList.put(player_id, play);
         
-        play.addPlayer(GameServer.getInstance().getActivePlayer(player_id));
-        playerRaceList.put(player_id, play);
-
-        ResponsePlayInit response = new ResponsePlayInit();
-        for (int p_id : play.getPlayers().keySet()) {
-            NetworkManager.addResponseForUser(p_id, response);
+            //sends playinit response to both users
+            for (int p_id : play.getPlayers().keySet()) {
+                NetworkManager.addResponseForUser(p_id, response);
+            }
         }
         return play;
     }
@@ -103,19 +126,32 @@ public class PlayManager {
      * @param playID is the caller's play ID i.e. race id
      * @param playerID is the caller's player ID
      * @throws Exception
+     * @throws SQLException
      */
-    public void endRace(int playID, int playerID, float finalscore) throws Exception {
+    public void endPlay(int playID, int playerID, float finalscore) throws SQLException,Exception {
         Play play = playList.get(playID);
         playList.remove(playID);
+        
         // check if play exists
         // this eliminates loser calling end play
         if (play != null) {
             int opponentID = play.getOpponentID(playerID);
 
             // remove play instances
-            playerRaceList.remove(playerID);
-            playerRaceList.remove(opponentID);
-
+            playerPlayList.remove(playerID);
+            playerPlayList.remove(opponentID);
+            try {
+                PlayDAO.leavePlay(playerID, playID);
+            } catch (SQLException e) {
+                Log.println_e("Error in removing record of player ID " + playerID+ " in race ID " + playID + " from database.");
+                Log.println_e(e.getMessage());
+            }
+            try {
+                PlayDAO.leavePlay(opponentID, playID);
+            } catch (SQLException e) {
+                Log.println_e("Error in removing record of player ID " + opponentID+ " in race ID " + playID + " from database.");
+                Log.println_e(e.getMessage());
+            }
             // create resposes
             ResponseSDEndGame response = new ResponseSDEndGame();
             response.setHighestScore(finalscore);
@@ -136,23 +172,23 @@ public class PlayManager {
         }
     }
 
-    public void removePlayerFromRaceList(int player_id) {
-        playerRaceList.remove(player_id);
+    public void removePlayerFromPlayList(int player_id) {
+        playerPlayList.remove(player_id);
     }
 
-    public void destroyRace(int play_id) {
+    public void destroyPlay(int play_id) {
         playList.remove(play_id);
     }
 
     public Play add(Play play) {
         for (int id : play.getPlayers().keySet()) {
-            playerRaceList.put(id, play);
+            playerPlayList.put(id, play);
         }
         return playList.put(play.getID(), play);
     }
 
-    public Play getRaceByPlayerID(int playerID) {
-        return playerRaceList.get(playerID);
+    public Play getPlayByPlayerID(int playerID) {
+        return playerPlayList.get(playerID);
     }
 
 

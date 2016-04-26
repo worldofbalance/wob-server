@@ -46,39 +46,39 @@ public class RequestSDEndGame extends GameRequest{
     public void doBusiness() throws Exception {
       
         int thisPlayerID = this.client.getPlayer().getPlayer_id();
-        PlayManager.manager.getRaceByPlayerID(thisPlayerID).getPlayers().get(thisPlayerID).setFinalScore(finalScore);
-       PlayManager.manager.getRaceByPlayerID(thisPlayerID).getPlayers().get(thisPlayerID).setScoreflag(1);
+        PlayManager.manager.getPlayByPlayerID(thisPlayerID).getPlayers().get(thisPlayerID).setFinalScore(finalScore);
+        PlayManager.manager.getPlayByPlayerID(thisPlayerID).getPlayers().get(thisPlayerID).setScoreflag(1);
        
-        flag = PlayManager.manager.getRaceByPlayerID(thisPlayerID).getPlayers().get(thisPlayerID).getScoreflag();
+        flag = PlayManager.manager.getPlayByPlayerID(thisPlayerID).getPlayers().get(thisPlayerID).getScoreflag();
         // end race
-        Play play = PlayManager.manager.getRaceByPlayerID(thisPlayerID);
+        Play play = PlayManager.manager.getPlayByPlayerID(thisPlayerID);
         if (play != null) {
             
-             p_id = PlayManager.manager.getRaceByPlayerID(thisPlayerID)
+            p_id = PlayManager.manager.getPlayByPlayerID(thisPlayerID)
                 .getOpponent(client.getPlayer()).getPlayer_id();
-             int opponentflag = PlayManager.manager.getRaceByPlayerID(p_id).getPlayers().get(p_id).getScoreflag();
-             // will get executed only when second player calls endgame
-             if((flag==1)&&(opponentflag==1)){
-            float opponentscore = PlayManager.manager.getRaceByPlayerID(thisPlayerID)
+            int opponentflag = PlayManager.manager.getPlayByPlayerID(p_id).getPlayers().get(p_id).getScoreflag();
+            // will get executed only when second player calls endgame
+            if((flag==1)&&(opponentflag==1)){
+                float opponentscore = PlayManager.manager.getPlayByPlayerID(thisPlayerID)
                 .getOpponent(client.getPlayer()).getFinalScore();
             
-            if (finalScore>opponentscore){
-            status = 1; // client calling request wins
-            winningscore = finalScore;
-            winningID = thisPlayerID;
-            }
-            else if(opponentscore>finalScore){
-            status = 2; // opponent won
-            winningscore = opponentscore;
-            winningID = p_id;
+                if (finalScore>opponentscore){
+                    status = 1; // client calling request wins
+                    winningscore = finalScore;
+                    winningID = thisPlayerID;
+                }
+                else if(opponentscore>finalScore){
+                    status = 2; // opponent won
+                    winningscore = opponentscore;
+                    winningID = p_id;
             
-            } else {
-            status = 3; // draw
-            winningscore = finalScore;
-            winningID = 0;
-            }
+                } else {
+                    status = 3; // draw
+                    winningscore = finalScore;
+                    winningID = 0;
+                }
              
-            PlayManager.manager.endRace(play.getID(), winningID , winningscore);
+            PlayManager.manager.endPlay(play.getID(), winningID , winningscore);
          }
         }
     }

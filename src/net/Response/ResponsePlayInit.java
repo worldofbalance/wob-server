@@ -28,7 +28,9 @@ public class ResponsePlayInit extends GameResponse{
         GamePacket packet = new GamePacket(responseCode);
                 
         packet.addShort16(status);        
-        
+        if(player != null){
+            packet.addInt32(player.getPlayer_id());
+        }
         return packet.getBytes();
     }
 

@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package net.Request;
 
 /**
@@ -32,21 +28,22 @@ public class RequestPlayInit extends GameRequest {
     @Override
     public void doBusiness() throws Exception {
         
-        Log.println("Trying to start Race: PlayerID[" +
+        Log.println("Trying to start Play: PlayerID[" +
                 player_id + "], RoomID[" + room_id + "]");
         
-        Play play = PlayManager.getInstance().createRace(player_id, room_id);
+        Play play = PlayManager.getInstance().createPlay(player_id, room_id);
         
-        Log.println("Trying to start Race: PlayerID[" +
+        Log.println("Trying to start Play: PlayerID[" +
                 player_id + "], RoomID[" + room_id + "]");
         
         if(play != null) {
             ResponsePlayInit response = new ResponsePlayInit();
+            response.setPlayer(play.getPlayer(player_id));
             for(int p_id : play.getPlayers().keySet()) {
                 NetworkManager.addResponseForUser(p_id, response);
             }
             
-            Log.println("Race created with players: " + play.getPlayers().keySet().toString());
+            Log.println("Play created with players: " + play.getPlayers().keySet().toString());
         }
         
         
