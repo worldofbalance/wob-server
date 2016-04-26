@@ -5,6 +5,9 @@
  */
 package core;
 
+import PlayTime.PlayManager;
+import PlayTime.PlayTimePlayer;
+import db.PlayInfoDAO;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -22,6 +25,8 @@ import net.Request.GameRequest;
 import net.Response.GameResponse;
 
 import model.Player;
+import net.Request.RequestSDPosition;
+import net.Response.ResponseSDDisconnect;
 /**
  *
  * @author anu
@@ -37,6 +42,7 @@ public class GameClient implements Runnable{
     private Queue<GameResponse> updates; // Temporarily store responses for client
     private boolean isDone;
     private Player player;
+    RequestSDPosition lastPosRequest;
     //Queue<GameResponse> updates; // Temporarily store responses for client
     
     /**
@@ -115,17 +121,28 @@ public class GameClient implements Runnable{
                                 // Transform the response into bytes and pass it into the output stream
                                 send(response);
                             }
+                        //When player disconnects from closing the client. (loses output dest.)
                         } catch (IOException ex) {
-                            Log.printf_e("Client %s connection lost", session_id);
+                            Log.printf_e("Client %s connection lost, attempting to reconnect.", session_id);
+                            //returns -1 if the player had not opponent
+                            int opp_id = PlayManager.getInstance().getPlayByPlayerID(player.getPlayer_id()).getOpponentID(player.getPlayer_id());
+                            if(opp_id < 0){
+                                ResponseSDDisconnect response = new ResponseSDDisconnect();
+                                NetworkManager.addResponseForUser(opp_id, response);
+                            }
+                            
                             isDone = true;
+                                                        
                         }
                     }
-                } else {
+                //when player disconnects from a timeout.
+                } else { 
                     // If there was no activity for the last moments, exit loop
                     if ((System.currentTimeMillis() - lastActivity) / 1000 >= Constants.TIMEOUT_SECONDS) {
                         isDone = true;
                     }
                 }
+            //incorrect request code. check Constants.
             } catch (Exception ex) {
                 Log.printf_e("Request [%d] Error:", requestCode);
                 Log.println_e(ex.getMessage());
