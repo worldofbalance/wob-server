@@ -128,7 +128,7 @@ public class PlayManager {
      * @throws Exception
      * @throws SQLException
      */
-    public void endPlay(int playID, int playerID, float finalscore) throws SQLException,Exception {
+    public void endPlay(int playID, int playerID, float finalscore, int status) throws SQLException,Exception {
         Play play = playList.get(playID);
         playList.remove(playID);
         
@@ -156,15 +156,18 @@ public class PlayManager {
             ResponseSDEndGame response = new ResponseSDEndGame();
             response.setHighestScore(finalscore);
 
-            // set the winner player to avoid null exception - Revisit this logic.
+            // set the winner player 
             response.setWinningPlayer(String.valueOf(playerID));
  
             // send responses to both players
             for (int p_id : play.getPlayers().keySet()) {
                 if (playerID == p_id) {
-                    response.setWin(true);
-                } else {
-                    response.setWin(false);
+                    response.setStatus(1); // status '1' means you won
+                } else if (status ==3){
+                 response.setStatus(3);  // status '3' means match draw
+                } 
+                else {
+                    response.setStatus(2); // status '2' means you lost
                 }
                 GameServer.getInstance().getThreadByPlayerID(p_id).send(response);
             }

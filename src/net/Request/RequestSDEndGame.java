@@ -22,7 +22,7 @@ public class RequestSDEndGame extends GameRequest{
 
     private boolean gameCompleted;
     private float finalScore;
-    private int p_id;
+    private int p_id_opponent;
     private ResponseSDEndGame responseSDEndGame;
     private int status;
     private int flag;
@@ -54,14 +54,22 @@ public class RequestSDEndGame extends GameRequest{
         Play play = PlayManager.manager.getPlayByPlayerID(thisPlayerID);
         if (play != null) {
             
-            p_id = PlayManager.manager.getPlayByPlayerID(thisPlayerID)
-                .getOpponent(client.getPlayer()).getPlayer_id();
-            int opponentflag = PlayManager.manager.getPlayByPlayerID(p_id).getPlayers().get(p_id).getScoreflag();
+            p_id_opponent = PlayManager.manager.getPlayByPlayerID(thisPlayerID)
+                             .getOpponent(client.getPlayer()).getPlayer_id();
+            int opponentflag = PlayManager.manager.getPlayByPlayerID(p_id_opponent).getPlayers().get(p_id_opponent).getScoreflag();
             // will get executed only when second player calls endgame
+            if(!gameCompleted){
+             float opponentscore = PlayManager.manager.getPlayByPlayerID(thisPlayerID)
+                                    .getOpponent(client.getPlayer()).getScore();
+              status = 2; // opponent won
+           PlayManager.manager.endPlay(play.getID(), p_id_opponent, opponentscore, status);
+            
+            }
+            if(gameCompleted){
             if((flag==1)&&(opponentflag==1)){
                 float opponentscore = PlayManager.manager.getPlayByPlayerID(thisPlayerID)
                 .getOpponent(client.getPlayer()).getFinalScore();
-            
+          
                 if (finalScore>opponentscore){
                     status = 1; // client calling request wins
                     winningscore = finalScore;
@@ -70,7 +78,7 @@ public class RequestSDEndGame extends GameRequest{
                 else if(opponentscore>finalScore){
                     status = 2; // opponent won
                     winningscore = opponentscore;
-                    winningID = p_id;
+                    winningID = p_id_opponent;
             
                 } else {
                     status = 3; // draw
@@ -78,7 +86,8 @@ public class RequestSDEndGame extends GameRequest{
                     winningID = 0;
                 }
              
-            PlayManager.manager.endPlay(play.getID(), winningID , winningscore);
+            PlayManager.manager.endPlay(play.getID(), winningID , winningscore, status);
+            }
          }
         }
     }

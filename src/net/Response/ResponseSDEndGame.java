@@ -16,7 +16,7 @@ public class ResponseSDEndGame extends GameResponse{
 
     private String winningPlayer;
     private float highestScore;    
-    private boolean win;
+    private int status;
  
     
 
@@ -28,7 +28,7 @@ public class ResponseSDEndGame extends GameResponse{
     public byte[] constructResponseInBytes() {
         GamePacket packet = new GamePacket(responseCode);
 
-        packet.addBoolean(isWin());
+        packet.addInt32(getStatus());
         packet.addFloat(getHighestScore());
         packet.addString(getWinningPlayer());
 
@@ -50,19 +50,14 @@ public class ResponseSDEndGame extends GameResponse{
     public void setHighestScore(float highestScore) {
         this.highestScore = highestScore;
     }
-    
-    /**
-     * @return the win
-     */
-    public boolean isWin() {
-        return win;
+
+    public int getStatus() {
+        return status;
     }
 
-    /**
-     * @param win the win to set
-     */
-    public void setWin(boolean win) {
-        this.win = win;
+    public void setStatus(int status) {
+        this.status = status;
     }
+  
 
 }
