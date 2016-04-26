@@ -50,7 +50,7 @@ public class RequestConvergeNewAttempt extends GameRequest {
     public void process() throws Exception {
         String user_id = PlayerDAO.getPlayerByPlayerId(playerId).getName();
         Log.printf("User '%s' has submitted a simulation request...", user_id);
-        //Log.consoleln("Processing RequestConvergeNewAttempt");
+        Log.consoleln("The timesteps is : " + timesteps);
         //run simulation
         SimJobConverge convergeJob = new SimJobConverge(config, timesteps+Constants.ADDITIONAL_TIMESTEPS);
         //create response
