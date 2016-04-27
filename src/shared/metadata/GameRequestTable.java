@@ -65,7 +65,6 @@ public class GameRequestTable {
         add(NetworkCode.CONVERGE_HINT_COUNT, "cvg.net.request.RequestConvergeHintCount");
         add(NetworkCode.CONVERGE_NEW_ATTEMPT_SCORE, "cvg.net.request.RequestConvergeNewAttemptScore");
 
-        // DH change
         // Multiplayer Convergence
         add(NetworkCode.MC_MATCH_INIT, "cvg.net.request.RequestMCMatchInit");   
         add(NetworkCode.MC_GET_TIME, "cvg.net.request.RequestConvergeGetTime");
@@ -73,6 +72,8 @@ public class GameRequestTable {
         add(NetworkCode.MC_GET_NAMES, "cvg.net.request.RequestConvergeGetNames");
         add(NetworkCode.MC_GET_OTHER_SCORE, "cvg.net.request.RequestConvergeGetOtherScore");
         add(NetworkCode.MC_CHECK_PLAYERS, "cvg.net.request.RequestConvergeCheckPlayers");
+        add(NetworkCode.MC_HOST_CONFIG, "cvg.net.request.RequestConvergeSpecifyParams");
+        add(NetworkCode.MC_NONHOST_CONFIG, "cvg.net.request.RequestConvergeNonhostConfig");
         
         add(NetworkCode.TOPLIST, "lby.net.request.RequestTopList");
         
