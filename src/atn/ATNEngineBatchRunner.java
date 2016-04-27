@@ -1,12 +1,15 @@
 package atn;
 
-import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
+import java.util.Scanner;
+
+import metadata.Constants;
 
 import simulation.SimulationException;
 import simulation.simjob.SimJob;
+import simulation.simjob.SimJobManager;
 
 /**
  * ATNEngineBatchRunner is a command-line program for running multiple
@@ -21,10 +24,19 @@ import simulation.simjob.SimJob;
  * @author Ben Saylor
  */
 public class ATNEngineBatchRunner {
+
+    public static void printUsage() {
+        System.out.println("Args: <timesteps> <node config input file> [--use-webservices]");
+    }
+
     public static void main(String[] args) {
-        
-        if (args.length != 2) {
-            System.out.println("Args: <timesteps> <node config input file>");
+        if (args.length == 3 && args[2].equals("--use-webservices")) {
+            // Disable ATNEngine and enable Web Services simulation engine
+            System.out.println("Using Web Services instead of ATNEngine");
+            Constants.useAtnEngine = false;
+            Constants.useSimEngine = true;
+        } else if (args.length != 2) {
+            printUsage();
             return;
         }
 
@@ -41,7 +53,12 @@ public class ATNEngineBatchRunner {
         // Crashes without this
         ATNEngine.LOAD_SIM_TEST_PARAMS = true;
 
+        SimJobManager jobMgr = null;
+        if (Constants.useSimEngine) {
+            jobMgr = new SimJobManager();
+        }
         ATNEngine atn = new ATNEngine();
+
         String nodeConfig;
         SimJob job;
         int simulationsRun = 0;
@@ -56,7 +73,14 @@ public class ATNEngineBatchRunner {
                 job = new SimJob();
                 job.setNode_Config(nodeConfig);
                 job.setTimesteps(timesteps);
-                atn.processSimJob(job);
+
+                if (Constants.useSimEngine) {
+                    jobMgr.setSimJob(job);
+                    jobMgr.runSimJob();
+                } else {
+                    atn.processSimJob(job);
+                }
+
                 simulationsRun++;
             }
         } catch (SQLException ex) {
