@@ -32,6 +32,7 @@ public class RequestPlayInit extends GameRequest {
                 player_id + "], RoomID[" + room_id + "]");
         
         Play play = PlayManager.getInstance().createPlay(player_id, room_id);
+        play.getPlayer(player_id).setNumber(play.getPlayers().size());
         
         Log.println("Trying to start Play: PlayerID[" +
                 player_id + "], RoomID[" + room_id + "]");
@@ -39,6 +40,7 @@ public class RequestPlayInit extends GameRequest {
         if(play != null) {
             ResponsePlayInit response = new ResponsePlayInit();
             response.setPlayer(play.getPlayer(player_id));
+            response.setNumber(play.getPlayer(player_id).getNumber());
             for(int p_id : play.getPlayers().keySet()) {
                 NetworkManager.addResponseForUser(p_id, response);
             }
