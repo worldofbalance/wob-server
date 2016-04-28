@@ -44,4 +44,6 @@ public class Constants {
     public static final short SMSG_EAT_PREY = 605;
     public final static short CMSG_DISCONNECT = 506;
     public final static short SMSG_DISCONNECT = 606;
+    public final static short CMSG_SCORE = 507;
+    public final static short SMSG_SCORE = 607;
 }

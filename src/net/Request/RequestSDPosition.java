@@ -19,7 +19,7 @@ import utility.DataReader;
  * @author anu
  */
 public class RequestSDPosition extends GameRequest{
-    private float x, y;
+    private float x, y, rotation;
     private int p_id;
     private ResponseSDPosition responseSDPosition;
     
@@ -27,16 +27,19 @@ public class RequestSDPosition extends GameRequest{
     public void parse() throws IOException {
         x = Float.parseFloat(DataReader.readString(dataInput));
         y = Float.parseFloat(DataReader.readString(dataInput));
+        rotation = Float.parseFloat(DataReader.readString(dataInput));
     }
 
     @Override
     public void doBusiness() throws Exception {
         PlayTimePlayer player; // the RacePlayer sending the request
-        System.out.println("X:  " +  x + "Y :  " + y);
+        System.out.println("X:  " +  x + "Y :  " + y + "Rotation " + rotation);
    
         responseSDPosition = new ResponseSDPosition();
         responseSDPosition.setX(x);
         responseSDPosition.setY(y);
+        responseSDPosition.setRotation(rotation);
+        
 
    
         //The playerID of the opponent of the player who sent the request
@@ -48,6 +51,7 @@ public class RequestSDPosition extends GameRequest{
         player = PlayManager.manager.getPlayByPlayerID(p_id).getPlayers().get(p_id);
         player.setX(x);
         player.setY(y);
+        player.setRotation(rotation);
         //PlayDAO.updatePlay(player); this is slowing things substanitially
         GameServer.getInstance().getThreadByPlayerID(p_id).send(responseSDPosition);
         

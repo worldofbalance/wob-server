@@ -14,7 +14,7 @@ import utility.GamePacket;
  */
 public class ResponseSDPosition extends GameResponse{
     
-    private float x, y;
+    private float x, y, rotation;
     
     public ResponseSDPosition(){
         responseCode = Constants.SMSG_POSITION;
@@ -25,6 +25,7 @@ public class ResponseSDPosition extends GameResponse{
         GamePacket packet = new GamePacket(responseCode);
         packet.addFloat(x);
         packet.addFloat(y);
+        packet.addFloat(rotation);
         return packet.getBytes();
     }
 
@@ -42,6 +43,14 @@ public class ResponseSDPosition extends GameResponse{
 
     public void setY(float y) {
         this.y = y;
+    }
+
+    public float getRotation() {
+        return rotation;
+    }
+
+    public void setRotation(float rotation) {
+        this.rotation = rotation;
     }
     
     

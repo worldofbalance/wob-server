@@ -266,7 +266,7 @@ public class PlayDAO {
             
             
             
-            pstmt.setInt(3, player.getScore()); // score
+            pstmt.setFloat(3, player.getScore()); // score
             pstmt.setInt(4, player.getMaxHealth()); //maxHealth
             pstmt.setInt(5, player.getHealth()); // health
             pstmt.setFloat(6, player.getSpeed()); // speed

@@ -41,6 +41,7 @@ public class GameClient implements Runnable{
     private DataInputStream dataInputStream; // Stores incoming requests for use
     private Queue<GameResponse> updates; // Temporarily store responses for client
     private boolean isDone;
+    private boolean isAlive = true;
     private Player player;
     RequestSDPosition lastPosRequest;
     //Queue<GameResponse> updates; // Temporarily store responses for client

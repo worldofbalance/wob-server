@@ -23,7 +23,6 @@ public class PlayTimePlayer extends Player {
             //itemID, // currently held item (0 if not holding anything)
             //numItems, // number of items collected
             time, // current time of player
-            score, // current score of player
             stomach, //current stomach of player
             maxStamina, //maximum stamina
             stamina, // stamina (used for character sprinting)
@@ -32,6 +31,8 @@ public class PlayTimePlayer extends Player {
             y, // y position of player
             speed, // current speed of player
             power, // current power of player
+            score, // current score of player
+            rotation, // current direction the player is looking in 
             finalScore;
     private boolean right,
             left,
@@ -54,6 +55,7 @@ public class PlayTimePlayer extends Player {
         score = 0;
         x = 0;
         y = 0;
+        rotation = 0.0f;
         speed = 1.0f;
         power = 1.0f;
         finalScore = 0.0f;
@@ -70,6 +72,14 @@ public class PlayTimePlayer extends Player {
 
     public void setScoreflag(int scoreflag) {
         this.scoreflag = scoreflag;
+    }
+
+    public float getRotation() {
+        return rotation;
+    }
+
+    public void setRotation(float rotation) {
+        this.rotation = rotation;
     }
     
     public int getRaceID() {
@@ -144,11 +154,11 @@ public class PlayTimePlayer extends Player {
         this.time = time;
     }
     
-    public int getScore() {
+    public float getScore() {
         return score;
     }
     
-    public void setScore(int score) {
+    public void setScore(float score) {
         this.score = score;
     }
     
