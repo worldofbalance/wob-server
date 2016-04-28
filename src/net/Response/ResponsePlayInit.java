@@ -18,6 +18,7 @@ public class ResponsePlayInit extends GameResponse{
  
     private short status;
     private Player player;
+    private int number;//determines starting position of player.
     
     public ResponsePlayInit(){
         responseCode = Constants.SMSG_RACE_INIT;
@@ -30,6 +31,8 @@ public class ResponsePlayInit extends GameResponse{
         packet.addShort16(status);        
         if(player != null){
             packet.addInt32(player.getPlayer_id());
+            packet.addInt32(number);
+            packet.addString(player.getUsername());
         }
         return packet.getBytes();
     }
@@ -42,6 +45,9 @@ public class ResponsePlayInit extends GameResponse{
         this.player = player;
     }
 
-
-
+    public void setNumber(int number){
+        this.number=number;
+    }
+    
+  
 }
