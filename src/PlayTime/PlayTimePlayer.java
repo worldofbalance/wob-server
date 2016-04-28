@@ -19,7 +19,7 @@ public class PlayTimePlayer extends Player {
             runnerSpeciesID, // ID of selected species
             maxHealth, //maximum health of player (can be changed by upgrades)
             health, // health of species
-            status, // status of species (from items/boosts)
+            number, // the number of the player to determine start position
             //itemID, // currently held item (0 if not holding anything)
             //numItems, // number of items collected
             time, // current time of player
@@ -48,7 +48,7 @@ public class PlayTimePlayer extends Player {
         // set defaults
         runnerSpeciesID = 31;
         health = 100;
-        status = 0;
+        number = 0;
         //itemID = 1;
         //numItems = 0;
         time = 0;
@@ -130,12 +130,12 @@ public class PlayTimePlayer extends Player {
         this.health = health;
     }
     
-    public int getStatus() {
-        return status;
+    public int getNumber() {
+        return number;
     }
     
-    public void setStatus(int status) {
-        this.status = status;
+    public void setNumber(int status) {
+        this.number = status;
     }
     
 //    public int getItemID() {
