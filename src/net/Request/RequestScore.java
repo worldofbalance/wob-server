@@ -28,7 +28,7 @@ public class RequestScore extends GameRequest{
     private ResponseScore responseScore;
 
     public RequestScore() {
-        responses.add(responseScore = new ResponseScore());
+       //responses.add(responseScore = new ResponseScore());
     }
 
     @Override
@@ -43,10 +43,11 @@ public class RequestScore extends GameRequest{
         p_id = client.getPlayer().getPlayer_id();
         player =  PlayManager.manager.getPlayByPlayerID(p_id).getPlayer(p_id);
         player.setScore(Score);
-        
+        responseScore = new ResponseScore();
+        responseScore.setScore((int)Score);
+
         opponent_id = PlayManager.manager.getPlayByPlayerID(p_id)
                 .getOpponent(player).getPlayer_id();
-        
         GameServer.getInstance().getThreadByPlayerID(opponent_id).send(responseScore);
         
     }
