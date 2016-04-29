@@ -32,7 +32,8 @@ public class ResponsePlayInit extends GameResponse{
         if(player != null){
             packet.addInt32(player.getPlayer_id());
             packet.addInt32(number);
-            packet.addString(player.getUsername());
+            if(player.getUsername()!=null)
+                packet.addString(player.getUsername());
         }
         return packet.getBytes();
     }

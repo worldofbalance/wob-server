@@ -33,7 +33,9 @@ public class RequestPlayInit extends GameRequest {
                 player_id + "], RoomID[" + room_id + "]");
         
         Play play = PlayManager.getInstance().createPlay(player_id, room_id);
+        
         play.getPlayer(player_id).setNumber(play.getPlayers().size());
+        Log.printf("play created, assigning player number %d.", play.getPlayers().size());
         
         Log.println("Trying to start Play: PlayerID[" +
                 player_id + "], RoomID[" + room_id + "]");
@@ -45,6 +47,7 @@ public class RequestPlayInit extends GameRequest {
             //add response for self
             responses.add(response);
             //get opponent id
+            try{
             int opp_id= PlayManager.manager.getPlayByPlayerID(client.getPlayer().getPlayer_id())
                 .getOpponent(client.getPlayer()).getPlayer_id();
             
@@ -54,6 +57,9 @@ public class RequestPlayInit extends GameRequest {
             }*/
             //send response to opponent
             GameServer.getInstance().getThreadByPlayerID(opp_id).send(response);
+            }catch(Exception ex){
+                Log.printf_e("waiting for opponent in game %d", room_id);
+            }
             Log.println("Play created with players: " + play.getPlayers().keySet().toString());
         }
         
