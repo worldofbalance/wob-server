@@ -176,8 +176,8 @@ public class ATNEngine {
        for (int t = initTimeIdx + 1; t < timesteps; t++) {
            boolean success = bsi.performIntegration(time(initTime, t), currBiomass);
            if (!success) {
-               //System.out.printf("Integration failed to converge, t = %d\n", t);
-               //System.out.print(bsi.extrapArrayToString(biomassScale));
+               System.out.printf("Integration failed to converge, t = %d\n", t);
+               System.out.print(bsi.extrapArrayToString(biomassScale));
                break;
            }
            currBiomass = bsi.getYNew();
@@ -464,7 +464,7 @@ public class ATNEngine {
 	        //loop through dataset
 	        //1 chart: 0: relationship/distance
 	        int chart = 0, nodes = 0, relnOffset = 0, distOffset = 0, pathCntOffset = 0;
-	        List<Integer> sortedNodeList = null;
+	        List<Integer> nodeList = null;
 	        boolean empty = false;
 	        boolean newChart = true;
 	        for (List<String> csvLine : dataSet) {
@@ -489,19 +489,26 @@ public class ATNEngine {
 	                case 1:  //relationship/distance chart
 	                    //bypass first - header - line
 	                    if (newChart) {
-	                        sortedNodeList = new ArrayList<>(ecosysTimesteps.getNodeList());
-	                        Collections.sort(sortedNodeList);
-	                        nodes = sortedNodeList.size();
+	                    	nodes = ecosysTimesteps.getNodeList().size();   
 	                        relnOffset = 2;  //offset in csvLine to 1st reln
 	                        distOffset = relnOffset + nodes;  //offset in csvLine to distance info
 	                        pathCntOffset = distOffset + nodes; //offset in csvLine to pathCnt info
+	                        
+	                        // Build list of node IDs in the order they appear in the
+	                        // columns of the table.
+	                        nodeList = new ArrayList<>(nodes);
+	                        for (int i = 0; i < nodes; i++) {
+	                        	Integer _nodeId = Integer.valueOf(csvLine.get(relnOffset + i));
+	                        	nodeList.add(i, _nodeId);
+	                        }
+
 	                        newChart = false;
 	                        break;
 	                    }
 	                    int nodeA = Integer.valueOf(csvLine.get(0));
 	                    NodeRelationships nodeRelns = new NodeRelationships(nodeA);
 	                    for (int i = 0; i < nodes; i++) {
-	                        int nodeB = sortedNodeList.get(i);
+	                        int nodeB = nodeList.get(i);
 	                        String relnStr = csvLine.get(relnOffset + i);
 	                        int dist = Integer.valueOf(csvLine.get(distOffset + i));
 	                        int pathCnt = Integer.valueOf(csvLine.get(pathCntOffset + i));
