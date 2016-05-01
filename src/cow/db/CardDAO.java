@@ -3,12 +3,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 import cow.model.Card;
 import cow.model.CardType;
-import cow.db.GameDB;
+import shared.db.GameDB;
 import shared.util.Log;
 
 public final class CardDAO {
