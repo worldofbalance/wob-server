@@ -55,6 +55,11 @@ public final class GamePacket {
         buffer.add((short) str.length());
         buffer.add(str.getBytes());
     }
+    
+    public void addString32(String str){
+        buffer.add(str.length());
+        buffer.add(str.getBytes());
+    }
 
     public void addFloat(float float_val) {
         addInt32(Float.floatToIntBits(float_val));

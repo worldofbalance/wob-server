@@ -87,12 +87,12 @@ public class MiniGame {
         String filePath = absServerPath.substring(0, absServerPath.lastIndexOf(File.separator));
         ProcessBuilder pb = new ProcessBuilder("java", "-jar", this.absServerPath);
         pb.directory(new File(filePath));
+        pb = pb.redirectErrorStream(true);
         try {
             this.process = pb.start();
             LogStreamReader lsr = new LogStreamReader(this.process.getInputStream(), this.name);
             Thread thread = new Thread(lsr, "LogStreamReader");
             thread.start();
-            
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -10,6 +10,8 @@ Relies on WoB_Server source code for objects that store simulation timesteps and
 species information.
 */
 
+import cvg.targetgenerator.DBStructs.SpeciesStruct;
+import cvg.targetgenerator.TargetGeneratorCache;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,10 +33,6 @@ import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 
-import shared.org.datacontract.schemas._2004._07.ManipulationParameter.ManipulatingNode;
-import shared.org.datacontract.schemas._2004._07.ManipulationParameter.ManipulatingNodeProperty;
-import shared.org.datacontract.schemas._2004._07.ManipulationParameter.ManipulatingParameter;
-import shared.org.datacontract.schemas._2004._07.ManipulationParameter.NodeBiomass;
 
 import shared.metadata.Constants;
 import shared.model.Ecosystem;
@@ -47,7 +45,6 @@ import shared.simulation.SimulationException;
 import shared.simulation.SpeciesZoneType;
 import shared.simulation.SpeciesZoneType.SpeciesTypeEnum;
 import shared.simulation.config.ManipulatingParameterName;
-import shared.simulation.config.ManipulationActionType;
 import shared.simulation.simjob.ConsumeMap;
 import shared.simulation.simjob.EcosystemTimesteps;
 import shared.simulation.simjob.NodeTimesteps;
@@ -70,6 +67,8 @@ public class ATNEngine {
    private static UserInput userInput;
    public static Properties propertiesConfig;
    private PrintStream psATN = null;
+   //Harjit added 4/6/16 so that generated ATNs will be saved in a seperate folder
+   private boolean generated = false;
    /*
     The first two timesteps values produced by WebServices do not
     fit the local solution well.  Therefore, these values have been excluded
@@ -87,10 +86,15 @@ public class ATNEngine {
 	private int status = Constants.STATUS_FAILURE;
 
    public ATNEngine() {
+       init();
+   }
+   
+   void init(){
        //load properties file containing ATN model parameter values
        propertiesConfig = new Properties();
        try {
-           propertiesConfig.load(new FileInputStream("src/shared/atn/SimJobConfig.properties"));
+           propertiesConfig.load(new FileInputStream(
+                   "src/shared/atn/SimJobConfig.properties"));
        } catch (FileNotFoundException ex) {
            Logger.getLogger(ATNEngine.class.getName()).log(
                    Level.SEVERE, null, ex);
@@ -108,6 +112,13 @@ public class ATNEngine {
 	       SpeciesType.loadSimTestLinkParams(Constants.ECOSYSTEM_TYPE);
        }
        //Above is not needed SimJobManager does this
+       
+       TargetGeneratorCache.init();
+   }
+   
+   public ATNEngine(boolean generated){
+       init();
+       this.generated = generated;
    }
    
 	public void setSimJob(SimJob job) {
@@ -211,15 +222,15 @@ public class ATNEngine {
        }
        //output data
        //A. print header
-       psATN.printf("timesteps");
-       for (int i = 0; i < timesteps; i++) {
+       //psATN.printf("timesteps");
+       for (int i = 1; i < timesteps; i++) {
            psATN.printf(",%d", i);
        }
        psATN.println();
        
        /* Convert to CSV String */
        String biomassCSV = "";
-       biomassCSV = "Manipulation_id: " + job.getATNManipulationId() +"\n\n";
+       //biomassCSV = "Manipulation_id: " + job.getATNManipulationId() +"\n\n";
        
        int maxTimestep = job.getTimesteps();
        // Create Timestep Labels
@@ -240,7 +251,14 @@ public class ATNEngine {
            
            //B. print combined biomass contributions (i.e. locally calculated biomass)
            //for current species.
-           psATN.printf("i.%d.calc", speciesID[i]);
+           String speciesName = null;
+           for(SpeciesStruct str: TargetGeneratorCache.species){
+               if(str.node_id == speciesID[i]){
+                   speciesName = str.name;
+               }
+           }
+           psATN.printf("%s [%d]", speciesName, speciesID[i]);
+           speciesName = null;
            for (int t = 0; t < timesteps; t++) {
                psATN.printf(",%9.0f", calcBiomass[t][i] * biomassScale);
            }
@@ -399,7 +417,12 @@ public class ATNEngine {
        System.out.println("Ecosystem output will be written to:");
        System.out.println("Network output will be written to:");
        //psATN = Functions.getPrintStream("ATN", userInput.destDir);
-       psATN = Functions.getPrintStream("ATN", Constants.ATN_CSV_SAVE_PATH);
+       
+       //if just running ATNEngine normally
+       if(!generated)
+        psATN = Functions.getPrintStream("ATN", Constants.ATN_CSV_SAVE_PATH);
+       else//if running ATNEngine with cvg.targetgenerator.EcosystemGenerator.java
+          psATN = Functions.getPrintStream("ATN", Constants.ATN_GENERATED_CSV_SAVE_PATH);
    }
  	
 	public HashMap<Integer, SpeciesZoneType> processSimJob(SimJob job) throws SQLException, SimulationException {
@@ -440,7 +463,7 @@ public class ATNEngine {
 
        //generate data for current job
        HashMap<Integer, SpeciesZoneType> mSpecies = genSpeciesDataset(job, ecosysTimesteps, ecosysRelationships);
-
+       psATN.close();
        System.out.printf("\nTime... %d seconds\n\n", (System.nanoTime() - start)
                / (long) Math.pow(10, 9));
        return mSpecies;
@@ -513,7 +536,7 @@ public class ATNEngine {
    }
    
    public static void main(String args[]) throws FileNotFoundException, SQLException, SimulationException {
-	   LOAD_SIM_TEST_PARAMS = true;
+        LOAD_SIM_TEST_PARAMS = true;
        //get output directory
        JFrame parent = null;
        userInput = new UserInput(parent);
@@ -528,12 +551,14 @@ public class ATNEngine {
        ATNEngine atn = new ATNEngine();
 
        SimJob job = new SimJob();
+       String test = "11,[2],664.1382861495723,528.0,2,K=1124.298302342037,R=1.0,0,[3],628.0774310402782,528.0,1,K=3094.7497791345336,0,[4],791.2368121645457,528.0,1,K=3096.0324601561038,0,[5],1630.705789023641,1.0,1,K=1466.66878847935,0,[7],399.8390149071922,816.0,1,K=5068.505083411805,0,[49],1429.8563464848974,0.355,1,X=0.9652016142012252,0,[55],677.823631884153,0.213,1,X=0.0031317358585477573,0,[61],472.9850090245784,54.0,1,X=0.1293436247045764,0,[74],1351.1972569167415,50.0,1,X=0.4696245337228393,0,[82],634.9374130808931,50.0,1,X=0.07811152489469675,0,[83],156.88992423564545,103.0,1,X=0.6399526206385862,0";
        job.setJob_Descript("atn1");
        //job.setNode_Config("2,[5],2000,1.000,0,0,[70],2494,13.000,1,X=0.155,0");	//Info comes from client
-       //job.setNode_Config("5,[5],2000,1.000,1,K=9431.818,0,[14],1751,20.000,1,X=0.273,0,[31],1415,0.008,1,X=1.000,0,[42],240,0.205,1,X=0.437,0,[70],2494,13.000,1,X=0.155,0");
-       job.setNode_Config("5,[5],2000,1.0,1,K=9431.818,0,[14],1752,20.0,1,X=0.273,0,[31],1415,0.008,1,X=1.000,0,[42],240,0.205,1,X=0.437,0,[70],2494,13.0,1,X=0.155,0");
+       //job.setNode_Config("5,[5],2000,1.000,1,K=9431.818,0,[14],1751,20.000,0,0,[31],1415,0.008,1,X=1.000,0,[42],240,0.205,1,X=0.437,0,[70],2494,13.000,1,X=0.155,0");
+       job.setNode_Config(test);
+       //job.setNode_Config("15,[1],400,1.000,1,K=2000.000,0,[2],1056,20.000,1,K=3000.000,0,[5],2000,1.000,1,K=7000.000,0,[7],1322,40.000,1,K=3000.000,0,[9],1913,0.071,1,X=0.310,0,[12],300,1.000,0,0,[26],1164,0.011,1,X=1.000,0,[45],916,0.425,1,X=0.400,0,[49],1015,0.355,1,X=0.120,0,[55],1849,0.213,1,X=0.480,0,[67],1434,9.600,1,X=0.180,0,[71],564,4.990,1,X=0.220,0,[75],568,1.590,1,X=0.010,0,[80],575,41.500,1,X=0.130,0,[87],240,112.000,1,X=0.100,0");
        job.setManip_Timestamp((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date()));
-       job.setTimesteps(200);
+       job.setTimesteps(1000);
        String atnManipId = UUID.randomUUID().toString();
        job.setATNManipulationId(atnManipId);
        atn.processSimJob(job);

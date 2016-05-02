@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import cow.model.Account;
+import shared.db.GameDB;
 import shared.util.Functions;
 import shared.util.Log;
 import shared.db.GameDB;

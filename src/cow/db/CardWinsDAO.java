@@ -4,9 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 
-import cow.model.Card;
 import cow.model.WinsLosses;
 import shared.db.GameDB;
 import shared.util.Log;
