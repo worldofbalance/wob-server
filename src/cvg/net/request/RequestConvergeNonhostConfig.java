@@ -11,6 +11,8 @@ import cvg.net.response.ResponseConvergeNonHostConfig;
 import java.io.DataInputStream;
 import java.io.IOException;
 import lby.net.request.GameRequest;
+import shared.core.GameClient;
+import shared.util.DataReader;
 import shared.util.Log;
 
 /**
@@ -19,25 +21,47 @@ import shared.util.Log;
  */
 public class RequestConvergeNonhostConfig extends GameRequest {
     private int player_id;
-    
+    private int status; 
    
     @Override
     public void parse(DataInputStream dataInput) throws IOException {
        //clients send no args
-        Log.consoleln("Nonhost has no parameters to parse, but it does send a response.");
+        Log.consoleln("In NonhostConfig, no args to parse. ");
     }
     
      @Override
     public void process() throws Exception {
         ResponseConvergeNonHostConfig response = new ResponseConvergeNonHostConfig();
         
-        MCMatchManager manager = MCMatchManager.getInstance();
-        MCMatch match = manager.getMatchByPlayer(player_id);
         
-        response.setNumRounds(match.getNumRounds());
-        response.setTimeWindow(match.getTimeWindow());
-        response.setBetAmount(match.getBetAmount());
-        response.setEcoNumber(match.getEcoNumber());
-        client.add(response);
+        
+        MCMatchManager manager = MCMatchManager.getInstance();
+        Log.consoleln("Check if manager is null: " + manager.toString());
+        MCMatch match = manager.getMatchByPlayer(client.getPlayerID());
+        Log.consoleln("match is: " + match);
+        short numRoundsRes = match.getNumRounds();
+        short timeWindowRes = match.getTimeWindow();
+        short betAmountRes = match.getBetAmount();
+        short ecoNumberRes = match.getEcoNumber();
+        Short nullCheck = new Short(match.getEcoNumber());
+        
+        while( numRoundsRes == 0 || timeWindowRes == 0 || betAmountRes == 0){
+            Log.consoleln("match is: " + match);
+            numRoundsRes = match.getNumRounds();
+            timeWindowRes = match.getTimeWindow();
+            betAmountRes = match.getBetAmount();
+            ecoNumberRes = match.getEcoNumber(); 
+            nullCheck = new Short(match.getEcoNumber());
+        }
+        Log.consoleln("Num Rounds is: " + numRoundsRes);
+        Log.consoleln("Time window is: " + timeWindowRes);
+        Log.consoleln("bet amount is: " + betAmountRes);
+        Log.consoleln("Eco number is: " + ecoNumberRes);
+            response.setNumRounds(numRoundsRes);
+            response.setTimeWindow(timeWindowRes);
+            response.setBetAmount(betAmountRes);
+            response.setEcoNumber(ecoNumberRes);
+            client.add(response);
+        
     }
 }
