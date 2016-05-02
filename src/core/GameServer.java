@@ -167,7 +167,11 @@ public class GameServer {
     }
     
        public Player getActivePlayer(int player_id) {
-        return activePlayers.get(player_id);
+           try{
+               return activePlayers.get(player_id);
+           }catch(Exception ex){
+               return null;
+           }
     }
       public static void main(String[] args) {
         try {
