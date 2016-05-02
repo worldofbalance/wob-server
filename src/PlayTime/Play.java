@@ -15,7 +15,8 @@ import java.util.List;
 import java.util.Map;
 import metadata.Constants;
 import model.Player;
-import net.Response.ResponseSDPosition;
+import model.Prey;
+import net.Response.ResponseSDReconnect;
 import utility.Log;
 import net.Response.ResponseSDStartGame;
 // TODO: import dataAccessLayer.RaceDAO;
@@ -27,7 +28,7 @@ public class Play {
 
 //    private 
     private Map<Integer, PlayTimePlayer> rPlayers = new HashMap<Integer, PlayTimePlayer>(); //player_id ->PlayerInformation
-
+    private Map<Integer, Prey> mapNpcFish = new HashMap<Integer, Prey>();
     private int playID;
     private int mapID;
 
@@ -53,16 +54,19 @@ public class Play {
      * @throws IOException
      */
     public void addPlayer(Player player) throws IOException{
+        //attempting to reconnect player.
         try{
             //will throw null pointer exception if player_id is not in rplayers.
             PlayTimePlayer ptp = rPlayers.get(player.getPlayer_id()); 
-            //Log.printf_e("Player %i is reconnecting to game %i", player.getPlayer_id(), playID);
-            ResponseSDPosition response = new ResponseSDPosition();
-            response.setX(ptp.getX());
-            response.setY(ptp.getY());
+            Log.printf_e("reconnecting player %d to game %d", ptp.getPlayer_id(), playID);
+            //Log.printf_e("Player %dis reconnecting to game %d", player.getPlayer_id(), playID);
+            ResponseSDReconnect response = new ResponseSDReconnect();
+            response.setMapNpc(mapNpcFish);
+            response.setMapPlayer(rPlayers);
             for (int p_id : getPlayers().keySet()) {
                 GameServer.getInstance().getThreadByPlayerID(p_id).send(response);
             }
+            //adding new player.
         }catch(Exception ex){
             
             this.rPlayers.put(player.getPlayer_id(), new PlayTimePlayer(player.getPlayer_id(), playID));
