@@ -15,9 +15,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import metadata.Constants;
 import model.Player;
 import net.Response.ResponsePlayInit;
 import net.Response.ResponseSDEndGame;
+import net.Response.ResponseSDReconnect;
 import utility.Log;
 
 /**
@@ -78,8 +80,6 @@ public class PlayManager {
 
     public Play createPlay(int player_id, int playID) throws IOException{
         Play play = this.playList.get(playID);
-        ResponsePlayInit response = new ResponsePlayInit();
-        short status;
         if (play == null) {
 
             System.out.println("Creating a Play with id = [" + playID + "]");
@@ -92,30 +92,24 @@ public class PlayManager {
                     + "already exists, add player " + player_id);
         }
         //if the game is waiting for a reconnect, prevents others who are not the reconnecting player from joining
-        if(play.getPlayers().size() > 1 && player_id != play.getPlayer(player_id).getPlayer_id())
+        if(play.getPlayers().size() == Constants.MAX_NUMBER_OF_PLAYERS && 
+                player_id != play.getPlayer(player_id).getPlayer_id())
         {
-            Log.printf_e("error, play %i is waiting for another player to reconnect", 
-                    playID);
-            status = 1;
-            response.setStatus(status);
-            NetworkManager.addResponseForUser(player_id, response);
-        }else if(play.getPlayers().size() > 1 && player_id == play.getPlayer(player_id).getPlayer_id()){
-            Log.printf_e("reconnecting player %i  to game %i now", player_id, playID);
-            status = 2;
-            response.setStatus(status);
+            Log.printf_e("error, play %d full", playID);
+            return null;
+        }/*else if(play.getPlayers().size() == Constants.MAX_NUMBER_OF_PLAYERS && 
+                player_id == play.getPlayer(player_id).getPlayer_id()){
+            Log.printf_e("reconnecting player %d  to game %d now", player_id, playID);
+            
             play.addPlayer(GameServer.getInstance().getActivePlayer(player_id));
-            for (int p_id : play.getPlayers().keySet()) {
-                NetworkManager.addResponseForUser(p_id, response);
-            }
-        }else
+            
+        }else*/
         {
             play.addPlayer(GameServer.getInstance().getActivePlayer(player_id));
             playerPlayList.put(player_id, play);
         
             //sends playinit response to both users
-            for (int p_id : play.getPlayers().keySet()) {
-                NetworkManager.addResponseForUser(p_id, response);
-            }
+            
         }
         return play;
     }
@@ -174,7 +168,7 @@ public class PlayManager {
             //System.out.println("endRace");
         }
     }
-
+    
     public void removePlayerFromPlayList(int player_id) {
         playerPlayList.remove(player_id);
     }
@@ -191,7 +185,11 @@ public class PlayManager {
     }
 
     public Play getPlayByPlayerID(int playerID) {
+        try{
         return playerPlayList.get(playerID);
+        }catch(Exception e){
+            return null;
+        }
     }
 
 
