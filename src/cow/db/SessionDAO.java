@@ -7,7 +7,7 @@ import java.sql.Statement;
 
 import cow.model.Session;
 import cow.model.Player;
-import cow.db.GameDB;
+import shared.db.GameDB;
 import shared.util.Color;
 import shared.util.Log;
 

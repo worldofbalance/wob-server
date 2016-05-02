@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import cow.model.Card;
 import cow.model.WinsLosses;
-import cow.db.GameDB;
+import shared.db.GameDB;
 import shared.util.Log;
 
 public class CardWinsDAO {

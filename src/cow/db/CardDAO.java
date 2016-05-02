@@ -8,9 +8,8 @@ import java.util.ArrayList;
 
 import cow.model.Card;
 import cow.model.CardType;
-import cow.db.GameDB;
 import shared.util.Log;
-
+import shared.db.GameDB;
 public final class CardDAO {
 	
 	private CardDAO() {

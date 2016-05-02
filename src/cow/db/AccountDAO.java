@@ -10,11 +10,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import cow.db.GameDB;
 import cow.model.Account;
 import shared.util.Functions;
 import shared.util.Log;
-
+import shared.db.GameDB;
 public final class AccountDAO {
 
     private AccountDAO() {
