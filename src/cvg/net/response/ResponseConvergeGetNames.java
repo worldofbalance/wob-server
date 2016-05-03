@@ -9,6 +9,7 @@ import shared.metadata.NetworkCode;
 import lby.net.response.GameResponse;
 import shared.util.GamePacket;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * ResponseConvergeHintCount returns # of hints in database
@@ -30,7 +31,7 @@ public class ResponseConvergeGetNames extends GameResponse {
     public byte[] getBytes() {
         GamePacket packet = new GamePacket(response_id);
         
-        for (HashMap.Entry<Integer, String> entry : playerNames.entrySet()) {
+        for (Map.Entry<Integer, String> entry : playerNames.entrySet()) {
             Integer key = entry.getKey();
             String value = entry.getValue();
             packet.addInt32(key);
