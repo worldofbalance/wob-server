@@ -218,7 +218,7 @@ public class GameServer {
             CodeSource codeSource = cow.core.GameServer.class.getProtectionDomain().getCodeSource();
             File jarFile = new File(codeSource.getLocation().toURI().getPath());
             String separator = System.getProperty("file.separator");
-             String serverConf = jarFile.getParentFile().getPath() + separator + ".."+separator+"conf" + separator + "gameServer.conf";
+            String serverConf = jarFile.getParentFile().getPath() + separator + ".."+separator+"conf" + separator + "gameServer.conf";
            
             File f = new File(serverConf);
             if (!f.exists()) {
@@ -230,8 +230,8 @@ public class GameServer {
             GameServerConf config = new GameServerConf(new ConfFileParser(serverConf).parse());
             Log.println("Done!");
 
-            //server = new GameServer(config.getPortNumber(), Constants.MAX_CLIENT_THREADS);
-            server = new GameServer(20038, Constants.MAX_CLIENT_THREADS);
+            server = new GameServer(config.getPortNumber(), Constants.MAX_CLIENT_THREADS);
+            //server = new GameServer(20038, Constants.MAX_CLIENT_THREADS);
             server.configure();
             server.run();
         } catch (IOException ex) {
