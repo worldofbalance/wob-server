@@ -144,6 +144,7 @@ public class GameClient {
                         // Send responses to client, if any
                         send();
                     } catch (Exception ex) {
+                        Log.println(ex.getClass().getName());
                         Log.printf_e("Request [%d] Error:\n%s", request_id, ex.getMessage());
                     }
                 }

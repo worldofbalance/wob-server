@@ -39,6 +39,11 @@ public final class SimJobManager {
         job = null;
         this.simEngine = newSimEngine();
     }
+    
+    public SimJobManager(SimJob sjob) {
+        job = sjob;
+        this.simEngine = newSimEngine();
+    }
 
     public SimulationEngine newSimEngine() {
     	if(Constants.useSimEngine){
