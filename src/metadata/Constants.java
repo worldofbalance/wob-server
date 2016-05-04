@@ -48,4 +48,6 @@ public class Constants {
     public final static short SMSG_SCORE = 607;
 
     public final static short SMSG_RECONNECT = 608;
+    
+   public final static short CMSG_HEARTBEAT = 509;
 }

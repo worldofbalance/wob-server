@@ -141,6 +141,12 @@ public class GameClient implements Runnable{
                     // If there was no activity for the last moments, exit loop
                     if ((System.currentTimeMillis() - lastActivity) / 1000 >= Constants.TIMEOUT_SECONDS) {
                         isDone = true;
+                        int opp_id = PlayManager.getInstance().getPlayByPlayerID(player.getPlayer_id()).getOpponentID(player.getPlayer_id());
+                        if(opp_id!=0){
+                        ResponseSDDisconnect response = new ResponseSDDisconnect();
+                        NetworkManager.addResponseForUser(opp_id, response);
+                        }
+                        
                     }
                 }
             //incorrect request code. check Constants.
@@ -171,7 +177,18 @@ public class GameClient implements Runnable{
         outputStream.write(response.constructResponseInBytes());
     }
    
+     
+     public Queue<GameResponse> getUpdates() {
+        Queue<GameResponse> responseList = null;
 
+        synchronized (this) {
+            responseList = updates;
+            updates = new LinkedList<GameResponse>();
+        }
+
+        return responseList;
+    }
+     
     public void end() {
         isDone = true;
     }

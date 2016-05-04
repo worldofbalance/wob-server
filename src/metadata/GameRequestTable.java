@@ -31,6 +31,7 @@ public class GameRequestTable {
         add(Constants.CMSG_REQ_PREY,"RequestPrey");
         add(Constants.CMSG_EAT_PREY,"RequestDestroyPrey");
         add(Constants.CMSG_SCORE,"RequestScore");
+        add(Constants.CMSG_HEARTBEAT,"RequestHeartbeat");
         
         
     }
