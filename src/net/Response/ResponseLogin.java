@@ -6,6 +6,7 @@
 package net.Response;
 
 import metadata.Constants;
+import metadata.NetworkCode;
 import model.Player;
 import utility.GamePacket;
 
@@ -23,7 +24,7 @@ public class ResponseLogin extends GameResponse {
     private Player player;
 
     public ResponseLogin() {
-        responseCode = Constants.SMSG_AUTH;
+        responseCode = NetworkCode.SD_GAME_LOGIN;
     }
 
     @Override

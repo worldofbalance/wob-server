@@ -6,6 +6,7 @@
 package net.Response;
 
 import metadata.Constants;
+import metadata.NetworkCode;
 import model.Player;
 import utility.GamePacket;
 /**
@@ -18,7 +19,7 @@ public class ResponseSDDisconnect extends GameResponse{
     private short status;
     
     public void RepsonseSDDisconnect(){
-        responseCode = Constants.SMSG_DISCONNECT;
+        responseCode = NetworkCode.SD_DISCONNECT;
         status=0;
     }
     

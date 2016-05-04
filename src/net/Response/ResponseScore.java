@@ -6,6 +6,7 @@
 package net.Response;
 
 import metadata.Constants;
+import metadata.NetworkCode;
 import utility.GamePacket;
 
 /**
@@ -18,7 +19,8 @@ public class ResponseScore extends GameResponse{
     
     
     public ResponseScore(){
-      responseCode = Constants.SMSG_SCORE;
+      //responseCode = Constants.SMSG_SCORE;
+      responseCode = NetworkCode.SD_SCORE;
     }
     
 @Override

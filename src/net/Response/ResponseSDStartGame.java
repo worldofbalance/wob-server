@@ -7,6 +7,7 @@ package net.Response;
 
 
 import metadata.Constants;
+import metadata.NetworkCode;
 
 import utility.GamePacket;
 import utility.Log;
@@ -28,7 +29,8 @@ public class ResponseSDStartGame extends GameResponse{
     */
     
     public ResponseSDStartGame(){
-        responseCode = Constants.SMSG_SDSTARTGAME;
+        //responseCode = Constants.SMSG_SDSTARTGAME;
+        responseCode = NetworkCode.SD_START_GAME;
         status = 0;
         Log.println("A ResponseSDStartGame has been sent out.");
     }

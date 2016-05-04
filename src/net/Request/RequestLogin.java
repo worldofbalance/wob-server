@@ -27,6 +27,7 @@ public class RequestLogin extends GameRequest{
     private String version;
     private String user_id;
     private String password;
+    private int account_id;
     // Responses
     private ResponseLogin responseLogin;
 

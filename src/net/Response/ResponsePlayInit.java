@@ -6,6 +6,7 @@
 package net.Response;
 
 import metadata.Constants;
+import metadata.NetworkCode;
 import model.Player;
 import utility.GamePacket;
 
@@ -21,7 +22,7 @@ public class ResponsePlayInit extends GameResponse{
     private int number;//determines starting position of player.
     
     public ResponsePlayInit(){
-        responseCode = Constants.SMSG_RACE_INIT;
+        responseCode = NetworkCode.SD_PLAY_INIT;
         status = 0;
     }
     @Override
