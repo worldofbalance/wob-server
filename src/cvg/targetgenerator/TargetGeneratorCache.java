@@ -5,7 +5,7 @@
  */
 package cvg.targetgenerator;
 
-import cow.db.GameDB;
+import shared.db.GameDB;
 import cvg.targetgenerator.DBStructs.ConsumeStruct;
 import cvg.targetgenerator.DBStructs.SpeciesStruct;
 import java.sql.Connection;
