@@ -11,10 +11,15 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URISyntaxException;
 import java.security.CodeSource;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SimpleTimeZone;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
@@ -175,8 +180,7 @@ public class GameServer {
     }
       public static void main(String[] args) {
         try {
-            Log.printf("Sea Divided v%s is starting...\n", Constants.CLIENT_VERSION);
-
+            Log.printf("Sea Divided v%s is starting...\n", Constants.CLIENT_VERSION);           
             gameServer = new GameServer();
             gameServer.run();
         } catch (Exception ex) {
