@@ -36,7 +36,7 @@ public class TargetGraphGenerator {
 
     public static void main(String[] args) {
         TargetGeneratorCache.init();
-        //writeToMultiplayerDatabase();
+        writeToMultiplayerDatabase();
         generateNewMultiplayerFile();
     }
 
@@ -66,6 +66,8 @@ public class TargetGraphGenerator {
         BufferedReader reader;
         String[] files = file.list();
 
+        int check = 0;
+        
         for (int i = 0; i < files.length; i++) {
             File temp = new File(Constants.ATN_ACCEPTED_CSV_SAVE_PATH + files[i]);
             //get all subdirectories
@@ -86,7 +88,7 @@ public class TargetGraphGenerator {
                             String line = reader.readLine();
                             targetParams = line;
                             String[] args = line.split(",");
-
+                            check = Integer.parseInt(args[0]);
                             defaultParams = args[0] + ",";
                             description = "Ecosystem (" + args[0] + " species)";
                             for (int arg = 1; arg < args.length; arg++) {
@@ -157,6 +159,12 @@ public class TargetGraphGenerator {
                         defaultParams = defaultParams.substring(0, defaultParams.length() - 1);
                         System.out.println("Default Params: " + defaultParams);
 
+                        //just for Ben's stuff
+                        if(check == 11)
+                            defaultParams = "11,[2],645.546,528.0,2,K=1000.0,R=1.0,0,[3],599.66,528.0,1,K=3623.1,0,[4],595.662,528.0,1,K=2077.99,0,[5],1426.75,1.0,1,K=1482.07,0,[7],639.183,816.0,1,K=5848.08,0,[49],1511.23,0.355,1,X=0.791329,0,[55],739.104,0.213,1,X=0.281552,0,[61],392.821,54.0,1,X=0.0128268,0,[74],924.06,50.0,1,X=0.149428,0,[82],525.34,50.0,1,X=0.194981,0,[83],233.019,103.0,1,X=0.183021,0";
+                        else if(check == 5){
+                            defaultParams = "5,[5],1555.63,1.0,1,K=15000.0,0,[14],1071.01,20.0,1,X=0.322425,0,[31],1844.15,0.0075,1,X=0.532847,0,[42],133.96,0.205,1,X=0.885162,0,[70],2110.84,13.0,1,X=0.28642,0";
+                        }
                         runATNEngine(defaultParams);
 
                         //at this point, we have targetParams, defaultParams, and defaultCSV (Functions.getLastCSVFilePath())
@@ -173,8 +181,7 @@ public class TargetGraphGenerator {
                                 for(int k = 0; k < steps.length; k++){
                                     newline = newline.concat(steps[k].trim() + ",");
                                 }
-                                
-                                line = newline;
+                                line = newline.substring(0, newline.length() - 1);
                                 targetCSV = targetCSV.concat(line +"\n");
                             }
 
@@ -193,7 +200,7 @@ public class TargetGraphGenerator {
                                     newline = newline.concat(steps[k].trim() + ",");
                                 }
                                 
-                                line = newline;
+                                line = newline.substring(0, newline.length() - 1);
                                 defaultCSV = defaultCSV.concat(line +"\n");
                             }
                             reader.close();
