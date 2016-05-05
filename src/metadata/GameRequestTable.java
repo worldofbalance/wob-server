@@ -31,7 +31,8 @@ public class GameRequestTable {
         add(Constants.CMSG_REQ_PREY,"RequestPrey");
         add(Constants.CMSG_EAT_PREY,"RequestDestroyPrey");
         add(Constants.CMSG_SCORE,"RequestScore");
-        add(Constants.CMSG_HEARTBEAT,"RequestHeartbeat"); */
+        add(Constants.CMSG_HEARTBEAT,"RequestHeartbeat"); 
+        add(Constants.CMSG_NPCPOSITION,"RequestNpcFishPosition");*/
         
         add(NetworkCode.SD_GAME_LOGIN, "RequestLogin");
         add(NetworkCode.SD_PLAY_INIT, "RequestPlayInit");
@@ -43,7 +44,7 @@ public class GameRequestTable {
         add(NetworkCode.SD_EAT_PREY,"RequestDestroyPrey");
         add(NetworkCode.SD_SCORE,"RequestScore");
         add(NetworkCode.SD_HEARTBEAT,"RequestHeartbeat");
-        
+        add(NetworkCode.SD_NPCPOSITION, "RequestNpcFishPosition" );
     }
 
     /**
