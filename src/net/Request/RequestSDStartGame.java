@@ -11,6 +11,7 @@ import net.Response.ResponseSDStartGame;
 import PlayTime.Play;
 import PlayTime.PlayManager;
 import core.GameServer;
+import java.text.ParseException;
 import utility.DataReader;
 import utility.Log;
 
@@ -27,13 +28,14 @@ public class RequestSDStartGame extends GameRequest {
         // Responses
     private ResponseSDStartGame responseStart;
 
-    public RequestSDStartGame() {
+    public RequestSDStartGame() throws ParseException {
         responses.add(responseStart = new ResponseSDStartGame());
     }
 
     @Override
     public void parse() throws IOException {
              p_id1 = DataReader.readInt(dataInput);
+             
     }
 
     @Override
