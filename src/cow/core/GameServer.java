@@ -230,8 +230,8 @@ public class GameServer {
             GameServerConf config = new GameServerConf(new ConfFileParser(serverConf).parse());
             Log.println("Done!");
 
-            server = new GameServer(config.getPortNumber(), Constants.MAX_CLIENT_THREADS);
-            //server = new GameServer(20038, Constants.MAX_CLIENT_THREADS);
+            //server = new GameServer(config.getPortNumber(), Constants.MAX_CLIENT_THREADS);
+            server = new GameServer(20038, Constants.MAX_CLIENT_THREADS);
             server.configure();
             server.run();
         } catch (IOException ex) {
