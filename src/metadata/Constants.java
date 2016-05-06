@@ -49,5 +49,7 @@ public class Constants {
 
     public final static short SMSG_RECONNECT = 608;
     
-   public final static short CMSG_HEARTBEAT = 509;
+    public final static short CMSG_HEARTBEAT = 509;
+    public final static short CMSG_NPCPOSITION = 510;
+    public final static short SMSG_NPCPOSITION = 610;
 }
