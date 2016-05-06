@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import metadata.Constants;
+import metadata.NetworkCode;
 import model.Prey;
 import utility.GamePacket;
 
@@ -17,7 +18,7 @@ public class ResponseNpcFishPosition extends GameResponse{
     private HashMap<Integer, Prey> fishMap; //preyid -> prey object
 
     public ResponseNpcFishPosition(){
-        this.responseCode = Constants.SMSG_NPCPOSITION;
+        this.responseCode = NetworkCode.SD_NPCPOSITION;
     }
     
     @Override

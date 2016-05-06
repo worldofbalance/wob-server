@@ -6,6 +6,7 @@
 package net.Response;
 
 import metadata.Constants;
+import metadata.NetworkCode;
 import utility.GamePacket;
 
 /**
@@ -17,7 +18,8 @@ public class ResponseSDKeyboard extends GameResponse{
     
     
     public ResponseSDKeyboard(){
-      responseCode = Constants.SMSG_KEYBOARD;
+      //responseCode = Constants.SMSG_KEYBOARD;
+      responseCode = NetworkCode.SD_KEYBOARD;
     }
     
 @Override

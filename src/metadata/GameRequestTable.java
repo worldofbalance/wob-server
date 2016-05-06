@@ -22,7 +22,7 @@ public class GameRequestTable {
      */
     public static void init() {
         // Populate the table using request codes and class names
-        add(Constants.CMSG_AUTH, "RequestLogin");
+        /*add(Constants.CMSG_AUTH, "RequestLogin");
         add(Constants.CMSG_RACE_INIT, "RequestPlayInit");
         add(Constants.CMSG_SDENDGAME, "RequestSDEndGame");
         add(Constants.CMSG_SDSTARTGAME, "RequestSDStartGame");  
@@ -31,10 +31,20 @@ public class GameRequestTable {
         add(Constants.CMSG_REQ_PREY,"RequestPrey");
         add(Constants.CMSG_EAT_PREY,"RequestDestroyPrey");
         add(Constants.CMSG_SCORE,"RequestScore");
-        add(Constants.CMSG_HEARTBEAT,"RequestHeartbeat");
-        add(Constants.CMSG_NPCPOSITION,"RequestNpcFishPosition");
+        add(Constants.CMSG_HEARTBEAT,"RequestHeartbeat"); 
+        add(Constants.CMSG_NPCPOSITION,"RequestNpcFishPosition");*/
         
-        
+        add(NetworkCode.SD_GAME_LOGIN, "RequestLogin");
+        add(NetworkCode.SD_PLAY_INIT, "RequestPlayInit");
+        add(NetworkCode.SD_END_GAME, "RequestSDEndGame");
+        add(NetworkCode.SD_START_GAME, "RequestSDStartGame");  
+        add(NetworkCode.SD_KEYBOARD, "RequestSDKeyboard");
+        add(NetworkCode.SD_PLAYER_POSITION, "RequestSDPosition");
+        add(NetworkCode.SD_PREY,"RequestPrey");
+        add(NetworkCode.SD_EAT_PREY,"RequestDestroyPrey");
+        add(NetworkCode.SD_SCORE,"RequestScore");
+        add(NetworkCode.SD_HEARTBEAT,"RequestHeartbeat");
+        add(NetworkCode.SD_NPCPOSITION, "RequestNpcFishPosition" );
     }
 
     /**

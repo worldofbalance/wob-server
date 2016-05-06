@@ -6,6 +6,7 @@
 package net.Response;
 
 import metadata.Constants;
+import metadata.NetworkCode;
 import utility.GamePacket;
 
 /**
@@ -17,7 +18,8 @@ public class ResponseSDPosition extends GameResponse{
     private float x, y, rotation;
     
     public ResponseSDPosition(){
-        responseCode = Constants.SMSG_POSITION;
+        //responseCode = Constants.SMSG_POSITION;
+        responseCode = NetworkCode.SD_PLAYER_POSITION;
     }
 
     @Override

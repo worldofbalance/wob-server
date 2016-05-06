@@ -10,9 +10,12 @@ import core.NetworkManager;
 import db.PlayDAO;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import metadata.Constants;
 import model.Player;
 import model.Prey;
@@ -162,12 +165,16 @@ public class Play {
         }
 
         if (playersReadyToStart == Constants.MAX_NUMBER_OF_PLAYERS) {
-            ResponseSDStartGame responseStart = new ResponseSDStartGame();
-            for (int p_id : getPlayers().keySet()) {
-                //NetworkManager.addResponseForUser(p_id, responseStart);
-                // changed to this to reduce start game lag
-                // this change made it almost simultaneous start
-                GameServer.getInstance().getThreadByPlayerID(p_id).send(responseStart);
+            try {
+                ResponseSDStartGame responseStart = new ResponseSDStartGame();
+                for (int p_id : getPlayers().keySet()) {
+                    //NetworkManager.addResponseForUser(p_id, responseStart);
+                    // changed to this to reduce start game lag
+                    // this change made it almost simultaneous start
+                    GameServer.getInstance().getThreadByPlayerID(p_id).send(responseStart);
+                }
+            } catch (ParseException ex) {
+                Logger.getLogger(Play.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

@@ -8,6 +8,7 @@ package net.Response;
 import PlayTime.PlayTimePlayer;
 import java.util.Map;
 import metadata.Constants;
+import metadata.NetworkCode;
 import model.Player;
 import model.Prey;
 import utility.GamePacket;
@@ -24,7 +25,7 @@ public class ResponseSDReconnect extends GameResponse{
     
     
     public ResponseSDReconnect(){
-        this.responseCode = Constants.SMSG_RECONNECT;
+        this.responseCode = NetworkCode.SD_RECONNECT;
     }
     
     

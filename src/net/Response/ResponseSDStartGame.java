@@ -12,6 +12,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 import metadata.Constants;
+import metadata.NetworkCode;
 
 import utility.GamePacket;
 import utility.Log;
@@ -35,7 +36,7 @@ public class ResponseSDStartGame extends GameResponse{
     */
     
     public ResponseSDStartGame() throws ParseException{
-        responseCode = Constants.SMSG_SDSTARTGAME;
+        responseCode = NetworkCode.SD_START_GAME;
         status = 0;
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         final String utcTime = sdf.format(new Date());

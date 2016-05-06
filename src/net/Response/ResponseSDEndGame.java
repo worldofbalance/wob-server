@@ -6,6 +6,7 @@
 package net.Response;
 
 import metadata.Constants;
+import metadata.NetworkCode;
 import utility.GamePacket;
 
 /**
@@ -21,7 +22,8 @@ public class ResponseSDEndGame extends GameResponse{
     
 
     public ResponseSDEndGame() {
-        responseCode = Constants.SMSG_SDENDGAME;
+        //responseCode = Constants.SMSG_SDENDGAME;
+        responseCode = NetworkCode.SD_END_GAME;
     }
 
     @Override

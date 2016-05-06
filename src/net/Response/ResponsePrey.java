@@ -6,6 +6,7 @@
 package net.Response;
 
 import metadata.Constants;
+import metadata.NetworkCode;
 import utility.GamePacket;
 
 /**
@@ -20,7 +21,7 @@ public class ResponsePrey extends GameResponse {
    private boolean isAlive;
    
     public ResponsePrey() {
-        responseCode = Constants.SMSG_RES_PREY;
+        responseCode = NetworkCode.SD_PREY;
     }
     @Override
     public byte[] constructResponseInBytes() {

@@ -6,6 +6,7 @@
 package net.Response;
 
 import metadata.Constants;
+import metadata.NetworkCode;
 import utility.GamePacket;
 
 /**
@@ -18,7 +19,7 @@ public class ResponseDestroyPrey extends GameResponse{
     private int prey_id;
     
     public ResponseDestroyPrey(){
-        responseCode= Constants.SMSG_EAT_PREY;
+        responseCode = NetworkCode.SD_EAT_PREY;
     }
     
     @Override
