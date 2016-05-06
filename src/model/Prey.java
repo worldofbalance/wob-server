@@ -13,8 +13,7 @@ public class Prey {
     
     int prey_id;
     int species_id;
-    float x;
-    float y;
+    float x,y, rotation;
     boolean isAlive;
 
     public Prey(){}
@@ -66,5 +65,12 @@ public class Prey {
         this.isAlive = isAlive;
     }
     
+    public float getRotation(){
+        return this.rotation;
+    }
+    
+    public void setRotation(float rot){
+        this.rotation = rot;
+    }
     
 }
