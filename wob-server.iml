@@ -10,5 +10,7 @@
     <orderEntry type="library" name="lib1" level="project" />
     <orderEntry type="library" name="lib" level="project" />
     <orderEntry type="library" name="chartlib" level="project" />
+    <orderEntry type="library" name="mini_game_server_jar (2)" level="project" />
+    <orderEntry type="library" name="COS_Server" level="project" />
   </component>
 </module>
