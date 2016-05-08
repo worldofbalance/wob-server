@@ -10,11 +10,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import cow.db.GameDB;
 import cow.model.Account;
+import shared.db.GameDB;
 import shared.util.Functions;
 import shared.util.Log;
-
+import shared.db.GameDB;
 public final class AccountDAO {
 
     private AccountDAO() {
@@ -86,6 +86,41 @@ public final class AccountDAO {
             pstmt = con.prepareStatement(query);
             pstmt.setInt(1, accountid);
             
+
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                account = new Account(rs.getInt("account_id"));
+                account.setUsername(rs.getString("username"));
+                account.setEmail(rs.getString("email"));
+                account.setPassword(rs.getString("password"));
+                account.setPlayTime(rs.getLong("play_time"));
+                account.setActiveTime(rs.getLong("active_time"));
+                account.setLastLogout(rs.getString("last_logout"));
+            }
+        } catch (SQLException ex) {
+            Log.println_e(ex.getMessage());
+        } finally {
+            GameDB.closeConnection(con, pstmt, rs);
+        }
+
+        return account;
+    }
+
+    public static Account getAccountByPlayer(int playerId) {
+        Account account = null;
+
+        String query = "SELECT * FROM `account` LEFT JOIN `player` ON `account`.`account_id`=`player`.`account_id` WHERE (`player_id` = ?)";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = GameDB.getConnection();
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, playerId);
+
 
             rs = pstmt.executeQuery();
 

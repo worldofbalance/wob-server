@@ -64,6 +64,15 @@ public class GameRequestTable {
         add(NetworkCode.CONVERGE_HINT, "cvg.net.request.RequestConvergeHint");
         add(NetworkCode.CONVERGE_HINT_COUNT, "cvg.net.request.RequestConvergeHintCount");
         add(NetworkCode.CONVERGE_NEW_ATTEMPT_SCORE, "cvg.net.request.RequestConvergeNewAttemptScore");
+
+        // DH change
+        // Multiplayer Convergence
+        add(NetworkCode.MC_MATCH_INIT, "cvg.net.request.RequestMCMatchInit");   
+        add(NetworkCode.MC_GET_TIME, "cvg.net.request.RequestConvergeGetTime");
+        add(NetworkCode.MC_BET_UPDATE, "cvg.net.request.RequestConvergeBetUpdate");
+        add(NetworkCode.MC_GET_NAMES, "cvg.net.request.RequestConvergeGetNames");
+        add(NetworkCode.MC_GET_OTHER_SCORE, "cvg.net.request.RequestConvergeGetOtherScore");
+        add(NetworkCode.MC_CHECK_PLAYERS, "cvg.net.request.RequestConvergeCheckPlayers");
         
         add(NetworkCode.TOPLIST, "lby.net.request.RequestTopList");
         
@@ -88,8 +97,25 @@ public class GameRequestTable {
 	add(NetworkCode.CLASH_PLAYER_VIEW, "cos.net.request.RequestClashPlayerView");
 	add(NetworkCode.CLASH_INITIATE_BATTLE, "cos.net.request.RequestClashInitiateBattle");
 	add(NetworkCode.CLASH_END_BATTLE, "cos.net.request.RequestClashEndBattle");
-        
-        
+
+        //Cards of the wild
+        add(NetworkCode.MATCH_INIT, "cow.net.request.RequestMatchInit");
+        add(NetworkCode.MATCH_STATUS, "cow.net.request.RequestMatchStatus");
+        add(NetworkCode.GET_DECK, "cow.net.request.RequestGetDeck");
+        add(NetworkCode.SUMMON_CARD, "cow.net.request.RequestSummonCard");
+        add(NetworkCode.CARD_ATTACK, "cow.net.request.RequestCardAttack");
+        add(NetworkCode.QUIT_MATCH, "cow.net.request.RequestQuitMatch");
+        add(NetworkCode.END_TURN, "cow.net.request.RequestEndTurn");
+        add(NetworkCode.MATCH_OVER, "cow.net.request.RequestMatchOver");
+        add(NetworkCode.DEAL_CARD, "cow.net.request.RequestDealCard");
+        add(NetworkCode.TREE_ATTACK, "cow.net.request.RequestTreeAttack");
+        add(NetworkCode.MATCH_ACTION, "cow.net.request.RequestMatchAction");
+        add(NetworkCode.MATCH_START, "cow.net.request.RequestMatchStart");
+        add(NetworkCode.RETURN_LOBBY, "cow.net.request.RequestReturnLobby");
+        add(NetworkCode.APPLY_FOOD, "cow.net.request.RequestFoodCard");
+
+
+
         Log.println("Done!");
     }
 

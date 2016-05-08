@@ -64,14 +64,16 @@ public class MatchPlayer{
 		// to get player list before getting cards
 		Log.consoleln("setDeck()");
 		ArrayList<Integer> card_ids = new ArrayList<Integer>();
+               
+		card_ids.add(90);       // freez
                 
 		card_ids.add(13); // herbivores
 		card_ids.add(13);
-                card_ids.add(1004);
 		card_ids.add(14);
 		card_ids.add(14);
+                card_ids.add(92);       // food card
+                card_ids.add(93);
 		card_ids.add(15);
-                card_ids.add(1004);
 		card_ids.add(70);
 		card_ids.add(40);
 		card_ids.add(31);
@@ -111,7 +113,9 @@ public class MatchPlayer{
 		card_ids.add(35);
 		card_ids.add(38);
 		card_ids.add(40);
-		
+                card_ids.add(91);       // rain
+                 card_ids.add(89);       // fire
+                
 		deck = new CardDeck(card_ids);
 		deckIsBuilt(true);
 	}

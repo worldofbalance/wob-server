@@ -3,11 +3,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import cow.model.Session;
 import cow.model.Player;
-import cow.db.GameDB;
+import shared.db.GameDB;
 import shared.util.Color;
 import shared.util.Log;
 

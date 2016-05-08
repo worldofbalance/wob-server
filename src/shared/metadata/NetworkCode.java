@@ -70,6 +70,15 @@ public class NetworkCode {
     public final static short CONVERGE_HINT = 150;
     public final static short CONVERGE_HINT_COUNT = 151;
     public final static short CONVERGE_NEW_ATTEMPT_SCORE = 152;
+
+    // DH change
+    // Multiplayer Convergence 
+    public final static short MC_MATCH_INIT = 180;
+    public final static short MC_GET_TIME = 181;
+    public final static short MC_BET_UPDATE = 182;
+    public final static short MC_GET_NAMES = 183;
+    public final static short MC_GET_OTHER_SCORE = 184;
+    public final static short MC_CHECK_PLAYERS = 185;
     
     public final static short TOPLIST = 153;
     
@@ -95,8 +104,25 @@ public class NetworkCode {
     public final static short BACK_TO_LOBBY = 192;
     public final static short PLAY_GAME = 193;
     public final static short END_GAME = 194;
-    
-    
+
+    // Cards of the wild
+    public final static short MATCH_INIT= 201;
+    public final static short MATCH_STATUS = 202;
+    public final static short GET_DECK = 203;
+    public final static short SUMMON_CARD = 204;
+    public final static short CARD_ATTACK = 205;
+    public final static short QUIT_MATCH = 206;
+    public final static short MATCH_OVER = 207;
+    public final static short END_TURN = 208;
+    public final static short DEAL_CARD = 209;
+    public final static short TREE_ATTACK = 210;
+    public final static short MATCH_ACTION = 211;
+    public final static short MATCH_START = 212;
+    public final static short RETURN_LOBBY = 213;
+    public final static short APPLY_FOOD = 214;
+
+
+
 
     /**
      * Check for duplicate values, if any.

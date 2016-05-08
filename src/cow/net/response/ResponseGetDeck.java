@@ -27,13 +27,15 @@ public class ResponseGetDeck extends GameResponse {
 	    	// ha: if not storing deck info in server, easier just to pop from deck
 	    	card = deck.popCardFromDeck();
 	    	// speciesID not included
-	        packet.addInt32(card.getCardID());
-	        packet.addInt32(card.getHealth());
-	        packet.addInt32(card.getAttack());
-	        packet.addInt32(card.getLevel());
-	        packet.addString(card.getDietType());
-	        packet.addString(card.getSpeciesName());
-	        packet.addString(card.getDescription());
+			if (card != null) {
+				packet.addInt32(card.getCardID());
+				packet.addInt32(card.getHealth());
+				packet.addInt32(card.getAttack());
+				packet.addInt32(card.getLevel());
+				packet.addString(card.getDietType());
+				packet.addString(card.getSpeciesName());
+				packet.addString(card.getDescription());
+			}
 	    }
 
 	    return packet.getBytes();
