@@ -6,8 +6,7 @@ import shared.util.GamePacket;
 import cow.net.response.GameResponse;
 
 public class ResponseSummonCard extends GameResponse {
-   
-	private short status;
+    private short status;
 	
     public ResponseSummonCard() {
         response_id = NetworkCode.SUMMON_CARD;

@@ -12,11 +12,11 @@ import cow.net.request.GameRequest;
 import cow.net.response.ResponseMatchStatus;
 
 public class RequestMatchStatus extends GameRequest {
-	private int playerID;
-	private Boolean isActive;
-	private Boolean opponentIsReady;
-	private String playerName;
-	private short status;
+	protected int playerID;
+	protected Boolean isActive;
+	protected Boolean opponentIsReady;
+	protected String playerName;
+	protected short status;
 	
 	@Override
 	public void parse(DataInputStream dataInput) throws IOException {
