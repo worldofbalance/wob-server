@@ -51,7 +51,7 @@ public class RequestConvergeNonhostConfig extends GameRequest {
             betAmountRes = match.getBetAmount();
             ecoNumberRes = match.getEcoNumber(); 
         }
-        client.setBet(betAmountRes);
+        
         Log.consoleln("Num Rounds is: " + numRoundsRes);
         Log.consoleln("Time window is: " + timeWindowRes);
         Log.consoleln("bet amount is: " + betAmountRes);
@@ -60,7 +60,12 @@ public class RequestConvergeNonhostConfig extends GameRequest {
             response.setTimeWindow(timeWindowRes);
             response.setBetAmount(betAmountRes);
             response.setEcoNumber(ecoNumberRes);
+            client.setBet(betAmountRes);
+            client.setBetTime(timeWindowRes);
             client.add(response);
+            
+        long timeValue = System.currentTimeMillis();
+        match.setStartTime(timeValue);
         
     }
 }
