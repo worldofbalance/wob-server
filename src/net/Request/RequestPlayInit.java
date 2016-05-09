@@ -49,8 +49,10 @@ public class RequestPlayInit extends GameRequest {
         }
         
         Play play = PlayManager.getInstance().createPlay(player_id, room_id);
-        if((PlayManager.getInstance().playerPlayList.get(room_id).getPlayers().size())==1){
-        play.HOST_client_id = player_id;
+        // if((PlayManager.getInstance().playerPlayList.get(room_id).getPlayers().size())==1){
+        if(play.getPlayers().size() == 1){
+            play.HOST_client_id = player_id;
+            Log.printf("The host of Play:" + play.getID() + " is Player:" + player_id);
         }
         if(status !=2)
             play.getPlayer(player_id).setNumber(play.getPlayers().size());
