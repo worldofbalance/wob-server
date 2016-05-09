@@ -36,7 +36,7 @@ public class TargetGraphGenerator {
 
     public static void main(String[] args) {
         TargetGeneratorCache.init();
-        writeToMultiplayerDatabase();
+        //writeToMultiplayerDatabase();
         generateNewMultiplayerFile();
     }
 

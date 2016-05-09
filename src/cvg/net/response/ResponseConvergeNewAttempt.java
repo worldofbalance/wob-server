@@ -57,7 +57,7 @@ public class ResponseConvergeNewAttempt extends GameResponse {
         packet.addBoolean(allowHints);
         packet.addInt32(hintId);
         packet.addString(config);
-        packet.addString32(csv);
+        packet.addString(csv);
         return packet.getBytes();
     }
 }
