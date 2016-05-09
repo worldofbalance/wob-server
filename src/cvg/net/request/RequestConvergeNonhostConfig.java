@@ -43,16 +43,15 @@ public class RequestConvergeNonhostConfig extends GameRequest {
         short timeWindowRes = match.getTimeWindow();
         short betAmountRes = match.getBetAmount();
         short ecoNumberRes = match.getEcoNumber();
-        Short nullCheck = new Short(match.getEcoNumber());
+        //Short nullCheck = new Short(match.getEcoNumber());
         
         while( numRoundsRes == 0 || timeWindowRes == 0 || betAmountRes == 0){
-            Log.consoleln("match is: " + match);
             numRoundsRes = match.getNumRounds();
             timeWindowRes = match.getTimeWindow();
             betAmountRes = match.getBetAmount();
             ecoNumberRes = match.getEcoNumber(); 
-            nullCheck = new Short(match.getEcoNumber());
         }
+        client.setBet(betAmountRes);
         Log.consoleln("Num Rounds is: " + numRoundsRes);
         Log.consoleln("Time window is: " + timeWindowRes);
         Log.consoleln("bet amount is: " + betAmountRes);

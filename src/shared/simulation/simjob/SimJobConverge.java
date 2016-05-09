@@ -37,11 +37,12 @@ public class SimJobConverge {
         }
 
         Log.consoleln("before jobMgr");
-        //jobMgr = new SimJobManager();
+        jobMgr = new SimJobManager();
         Log.consoleln("before SimJob");
         simJob = new SimJob(config, timesteps);
         Log.consoleln("before setSimJob");//jobMgr is broken
-        jobMgr = new SimJobManager(simJob);//this breaks not sure why
+        jobMgr.setSimJob(simJob);
+        //jobMgr = new SimJobManager(simJob);//this breaks not sure why
         Log.consoleln("after setSimJob");//
         try {
             Log.consoleln("Before JobId");//this next line breaks

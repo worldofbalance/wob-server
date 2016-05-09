@@ -71,7 +71,7 @@ public class SetMetabolicRate {
         PrintStream ps = null;
 
         // Determine filename
-        String[] files = new File(Constants.CSV_SAVE_PATH).list(new FilenameFilter() {
+        String[] files = new File(Constants.ATN_CSV_SAVE_PATH).list(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return name.startsWith(name) && name.endsWith(extension);
@@ -100,7 +100,7 @@ public class SetMetabolicRate {
 
         csvFilename += extension;
         try {
-            ps = new PrintStream(new FileOutputStream(Constants.CSV_SAVE_PATH + csvFilename));
+            ps = new PrintStream(new FileOutputStream(Constants.ATN_CSV_SAVE_PATH + csvFilename));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(SetMetabolicRate.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -144,7 +144,7 @@ public class SetMetabolicRate {
         int sp;
 
         final String name = "met-rate", extension = ".csv";
-        String fileName = Constants.CSV_SAVE_PATH.concat(name).concat(extension);
+        String fileName = Constants.ATN_CSV_SAVE_PATH.concat(name).concat(extension);
         PrintWriter dest = new PrintWriter(new File(fileName));
 
         System.out.printf("%30s,%4s,%10s,%10s,%10s,%10s", "Animal(i)", "ID", "M_i",

@@ -386,5 +386,8 @@ public class GameClient {
         return match_id;
     }
     
+    public void setBet(int bet){
+        this.bet = bet;
+    }
     
 }
