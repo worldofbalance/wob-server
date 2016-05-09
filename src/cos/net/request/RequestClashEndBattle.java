@@ -5,21 +5,18 @@
  */
 package cos.net.request;
 
+import cos.db.BattleDAO;
+import cos.db.DefenseConfigDAO;
+import cos.db.PlayerDAO;
+import cos.model.Battle;
+import cos.model.DefenseConfig;
+import cos.model.Player;
+import cos.net.response.ResponseClashEndBattle;
+import cos.util.DataReader;
+
 import java.io.DataInputStream;
 import java.io.IOException;
-
-import shared.core.GameServer;
-import shared.db.PlayerDAO;
-import cos.db.DefenseConfigDAO;
-import lby.net.request.GameRequest;
-import cos.net.response.ResponseClashEndBattle;
-import shared.util.DataReader;
 import java.util.Date;
-import shared.model.Player;
-import cos.model.DefenseConfig;
-
-import cos.db.BattleDAO;
-import cos.model.Battle;
 
 /**
  * Sent when the client has finished a battle

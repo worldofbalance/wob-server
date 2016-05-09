@@ -1,8 +1,8 @@
 package cos.model;
 
-import java.util.ArrayList;
-import shared.util.Vector2;
+import cos.util.Vector2;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 

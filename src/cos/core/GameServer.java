@@ -2,20 +2,17 @@ package cos.core;
 
 // Java Imports
 
-import lby.core.badge.BadgeController;
-import lby.core.world.WorldController;
-import shared.config.GameServerConf;
-import shared.core.ClientHandler;
-import shared.core.GameClient;
-import shared.metadata.Constants;
-import shared.metadata.GameRequestTable;
-import shared.model.Account;
-import shared.model.Player;
-import shared.util.ConfFileParser;
-import shared.util.ConfigureException;
-import shared.util.ExpTable;
-import shared.util.Log;
-import shared.core.ServerResources;
+import cos.config.GameServerConf;
+import cos.core.badge.BadgeController;
+import cos.core.world.WorldController;
+import cos.metadata.Constants;
+import cos.metadata.GameRequestTable;
+import cos.model.Account;
+import cos.model.Player;
+import cos.util.ConfFileParser;
+import cos.util.ConfigureException;
+import cos.util.ExpTable;
+import cos.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -224,7 +221,8 @@ public class GameServer {
             GameServerConf config = new GameServerConf(new ConfFileParser(serverConf).parse());
             Log.println("Done!");
 
-            server = new GameServer(16567, Constants.MAX_CLIENT_THREADS);
+            //server = new GameServer(16567, Constants.MAX_CLIENT_THREADS);
+            server = new GameServer(config.getPortNumber(), Constants.MAX_CLIENT_THREADS);
             server.configure();
             server.run();
         } catch (IOException ex) {

@@ -5,17 +5,13 @@
  */
 package cos.net.request;
 
-import shared.core.GameServer;
+import cos.db.ClashPlayerDAO;
+import cos.model.Player;
+import cos.net.response.ResponseClashPlayerList;
+
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-
-import cos.db.ClashPlayerDAO;
-import cos.db.DefenseConfigDAO;
-import lby.net.request.GameRequest;
-import cos.net.response.ResponseClashPlayerList;
-import cos.model.Player;
 
 /**
  * Request for a list of players of Clash of Species
@@ -43,7 +39,7 @@ public class RequestClashPlayerList extends GameRequest{
         for(Player pl : eligible){
             // Players don't need to be active to initialize a battle.
             // Don't display yourself in the list of potential opponents
-            if(pl.id != client.getPlayer().getID()) {
+            if(pl.player_id != client.getPlayer().getID()) {
                 response.addPlayer(pl);
             }
         }

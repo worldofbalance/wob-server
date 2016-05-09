@@ -5,14 +5,13 @@
  */
 package cos.net.response;
 
-import java.util.HashMap;
-import java.util.Map;
+import cos.metadata.NetworkCode;
+import cos.util.GamePacket;
+import cos.util.Vector2;
 
-import shared.metadata.NetworkCode;
-import lby.net.response.GameResponse;
-import shared.util.GamePacket;
-import shared.util.Vector2;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**

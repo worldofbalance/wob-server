@@ -1,17 +1,17 @@
 package cos.db;
-import shared.db.GameDB;
-
-// Java Imports
-import java.sql.*;
-import java.util.*;
-import java.util.Date;
-
-
-// Other Imports
 
 import cos.model.DefenseConfig;
-import shared.util.Log;
-import shared.util.Vector2;
+import cos.util.Log;
+import cos.util.Vector2;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+// Java Imports
+// Other Imports
 
 /**
  * Table(s) Required: defence_config
