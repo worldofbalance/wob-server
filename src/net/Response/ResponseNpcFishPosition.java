@@ -30,6 +30,7 @@ public class ResponseNpcFishPosition extends GameResponse{
         for(Map.Entry<Integer, Prey> entry : fishMap.entrySet()){
             fish = entry.getValue();
             packet.addInt32(fish.getPrey_id());
+            packet.addInt32(fish.getSpecies_id());
             packet.addFloat(fish.getX());
             packet.addFloat(fish.getY());
             packet.addFloat(fish.getRotation());

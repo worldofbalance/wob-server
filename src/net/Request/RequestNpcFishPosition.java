@@ -27,6 +27,7 @@ public class RequestNpcFishPosition extends GameRequest{
         while(numFish > 0){
             fish = new Prey();
             fish.setPrey_id(Integer.parseInt(DataReader.readString(dataInput)));
+            fish.setSpecies_id(Integer.parseInt(DataReader.readString(dataInput)));
             fish.setX(Float.parseFloat(DataReader.readString(dataInput)));
             fish.setY(Float.parseFloat(DataReader.readString(dataInput)));
             fish.setRotation(Float.parseFloat(DataReader.readString(dataInput)));

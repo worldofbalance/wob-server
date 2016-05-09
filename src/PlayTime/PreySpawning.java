@@ -32,7 +32,7 @@ public class PreySpawning {
       if(i<8){
           prey.setSpecies_id(1);
       }
-      else if((i>=8)&&(i<17)){
+      else if((i>=8)&&(i<15)){
            prey.setSpecies_id(2);
         }
       else

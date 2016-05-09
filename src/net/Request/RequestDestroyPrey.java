@@ -58,16 +58,19 @@ public class RequestDestroyPrey extends GameRequest{
             if(play.species1<3){
                 response2.setSpecies_id(1);
                 response2.setNum_of_prey(4);
+                play.species1 += 4;
                 GameServer.getInstance().getThreadByPlayerID(play.HOST_client_id).send(response2);
             }
             else if(play.species2<3){
                  response2.setSpecies_id(2);
                 response2.setNum_of_prey(4);
+                play.species2 += 4;
                 GameServer.getInstance().getThreadByPlayerID(play.HOST_client_id).send(response2);
             }
             else if(play.species3<3){
                  response2.setSpecies_id(3);
                 response2.setNum_of_prey(3);
+                play.species3 += 3;
                 GameServer.getInstance().getThreadByPlayerID(play.HOST_client_id).send(response2);
             }
             
