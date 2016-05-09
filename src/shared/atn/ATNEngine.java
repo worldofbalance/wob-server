@@ -251,14 +251,19 @@ public class ATNEngine {
 
             //B. print combined biomass contributions (i.e. locally calculated biomass)
             //for current species.
-            String speciesName = null;
+             SimJobSZT sjSzt = job.getSpeciesZoneByNodeId(speciesID[i]);
+            //add nodes to list in the order that they are received from infos
+            String name = sjSzt.getName().replaceAll(",", " ") + " [" + sjSzt.getNodeIndex() + "]";
+            psATN.print(name);
+            //Harjit's old stuff that Ben fixed for Boabab
+            /*String speciesName = null;
             for (SpeciesStruct str : TargetGeneratorCache.species) {
                 if (str.node_id == speciesID[i]) {
                     speciesName = str.name;
                 }
             }
             psATN.printf("%s [%d]", speciesName, speciesID[i]);
-            speciesName = null;
+            speciesName = null;*/
             for (int t = 0; t < timesteps; t++) {
                 psATN.printf(",%9.0f", calcBiomass[t][i] * biomassScale);
             }
@@ -273,9 +278,6 @@ public class ATNEngine {
 //               psATN.println();
 //           }
             float extinction = 1.E-15f;
-            SimJobSZT sjSzt = job.getSpeciesZoneByNodeId(speciesID[i]);
-            //add nodes to list in the order that they are received from infos
-            String name = sjSzt.getName().replaceAll(",", " ") + " [" + sjSzt.getNodeIndex() + "]";
             String tempStr = name;
             for (int t = 0; t < maxTimestep; t++) {
                 tempStr += ",";
@@ -558,7 +560,7 @@ public class ATNEngine {
         job.setNode_Config(test);
         //job.setNode_Config("15,[1],400,1.000,1,K=2000.000,0,[2],1056,20.000,1,K=3000.000,0,[5],2000,1.000,1,K=7000.000,0,[7],1322,40.000,1,K=3000.000,0,[9],1913,0.071,1,X=0.310,0,[12],300,1.000,0,0,[26],1164,0.011,1,X=1.000,0,[45],916,0.425,1,X=0.400,0,[49],1015,0.355,1,X=0.120,0,[55],1849,0.213,1,X=0.480,0,[67],1434,9.600,1,X=0.180,0,[71],564,4.990,1,X=0.220,0,[75],568,1.590,1,X=0.010,0,[80],575,41.500,1,X=0.130,0,[87],240,112.000,1,X=0.100,0");
         job.setManip_Timestamp((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date()));
-        job.setTimesteps(1000);
+        job.setTimesteps(400);
         String atnManipId = UUID.randomUUID().toString();
         job.setATNManipulationId(atnManipId);
         atn.processSimJob(job);

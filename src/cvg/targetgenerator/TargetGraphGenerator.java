@@ -5,6 +5,7 @@
  */
 package cvg.targetgenerator;
 
+import cvg.ATNConverter;
 import cvg.net.response.ResponseConvergeEcosystems;
 import java.io.BufferedReader;
 import java.io.File;
@@ -36,7 +37,7 @@ public class TargetGraphGenerator {
 
     public static void main(String[] args) {
         TargetGeneratorCache.init();
-        //writeToMultiplayerDatabase();
+        writeToMultiplayerDatabase();
         generateNewMultiplayerFile();
     }
 
@@ -208,7 +209,7 @@ public class TargetGraphGenerator {
                             e.printStackTrace();
                         }
                         //now we have defaultParams, targetParams, defaultCSV, targetCSV, timesteps = 200
-                        addToMultiplayerDB(description, defaultParams, defaultCSV, targetParams, targetCSV, 200);
+                        addToMultiplayerDB(description, defaultParams, ATNConverter.ConvertCSV(defaultCSV, 200), targetParams, ATNConverter.ConvertCSV(targetCSV, 200), 200);
                     }
                 }
             }
@@ -262,7 +263,7 @@ public class TargetGraphGenerator {
             job.setJob_Descript("atn1");
             job.setNode_Config(node_config);
             job.setManip_Timestamp((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date()));
-            job.setTimesteps(1000);
+            job.setTimesteps(400);
             String atnManipId = UUID.randomUUID().toString();
             job.setATNManipulationId(atnManipId);
             atn.processSimJob(job);
