@@ -1,7 +1,9 @@
 package lby.core.world;
 
 // Java Imports
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,12 +54,12 @@ public class World {
         clock = new Clock(day, time_rate * Constants.TIME_MODIFIER);
         createClockEvents();
 
-//        worldTimer.schedule(new TimerTask() {
-//            @Override
-//            public void run() {
-//                clock.run();
-//            }
-//        }, 1000, 1000);
+        worldTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                clock.run();
+           }
+        }, 1000, 1000);
     }
 
     private void createClockEvents() {
@@ -164,13 +166,14 @@ public class World {
             Log.println("item_id = " + item_id);
             if (species != null) {
                 int biomass = itemList.get(item_id);
-                totalCost += species.getCost() * Math.ceil(biomass / species.getBiomass());
+                totalCost += species.getCost() * Math.ceil(biomass / species.getBiomass()); //if species has a low biomass per unit, the price will be very high
+                  Log.println("biomass: " + biomass);
             } else {
                 return -1;
             }
         }
-         
-      //cost is absurdly high, most transactions fail because of this
+       
+  
         Log.println("total cost before: " + totalCost);
         Log.println("player credits: " + player.getCredits());
         if (GameResources.useCredits(player, totalCost)) {
@@ -186,20 +189,7 @@ public class World {
             }
             //LobbyController.getInstance().getLobby(this).getEventHandler().execute(EventTypes.BIOMASS_BOUGHT, totalBiomass);
 
-            // Create a new timer, if none exist.
-            if (shopTimer.getTask() == null || shopTimer.getTimeRemaining() <= 0) {
-                // Timer Declaration Start
-                final World world_f = this;
-                final Player player_f = player;
-                shopTimer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        world_f.processShopOrder(player_f);
-                    }
-                }, Constants.SHOP_PROCESS_DELAY);
-                // End
-            }
-            // Insert these item values into the hashmap
+                        // Insert these item values into the hashmap
             for (int item_id : itemList.keySet()) {
                 int amount = itemList.get(item_id);
                 // New item
@@ -208,6 +198,27 @@ public class World {
                 }
                 shopList.put(item_id, amount);
             }
+            
+           
+                
+            // Create a new timer, if none exist.
+            if (shopTimer.getTask() == null || shopTimer.getTimeRemaining() <= 0) {
+                // Timer Declaration Start
+                final World world_f = this;
+                Log.consoleln("world " +world_f);
+                Log.consoleln("timer " +shopTimer.getTimeElapsed());
+                final Player player_f = player;
+                world_f.processShopOrder(player_f);
+//                shopTimer.schedule(new TimerTask() {
+//                    @Override
+//                    public void run() {
+//                        world_f.processShopOrder(player_f);
+//                    }
+//                }, Date.from(Instant.now()));
+                // End
+            }
+            
+
         } else {
             totalCost = -1;
         }
@@ -222,9 +233,25 @@ public class World {
      */
     public void processShopOrder(Player player) {
         // Retrieve starting Zone
+        Log.println("player:\t" + player);
         Ecosystem ecosystem = player.getEcosystem();
+         Log.println("eco: " +ecosystem);
+        if(ecosystem == null)
+        {
+            short type = 1;
+            ecosystem = new Ecosystem(player.getAccountID(),player.getAccountID(),player.getID(),player.getName(),type);
+            player.setEcosystem(ecosystem);
+     
+        }
+        Log.println("eco after: " +ecosystem);
+        Log.println("shoplist: " +shopList);
+        World world = this;
+        
+        //gameEngine is null here
+        //gameEngine = GameEngine(lobby, world, ecosystem);
         gameEngine.createSpeciesByPurchase(player, shopList, ecosystem);
         gameEngine.forceSimulation();
+        
         
         
         Log.println("process order");
@@ -238,6 +265,7 @@ public class World {
                 tempList += ",";
             }
         }
+        
 
         ResponseShopAction response = new ResponseShopAction();
         response.setStatus(2);
