@@ -34,12 +34,19 @@ public class Play {
     private Map<Integer, Prey> mapNpcFish = new HashMap<Integer, Prey>();
     private int playID;
     private int mapID;
+    public int species1;
+    public  int species2;
+    public  int species3;
+    public  int HOST_client_id; 
 
     private short playersReadyToStart;
     
     public Play(int playID) {
         this.playID = playID;
-        
+        species1 = 7;
+        species2 = 7;
+        species3 = 6;
+        HOST_client_id = 0; 
         try {
             PlayDAO.createPlay(playID);
         } catch (SQLException e) {
@@ -47,6 +54,38 @@ public class Play {
             Log.println_e(e.getMessage());
         }
         
+    }
+
+    public int getSpecies1() {
+        return species1;
+    }
+
+    public void setSpecies1(int species1) {
+        this.species1 = species1;
+    }
+
+    public int getSpecies2() {
+        return species2;
+    }
+
+    public void setSpecies2(int species2) {
+        this.species2 = species2;
+    }
+
+    public int getSpecies3() {
+        return species3;
+    }
+
+    public void setSpecies3(int species3) {
+        this.species3 = species3;
+    }
+
+    public int getHOST_client_id() {
+        return HOST_client_id;
+    }
+
+    public void setHOST_client_id(int HOST_client_id) {
+        this.HOST_client_id = HOST_client_id;
     }
     
     /**

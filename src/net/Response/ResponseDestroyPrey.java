@@ -27,11 +27,12 @@ public class ResponseDestroyPrey extends GameResponse{
         GamePacket packet = new GamePacket(responseCode);
         packet.addShort16(status);
         if(status ==0){
+      
             packet.addInt32(prey_id);
         }
         return packet.getBytes();
     }
-    
+
     public void setPreyId(int prey_id){
         this.prey_id = prey_id;
     }

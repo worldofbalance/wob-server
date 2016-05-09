@@ -37,10 +37,11 @@ public class RequestPrey extends GameRequest{
     @Override
     public void doBusiness() throws Exception {
         
+        responsePrey.setSpecies_id(PreySpawning.getInstance().map.get(prey_id).getSpecies_id());
         responsePrey.setPrey_id(prey_id);
         responsePrey.setX(PreySpawning.getInstance().map.get(prey_id).getX());
         responsePrey.setY(PreySpawning.getInstance().map.get(prey_id).getY());
-        responsePrey.setIsAlive(PreySpawning.getInstance().map.get(prey_id).isIsAlive());
+        responsePrey.setRotation(PreySpawning.getInstance().map.get(prey_id).getRotation());
         
     }
 

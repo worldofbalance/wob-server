@@ -100,6 +100,7 @@ public class NetworkCode {
     public final static short SD_RECONNECT = 310;
     public final static short SD_HEARTBEAT = 311;
     public final static short SD_NPCPOSITION = 312;
+    public final static short SD_RESPAWN = 313;
 
     /**
      * Check for duplicate values, if any.

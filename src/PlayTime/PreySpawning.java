@@ -28,8 +28,18 @@ public class PreySpawning {
       float y = Constants.Y_MIN + (float)(Math.random() * ((Constants.Y_MAX - Constants.Y_MIN) + 1));
       prey.setX(x);
       prey.setY(y);
-      prey.setIsAlive(true);
       prey.setPrey_id(i);
+      if(i<8){
+          prey.setSpecies_id(1);
+      }
+      else if((i>=8)&&(i<17)){
+           prey.setSpecies_id(2);
+        }
+      else
+      {
+          prey.setSpecies_id(3);
+      }
+      prey.setRotation(0.0f);
       map.put(i,prey);
  }
  }

@@ -16,9 +16,11 @@ import utility.GamePacket;
 public class ResponsePrey extends GameResponse {
    
    private int prey_id;
+   private int Species_id;
    private float x ;
    private float y;
-   private boolean isAlive;
+   private float rotation;
+   
    
     public ResponsePrey() {
         responseCode = NetworkCode.SD_PREY;
@@ -26,11 +28,22 @@ public class ResponsePrey extends GameResponse {
     @Override
     public byte[] constructResponseInBytes() {
         GamePacket packet = new GamePacket(responseCode);
+        packet.addInt32(Species_id);
         packet.addInt32(prey_id);
         packet.addFloat(x);
         packet.addFloat(y);
-        packet.addBoolean(isAlive);
+        packet.addFloat(rotation);
         return packet.getBytes();
+    }
+
+
+    public void setRotation(float rotation) {
+        this.rotation = rotation;
+    }
+
+
+    public void setSpecies_id(int Species_id) {
+        this.Species_id = Species_id;
     }
 
     public void setPrey_id(int prey_id) {
@@ -45,8 +58,6 @@ public class ResponsePrey extends GameResponse {
         this.y = y;
     }
 
-    public void setIsAlive(boolean isAlive) {
-        this.isAlive = isAlive;
-    }
+   
     
 }
