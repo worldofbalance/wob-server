@@ -81,7 +81,7 @@ public class MiniGameServers {
         miniGames.put(game.getName(), game);
 
         game = new MiniGame("Clash of Species");
-        game.setAsMultiPlayerGame("mini_game_server_jar/cos_server/dist/cos_server.jar", 16567);
+        game.setAsMultiPlayerGame("mini_game_server_jar/cos_server/dist/cos-server.jar", 16567);
         miniGames.put(game.getName(), game);
     }
 }
