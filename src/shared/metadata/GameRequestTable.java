@@ -46,6 +46,9 @@ public class GameRequestTable {
 
         add(NetworkCode.UPDATE_TIME, "lby.net.request.RequestUpdateTime");
 
+        //MENU
+        add(NetworkCode.STATUS, "lby.net.request.RequestStatus");
+        
         // Badge
         add(NetworkCode.BADGE_LIST, "lby.net.request.badge.RequestBadgeList");
         // Shop
