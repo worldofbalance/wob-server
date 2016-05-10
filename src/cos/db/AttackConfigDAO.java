@@ -1,14 +1,14 @@
 package cos.db;
 
 // Java Imports
+
+import cos.model.AttackConfig;
+import cos.util.Log;
+
 import java.sql.*;
 import java.util.Date;
 
-import shared.db.GameDB;
-
 // Other Imports
-import cos.model.AttackConfig;
-import shared.util.Log;
 
 /**
  * Database methods for model.clashgame.AttackConfig
