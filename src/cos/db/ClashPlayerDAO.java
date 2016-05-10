@@ -1,12 +1,13 @@
 package cos.db;
 
 import cos.model.Player;
+import cos.util.Log;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import shared.db.GameDB;
-import shared.util.Log;
-
-import java.sql.*;
 import java.util.List;
 
 /**
@@ -41,9 +42,9 @@ public class ClashPlayerDAO {
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 Player pl = new Player();
-                pl.id = rs.getInt("player_id");
+                pl.player_id = rs.getInt("player_id");
                 pl.name = rs.getString("name");
-                pl.level = rs.getInt("level");
+                pl.level = (short) rs.getInt("level");
                 result.add(pl);
             }
         } catch (SQLException ex) {
@@ -73,9 +74,9 @@ public class ClashPlayerDAO {
 
             if (rs.next()) {
                 result = new Player();
-                result.id = rs.getInt("player_id");
+                result.player_id = rs.getInt("player_id");
                 result.name = rs.getString("name");
-                result.level = rs.getInt("level");
+                result.level = (short)rs.getInt("level");
             }
         } catch (SQLException ex) {
             Log.println_e(ex.getMessage());

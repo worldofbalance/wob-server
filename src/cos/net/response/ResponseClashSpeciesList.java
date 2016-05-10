@@ -5,10 +5,9 @@
  */
 package cos.net.response;
 
-import shared.metadata.NetworkCode;
+import cos.metadata.NetworkCode;
 import cos.model.Species;
-import lby.net.response.GameResponse;
-import shared.util.GamePacket;
+import cos.util.GamePacket;
 
 import java.util.ArrayList;
 import java.util.List;

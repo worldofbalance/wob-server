@@ -5,9 +5,8 @@
  */
 package cos.net.response;
 
-import shared.metadata.NetworkCode;
-import lby.net.response.GameResponse;
-import shared.util.GamePacket;
+import cos.metadata.NetworkCode;
+import cos.util.GamePacket;
 
 /**
  * Container for the new virtual currency balance to be sent back

@@ -5,17 +5,15 @@
  */
 package cos.net.request;
 
-import shared.db.PlayerDAO;
-import java.io.DataInputStream;
-import java.io.IOException;
-
 import cos.db.ClashPlayerDAO;
 import cos.db.DefenseConfigDAO;
 import cos.model.DefenseConfig;
 import cos.model.Player;
-import lby.net.request.GameRequest;
 import cos.net.response.ResponseClashPlayerView;
-import shared.util.DataReader;
+import cos.util.DataReader;
+
+import java.io.DataInputStream;
+import java.io.IOException;
 
 /**
  * Request for data on a specific Clash of Species player

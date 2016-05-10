@@ -5,17 +5,15 @@
  */
 package cos.net.request;
 
+import cos.db.DefenseConfigDAO;
+import cos.model.DefenseConfig;
+import cos.net.response.ResponseClashEntry;
+import cos.util.Vector2;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.HashMap;
-
-import cos.model.DefenseConfig;
-import lby.net.request.GameRequest;
-import cos.net.response.ResponseClashEntry;
-import cos.db.DefenseConfigDAO;
-import shared.util.Vector2;
 
 /**
  * @author lev

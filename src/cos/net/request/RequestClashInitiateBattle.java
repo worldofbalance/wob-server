@@ -5,22 +5,21 @@
  */
 package cos.net.request;
 
+import cos.db.AttackConfigDAO;
+import cos.db.BattleDAO;
+import cos.db.DefenseConfigDAO;
+import cos.db.PlayerDAO;
+import cos.model.AttackConfig;
+import cos.model.Battle;
+import cos.model.DefenseConfig;
+import cos.model.Player;
+import cos.net.response.ResponseClashInitiateBattle;
+import cos.util.DataReader;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-
-import shared.db.PlayerDAO;
-import cos.db.AttackConfigDAO;
-import cos.db.BattleDAO;
-import cos.db.DefenseConfigDAO;
-import shared.model.Player;
-import cos.model.AttackConfig;
-import cos.model.Battle;
-import cos.model.DefenseConfig;
-import lby.net.request.GameRequest;
-import cos.net.response.ResponseClashInitiateBattle;
-import shared.util.DataReader;
 
 /**
  * Sent when the player initiates a battle on the client

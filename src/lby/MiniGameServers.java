@@ -5,13 +5,13 @@
  */
 package lby;
 
+import shared.util.Log;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import shared.util.ConfFileParser;
-import shared.util.Log;
 
 /**
  *
@@ -78,6 +78,10 @@ public class MiniGameServers {
 
         game = new MiniGame("Sea Divided");
         game.setAsMultiPlayerGame("mini_game_server_jar/SeaDividedServer/dist/SeaDivided.jar", 20040);
+        miniGames.put(game.getName(), game);
+
+        game = new MiniGame("Clash of Species");
+        game.setAsMultiPlayerGame("mini_game_server_jar/cos_server/dist/cos-server.jar", 16567);
         miniGames.put(game.getName(), game);
     }
 }

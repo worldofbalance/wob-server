@@ -5,9 +5,8 @@
  */
 package cos.net.response;
 
-import shared.metadata.NetworkCode;
-import lby.net.response.GameResponse;
-import shared.util.GamePacket;
+import cos.metadata.NetworkCode;
+import cos.util.GamePacket;
 
 /**
  * Sent back after the user has sent a defense configuration for the

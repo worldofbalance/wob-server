@@ -230,8 +230,7 @@ public class GameServer {
             Log.println_e("Server Crashed!");
             Log.println_e(ex.getMessage());
         }
-       
-        
+
         System.exit(0);
     }
 }

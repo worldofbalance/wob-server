@@ -5,15 +5,12 @@
  */
 package cos.net.response;
 
-import shared.metadata.NetworkCode;
+import cos.metadata.NetworkCode;
 import cos.model.Player;
-import lby.net.response.GameResponse;
-import shared.util.GamePacket;
+import cos.util.GamePacket;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Container for the list of players of Clash of Species game
@@ -50,7 +47,7 @@ public class ResponseClashPlayerList extends GameResponse{
         GamePacket packet = new GamePacket(response_id);
         packet.addInt32(players.size());
         for(Player pl : players) {
-            packet.addInt32(pl.id);
+            packet.addInt32(pl.player_id);
             packet.addString(pl.name);
             // Also add level?
         }
