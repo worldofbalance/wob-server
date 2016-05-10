@@ -16,6 +16,7 @@ import lby.core.LobbyController;
 import shared.core.GameResources;
 import shared.core.ServerResources;
 import lby.db.world.WorldDAO;
+import lby.db.world.WorldZoneDAO;
 import lby.net.response.ResponseSpeciesCreate;
 import shared.metadata.Constants;
 import shared.model.Player;
@@ -323,5 +324,72 @@ public class World {
 
 
         }
+    }
+     /**
+     * Create new and merge existing purchases until a given time frame is up.
+     *
+     * @param zone_id
+     * @param player
+     * @return
+     */
+    public int createTilesByPurchase(Integer zone_id, Player player) throws SQLException {
+        Log.println("Player [" + player.getName() + "] is requesting for a tile order.");
+        int totalCost = 0;
+
+        // Determine the total cost of purchase
+        totalCost = (int) (WorldZoneDAO.getCarryingCapacity(zone_id)*100);
+        
+  
+        Log.println("total cost before: " + totalCost);
+        Log.println("player credits: " + player.getCredits());
+        if (GameResources.useCredits(player, totalCost)) {
+             //LobbyController.getInstance().getLobby(this).getEventHandler().execute(EventTypes.SPECIES_BOUGHT, itemList.size());
+            WorldZoneDAO.updateOwner(player.getAccountID(), zone_id);
+//            int totalBiomass = 0;
+//            for (int item_id : itemList.keySet()) {
+//                SpeciesType species = ServerResources.getSpeciesTable().getSpecies(item_id);
+//
+//                if (species != null) {
+//                    totalBiomass += itemList.get(item_id);
+//                }
+//            }
+//            //LobbyController.getInstance().getLobby(this).getEventHandler().execute(EventTypes.BIOMASS_BOUGHT, totalBiomass);
+//
+//                        // Insert these item values into the hashmap
+//            for (int item_id : itemList.keySet()) {
+//                int amount = itemList.get(item_id);
+//                // New item
+//                if (shopList.containsKey(item_id)) {
+//                    amount += shopList.get(item_id);
+//                }
+//                shopList.put(item_id, amount);
+//            }
+//            
+//           
+//                
+//            // Create a new timer, if none exist.
+//            if (shopTimer.getTask() == null || shopTimer.getTimeRemaining() <= 0) {
+//                // Timer Declaration Start
+//                final World world_f = this;
+//                Log.consoleln("world " +world_f);
+//                Log.consoleln("timer " +shopTimer.getTimeElapsed());
+//                final Player player_f = player;
+//                world_f.processShopOrder(player_f);
+////                shopTimer.schedule(new TimerTask() {
+////                    @Override
+////                    public void run() {
+////                        world_f.processShopOrder(player_f);
+////                    }
+////                }, Date.from(Instant.now()));
+//                // End
+//            }
+//            
+
+        } else {
+            totalCost = -1;
+        }
+        
+        Log.println("Order has been placed! Total cost = " + totalCost);
+        return totalCost;
     }
 }
