@@ -390,4 +390,7 @@ public class GameClient {
         this.bet = bet;
     }
     
+    public void setBetTime(int betTime){
+        this.betTime = betTime;
+    }
 }

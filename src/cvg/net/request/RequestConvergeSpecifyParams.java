@@ -47,6 +47,7 @@ public class RequestConvergeSpecifyParams extends GameRequest{
         
         short status = 0;//0 indicates success
         response.setStatus(status);
+        client.setBetTime(timeWindow);
         client.setBet(betAmount);//updates bet to custom value rather than hardcoded value
         client.add(response);
         //changes to rest time
