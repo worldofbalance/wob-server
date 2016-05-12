@@ -269,14 +269,14 @@ public final class WorldZoneDAO {
         float carrying_capacity = -1.f;
 
         try {
-            String query = "SELECT carrying_capacity FROM zone WHERE zone_id = ?";
+            String query = "SELECT vegetation_capacity FROM world_zone WHERE zone_id = ?";
 
             connection = GameDB.getConnection();
             pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, zone_id);
             rs = pstmt.executeQuery();
             if (rs.next()) {
-                carrying_capacity = rs.getFloat("carrying_capacity");
+                carrying_capacity = rs.getFloat("vegetation_capacity");
             }
             rs.close();
             pstmt.close();
