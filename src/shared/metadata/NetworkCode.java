@@ -32,6 +32,10 @@ public class NetworkCode {
     public final static short SHOP = 116;
     public final static short SHOP_ACTION = 117;
     public final static short TILE_SHOP_ACTION = 1172;
+    
+    public final static short TILE_PURCHASE = 301;
+    public final static short TILE_PRICE = 302;
+    
     public final static short STATUS = 1171;
     public final static short PARAMS = 118;
     public final static short CHANGE_PARAMETERS = 119;

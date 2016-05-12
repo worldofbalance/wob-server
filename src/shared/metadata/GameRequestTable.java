@@ -54,6 +54,8 @@ public class GameRequestTable {
         // Shop
         add(NetworkCode.SHOP, "lby.net.request.shop.RequestShop");
         add(NetworkCode.SHOP_ACTION, "lby.net.request.shop.RequestShopAction");
+        add(NetworkCode.TILE_PRICE, "lby.net.request.RequestTilePrice");
+        add(NetworkCode.TILE_PURCHASE, "lby.net.request.RequestTilePurchase");        
         // World
         add(NetworkCode.WORLD, "lby.net.request.world.RequestWorld");
         add(NetworkCode.ZONE_LIST, "lby.net.request.world.RequestZoneList");
