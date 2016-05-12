@@ -14,7 +14,7 @@ import utility.DataReader;
  * @author Karl
  */
 public class RequestNpcFishPosition extends GameRequest{
-    private HashMap<Integer, Prey> fishMap; //prey_id -> prey object
+    private HashMap<Integer, Prey> fishMap = new HashMap<Integer, Prey>(); //prey_id -> prey object
     private int numFish;  //the number of fish in the request.
     private ResponseNpcFishPosition response;
     private int p_id;
@@ -22,7 +22,7 @@ public class RequestNpcFishPosition extends GameRequest{
     @Override
     public void parse() throws IOException {
         numFish = Integer.parseInt(DataReader.readString(dataInput));
-        
+        System.out.println("Num fish is " + numFish);
         Prey fish;
         while(numFish > 0){
             fish = new Prey();
@@ -32,6 +32,7 @@ public class RequestNpcFishPosition extends GameRequest{
             fish.setY(Float.parseFloat(DataReader.readString(dataInput)));
             fish.setRotation(Float.parseFloat(DataReader.readString(dataInput)));
             fishMap.put(fish.getPrey_id(),fish);
+            System.out.println("Parsed. ");
             numFish--;
         }
     }
