@@ -18,7 +18,7 @@ public class Constants {
     public static final int X_MAX = 120;
     public static final int Y_MIN = -75;
     public static final int Y_MAX = 75;
-    public static final int MIN_PREY = 10;
+    public static final int MIN_PREY = 15;
     
     
     

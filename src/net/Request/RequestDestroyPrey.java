@@ -55,7 +55,7 @@ public class RequestDestroyPrey extends GameRequest{
         
         // check total number of fishes alive and send request to host client to spawn fishes
         if((play.species1+ play.species2 + play.species3)< Constants.MIN_PREY){
-            if(play.species1<3){
+            if(play.species1<5){
                 response2.setSpecies_id(1);
                 response2.setNum_of_prey(4);
                 play.species1 += 4;
@@ -67,7 +67,7 @@ public class RequestDestroyPrey extends GameRequest{
                 play.species2 += 4;
                 GameServer.getInstance().getThreadByPlayerID(play.HOST_client_id).send(response2);
             }
-            else if(play.species3<3){
+            else if(play.species3<4){
                  response2.setSpecies_id(3);
                 response2.setNum_of_prey(3);
                 play.species3 += 3;
