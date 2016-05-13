@@ -87,20 +87,20 @@ public class NetworkCode {
     public final static short APPLY_WEATHER=215;
     */
     // Sea Divided
-    public final static short SD_GAME_LOGIN = 300;
-    public final static short SD_PLAY_INIT = 301;
-    public final static short SD_START_GAME = 302;
-    public final static short SD_END_GAME = 303;
-    public final static short SD_KEYBOARD = 304;
-    public final static short SD_PLAYER_POSITION = 305;
-    public final static short SD_PREY = 306;
-    public final static short SD_EAT_PREY = 307;
-    public final static short SD_SCORE = 308;
-    public final static short SD_DISCONNECT = 309;
-    public final static short SD_RECONNECT = 310;
-    public final static short SD_HEARTBEAT = 311;
-    public final static short SD_NPCPOSITION = 312;
-    public final static short SD_RESPAWN = 313;
+    public final static short SD_GAME_LOGIN = 400;
+    public final static short SD_PLAY_INIT = 401;
+    public final static short SD_START_GAME = 402;
+    public final static short SD_END_GAME = 403;
+    public final static short SD_KEYBOARD = 404;
+    public final static short SD_PLAYER_POSITION = 405;
+    public final static short SD_PREY = 406;
+    public final static short SD_EAT_PREY = 407;
+    public final static short SD_SCORE = 408;
+    public final static short SD_DISCONNECT = 409;
+    public final static short SD_RECONNECT = 410;
+    public final static short SD_HEARTBEAT = 411;
+    public final static short SD_NPCPOSITION = 412;
+    public final static short SD_RESPAWN = 413;
 
     /**
      * Check for duplicate values, if any.
