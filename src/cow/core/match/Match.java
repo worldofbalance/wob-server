@@ -16,7 +16,6 @@ import shared.util.Log;
  * opponents status. 
  */
 public class Match {
-	
 	// Leaving in separate players and player map for convenience
 	MatchPlayer player1, player2;
 	Map<Integer, MatchPlayer> playerList = new HashMap<Integer, MatchPlayer>();
@@ -108,6 +107,8 @@ public class Match {
 	 * @return
 	 */
 	public Boolean isOpponentReady(int playerID){
+		if (player1 == null || player2 == null)
+			return false;
 		Boolean isReady;
 		if(playerID == player1.getID()){
 			isReady = player2.isReady();
@@ -127,6 +128,8 @@ public class Match {
 	 * @return
 	 */
 	public Boolean isOpponentActive(int playerID){
+		if (player1 == null || player2 == null)
+			return false;
 		Boolean isActive;
 		if(playerID == player1.getID()){
 			isActive = player2.isActive();
@@ -249,5 +252,9 @@ public class Match {
     public MatchPlayer getOpponent(MatchPlayer player) {
         return (player == player1) ? player2 : player1;
     }
+
+	public boolean isBothPlayersReady () {
+		return player1 != null && player2 != null;
+	}
 }
 

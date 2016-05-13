@@ -56,7 +56,7 @@ public class RequestMatchStatus extends GameRequest {
 				opponentIsReady = true;
 				isActive = true;
 			} else {
-				match.addMatchAction(playerID, action);
+//				match.addMatchAction(playerID, action);
 				opponentIsReady = match.isOpponentReady(playerID);
 				
 				// If opponent is ready they should be active but double checking
@@ -70,7 +70,13 @@ public class RequestMatchStatus extends GameRequest {
 					match.getPlayer(playerID).setActive(isActive);
 				}
 			}
-			response.setStatus(Constants.STATUS_SUCCESS_CARDS);
+			if (match.isBothPlayersReady()) {
+				match.addMatchAction(playerID, action);
+				response.setStatus(Constants.STATUS_SUCCESS_CARDS);
+			} else {
+				response.setStatus(Constants.STATUS_FAILURE_CARDS);
+			}
+
 			response.setMatchID(matchID);
 			response.setIsActive(isActive);
 			response.setIsReady(opponentIsReady);
