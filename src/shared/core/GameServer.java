@@ -219,7 +219,7 @@ public class GameServer {
             server = new GameServer(config.getPortNumber(), Constants.MAX_CLIENT_THREADS);
             server.configure();
             
-            MiniGameServers.getInstance().runServers();
+            //MiniGameServers.getInstance().runServers();
             
             server.run();
         } catch (IOException ex) {

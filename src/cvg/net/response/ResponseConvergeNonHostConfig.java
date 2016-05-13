@@ -18,6 +18,7 @@ public class ResponseConvergeNonHostConfig extends GameResponse {
     private short timeWindow;
     private short betAmount;
     private short ecoNumber;
+    private short sliders;
 
     public ResponseConvergeNonHostConfig(){
         response_id = NetworkCode.MC_NONHOST_CONFIG;
@@ -38,6 +39,10 @@ public class ResponseConvergeNonHostConfig extends GameResponse {
         this.ecoNumber = ecoNumber;
     }
     
+    public void setSliders(short sliders){
+        this.sliders = sliders;
+    }
+    
      @Override
     public byte[] getBytes() {
         GamePacket packet = new GamePacket(response_id);
@@ -46,6 +51,7 @@ public class ResponseConvergeNonHostConfig extends GameResponse {
         packet.addShort16(timeWindow);
         packet.addShort16(betAmount);
         packet.addShort16(ecoNumber);
+        packet.addShort16(sliders);
         return packet.getBytes();
     }
     

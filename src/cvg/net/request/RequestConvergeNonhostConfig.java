@@ -43,13 +43,15 @@ public class RequestConvergeNonhostConfig extends GameRequest {
         short timeWindowRes = match.getTimeWindow();
         short betAmountRes = match.getBetAmount();
         short ecoNumberRes = match.getEcoNumber();
-        //Short nullCheck = new Short(match.getEcoNumber());
+        short allowSlidersRes = match.getSliders();
+       
         
         if( numRoundsRes == 0 || timeWindowRes == 0 || betAmountRes == 0){
-            numRoundsRes = -1 //match.getNumRounds();
-            timeWindowRes = 0 //match.getTimeWindow();
-            betAmountRes = 0 //match.getBetAmount();
-            ecoNumberRes = 0 //match.getEcoNumber(); 
+            numRoundsRes = -1; //match.getNumRounds();
+            timeWindowRes = 0; //match.getTimeWindow();
+            betAmountRes = 0; //match.getBetAmount();
+            ecoNumberRes = 0; //match.getEcoNumber(); 
+            allowSlidersRes = 0;
         }
         
         Log.consoleln("Num Rounds is: " + numRoundsRes);
@@ -60,6 +62,7 @@ public class RequestConvergeNonhostConfig extends GameRequest {
             response.setTimeWindow(timeWindowRes);
             response.setBetAmount(betAmountRes);
             response.setEcoNumber(ecoNumberRes);
+            response.setSliders(allowSlidersRes);
             client.setBet(betAmountRes);
             client.setBetTime(timeWindowRes);
             client.add(response);

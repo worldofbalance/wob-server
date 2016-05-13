@@ -23,13 +23,14 @@ public class RequestConvergeSpecifyParams extends GameRequest{
     private short timeWindow;
     private short betAmount;
     private short ecoNumber;
-    
+    private short allowSliders;
     @Override
     public void parse(DataInputStream dataInput) throws IOException {
         numRounds = DataReader.readShort(dataInput);
         timeWindow = DataReader.readShort(dataInput);
         betAmount = DataReader.readShort(dataInput);
         ecoNumber = DataReader.readShort(dataInput);
+        allowSliders = DataReader.readShort(dataInput);
     }
     
     @Override
@@ -44,6 +45,7 @@ public class RequestConvergeSpecifyParams extends GameRequest{
         match.setTimeWindow(timeWindow);
         match.setBetAmount(betAmount);
         match.setEcoNumber(ecoNumber);
+        match.setSliders(allowSliders);
         
         short status = 0;//0 indicates success
         response.setStatus(status);

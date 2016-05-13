@@ -34,6 +34,7 @@ public class MCMatch {
         private short timeWindow;
         private short betAmount;
         private short ecoNumber;
+        private short sliders;
         
 	
 	public MCMatch (List<Player> players, int matchID){
@@ -288,6 +289,10 @@ public class MCMatch {
         this.ecoNumber = ecoNumber;
     }
     
+    public void setSliders(short sliders){
+        this.sliders = sliders;
+    }
+    
     public short getNumRounds(){
         return numRounds;
     }
@@ -302,6 +307,10 @@ public class MCMatch {
     
     public short getEcoNumber(){
         return ecoNumber;
+    }
+    
+    public short getSliders(){
+        return sliders;
     }
     
 }
