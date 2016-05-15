@@ -38,7 +38,10 @@ public class RequestDestroyPrey extends GameRequest{
         response.setPreyId(prey_id);
         Play play = PlayManager.getInstance().getPlayByPlayerID(client.getPlayer().getPlayer_id());
         // decrease number on destroy
-        if(species_id==1){
+        if(species_id==0){
+            play.species0--;
+        }
+        else if(species_id==1){
             play.species1--;
         }
         else if(species_id==2){
@@ -47,6 +50,19 @@ public class RequestDestroyPrey extends GameRequest{
         else if(species_id==3){
             play.species3--;
         }
+         else if(species_id==4){
+            play.species4--;
+        }
+         else if(species_id==5){
+            play.species5--;
+        }
+         else if(species_id==6){ 
+            play.species6--;
+        }
+         else if(species_id==7){
+            play.species7--;
+        }
+       
         //The playerID of the opponent of the player who sent the request
         player_id = PlayManager.manager.getPlayByPlayerID(client.getPlayer().getPlayer_id())
                 .getOpponent(client.getPlayer()).getPlayer_id();
@@ -54,26 +70,56 @@ public class RequestDestroyPrey extends GameRequest{
         GameServer.getInstance().getThreadByPlayerID(player_id).send(response);
         
         // check total number of fishes alive and send request to host client to spawn fishes
-        if((play.species1+ play.species2 + play.species3)< Constants.MIN_PREY){
-            if(play.species1<5){
-                response2.setSpecies_id(1);
-                response2.setNum_of_prey(4);
-                play.species1 += 4;
-                GameServer.getInstance().getThreadByPlayerID(play.HOST_client_id).send(response2);
+        if((play.species1+ play.species2 + play.species3 +play.species4+ play.species5 + play.species6+ play.species7 +play.species0)< Constants.MIN_PREY){
+            if(play.species0<3){
+                response2.setSpecies_id(0);
+                response2.setNum_of_prey(3);
+                play.species0 += 3;
+                
             }
-            else if(play.species2<3){
+            else if(play.species1<3){
+                 response2.setSpecies_id(1);
+                response2.setNum_of_prey(3);
+                play.species1 += 3;
+              
+            }
+            else if(play.species2<2){
                  response2.setSpecies_id(2);
-                response2.setNum_of_prey(4);
-                play.species2 += 4;
-                GameServer.getInstance().getThreadByPlayerID(play.HOST_client_id).send(response2);
+                response2.setNum_of_prey(3);
+                play.species2 += 3;
+                
             }
-            else if(play.species3<4){
+              else if(play.species3<2){
                  response2.setSpecies_id(3);
                 response2.setNum_of_prey(3);
                 play.species3 += 3;
-                GameServer.getInstance().getThreadByPlayerID(play.HOST_client_id).send(response2);
+                
             }
-            
+              else if(play.species4<3){
+                 response2.setSpecies_id(4);
+                response2.setNum_of_prey(3);
+                play.species4 += 3;
+                
+            }
+              else if(play.species5<3){
+                 response2.setSpecies_id(5);
+                response2.setNum_of_prey(3);
+                play.species5 += 3;
+                
+            }
+              else if(play.species6<2){
+                 response2.setSpecies_id(6);
+                response2.setNum_of_prey(3);
+                play.species6 += 3;
+                
+            }
+              else if(play.species7<3){
+                 response2.setSpecies_id(7);
+                response2.setNum_of_prey(3);
+                play.species7 += 3;
+                
+            }
+          GameServer.getInstance().getThreadByPlayerID(play.HOST_client_id).send(response2);  
         }
     }
     

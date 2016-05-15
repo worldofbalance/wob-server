@@ -13,12 +13,12 @@ public class Constants {
     public static final String CLIENT_VERSION = "1.00";
     public static final int TIMEOUT_SECONDS = 90;
     public static final short MAX_NUMBER_OF_PLAYERS = 2;
-    public static final int NUM_PREY = 20;
+    public static final int NUM_PREY = 40;
     public static final int X_MIN = -120;
     public static final int X_MAX = 120;
     public static final int Y_MIN = -75;
     public static final int Y_MAX = 75;
-    public static final int MIN_PREY = 15;
+    public static final int MIN_PREY = 20;
     
     
     
