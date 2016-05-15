@@ -29,15 +29,35 @@ public class PreySpawning {
       prey.setX(x);
       prey.setY(y);
       prey.setPrey_id(i);
-      if(i<8){
-          prey.setSpecies_id(1);
+      if(i<7){
+          prey.setSpecies_id(0);
       }
-      else if((i>=8)&&(i<15)){
-           prey.setSpecies_id(2);
+      else if((i>=7)&&(i<12)){
+           prey.setSpecies_id(1);
         }
-      else
+      else if((i>=12)&&(i<16))
+      {
+          prey.setSpecies_id(2);
+      }
+       else if((i>=16)&&(i<20))
       {
           prey.setSpecies_id(3);
+      }
+       else if((i>=20)&&(i<26))
+      {
+          prey.setSpecies_id(4);
+      }
+       else if((i>=26)&&(i<32))
+      {
+          prey.setSpecies_id(5);
+      }
+        else if((i>=32)&&(i<36))
+      {
+          prey.setSpecies_id(6);
+      }
+        else if((i>=36)&&(i<=40))
+      {
+          prey.setSpecies_id(7);
       }
       prey.setRotation(0.0f);
       map.put(i,prey);

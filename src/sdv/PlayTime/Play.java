@@ -37,15 +37,26 @@ public class Play {
     public int species1;
     public  int species2;
     public  int species3;
+    public int species4;
+    public  int species5;
+    public  int species6;
+    public int species7;
+    public int species0;
+    
     public  int HOST_client_id; 
 
     private short playersReadyToStart;
     
     public Play(int playID) {
         this.playID = playID;
-        species1 = 7;
-        species2 = 7;
-        species3 = 6;
+        species0 = 6;
+        species1 = 5;
+        species2 = 4;
+        species3 = 4;
+        species4 =6;
+        species5 = 6;
+        species6 =4;
+        species7 =5;
         HOST_client_id = 0; 
         try {
             PlayDAO.createPlay(playID);
@@ -78,6 +89,46 @@ public class Play {
 
     public void setSpecies3(int species3) {
         this.species3 = species3;
+    }
+
+    public int getSpecies4() {
+        return species4;
+    }
+
+    public void setSpecies4(int species4) {
+        this.species4 = species4;
+    }
+
+    public int getSpecies5() {
+        return species5;
+    }
+
+    public void setSpecies5(int species5) {
+        this.species5 = species5;
+    }
+
+    public int getSpecies6() {
+        return species6;
+    }
+
+    public void setSpecies6(int species6) {
+        this.species6 = species6;
+    }
+
+    public int getSpecies7() {
+        return species7;
+    }
+
+    public void setSpecies7(int species7) {
+        this.species7 = species7;
+    }
+
+    public int getSpecies0() {
+        return species0;
+    }
+
+    public void setSpecies0(int species0) {
+        this.species0 = species0;
     }
 
     public int getHOST_client_id() {
