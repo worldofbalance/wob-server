@@ -19,7 +19,7 @@ public class Constants {
     public static final int Y_MIN = -75;
     public static final int Y_MAX = 75;
     public static final int MIN_PREY = 20;
-    
+    public static final int CREDIT_REWARD = 50;
     
     
     
