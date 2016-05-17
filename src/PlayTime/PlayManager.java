@@ -134,18 +134,7 @@ public class PlayManager {
             // remove play instances
             playerPlayList.remove(playerID);
             playerPlayList.remove(opponentID);
-            try {
-                PlayDAO.leavePlay(playerID, playID);
-            } catch (SQLException e) {
-                Log.println_e("Error in removing record of player ID " + playerID+ " in race ID " + playID + " from database.");
-                Log.println_e(e.getMessage());
-            }
-            try {
-                PlayDAO.leavePlay(opponentID, playID);
-            } catch (SQLException e) {
-                Log.println_e("Error in removing record of player ID " + opponentID+ " in race ID " + playID + " from database.");
-                Log.println_e(e.getMessage());
-            }
+            
             // create resposes
             ResponseSDEndGame response = new ResponseSDEndGame();
             response.setHighestScore(finalscore);
@@ -165,6 +154,24 @@ public class PlayManager {
                 }
                 GameServer.getInstance().getThreadByPlayerID(p_id).send(response);
             }
+            //update database that the players have left the room.
+            try {
+                PlayDAO.leavePlay(playerID, playID);
+            } catch (SQLException e) {
+                Log.println_e("Error in removing record of player ID " + playerID+ " in race ID " + playID + " from database.");
+                Log.println_e(e.getMessage());
+            }
+            try {
+                PlayDAO.leavePlay(opponentID, playID);
+            } catch (SQLException e) {
+                Log.println_e("Error in removing record of player ID " + opponentID+ " in race ID " + playID + " from database.");
+                Log.println_e(e.getMessage());
+            }
+            
+            try{
+                PlayDAO.endPlay(playID, playerID, finalscore);
+            }catch(SQLException e){}
+            
             //System.out.println("endRace");
         }
     }
