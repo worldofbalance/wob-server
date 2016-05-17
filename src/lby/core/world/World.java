@@ -172,8 +172,6 @@ public class World {
 
             List<SpeciesType> speciesArray = ServerResources.getSpeciesTable().getSpecies();
             
-            
-            Log.println("item_id = " + item_id);
             if (species != null) {
                 int biomass = itemList.get(item_id);
                 if (species.getBiomass() < 1){
@@ -182,7 +180,6 @@ public class World {
                 }
                 else 
                     totalCost += species.getCost() * Math.ceil(biomass / species.getBiomass());
-                  Log.println("biomass: " + biomass);
             } else {
                 return -1;
             }
@@ -192,7 +189,6 @@ public class World {
         Log.println("total cost before: " + totalCost);
         Log.println("player credits: " + player.getCredits());
         if (GameResources.useCredits(player, totalCost)) {
-             //LobbyController.getInstance().getLobby(this).getEventHandler().execute(EventTypes.SPECIES_BOUGHT, itemList.size());
 
             int totalBiomass = 0;
             for (int item_id : itemList.keySet()) {
@@ -202,7 +198,6 @@ public class World {
                     totalBiomass += itemList.get(item_id);
                 }
             }
-            //LobbyController.getInstance().getLobby(this).getEventHandler().execute(EventTypes.BIOMASS_BOUGHT, totalBiomass);
 
             // Insert these item values into the hashmap
             for (int item_id : itemList.keySet()) {
@@ -214,26 +209,11 @@ public class World {
                 shopList.put(item_id, amount);
             }
             
-           
+           // Process the order
+            final World world_f = this;
+            final Player player_f = player;
+            world_f.processShopOrder(player_f);
                 
-            // Create a new timer, if none exist.
-            if (shopTimer.getTask() == null || shopTimer.getTimeRemaining() <= 0) {
-                // Timer Declaration Start
-                final World world_f = this;
-                Log.consoleln("world " +world_f);
-                Log.consoleln("timer " +shopTimer.getTimeElapsed());
-                final Player player_f = player;
-                world_f.processShopOrder(player_f);
-//                shopTimer.schedule(new TimerTask() {
-//                    @Override
-//                    public void run() {
-//                        world_f.processShopOrder(player_f);
-//                    }
-//                }, Date.from(Instant.now()));
-                // End
-            }
-            
-
         } else {
             totalCost = -1;
         }
