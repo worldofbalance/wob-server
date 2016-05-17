@@ -7,6 +7,7 @@ import java.util.List;
 import lby.core.world.Zone;
 import shared.metadata.NetworkCode;
 import shared.model.Player;
+import shared.model.Species;
 import shared.util.GamePacket;
 
 public class ResponseEcosystem extends GameResponse {
@@ -22,6 +23,7 @@ public class ResponseEcosystem extends GameResponse {
     private int score;
     private Player player;
     private List<Zone> zones;
+    private List<Species> speciesList;
 
     public ResponseEcosystem() {
         response_id = NetworkCode.ECOSYSTEM;
@@ -48,6 +50,13 @@ public class ResponseEcosystem extends GameResponse {
                         + zone.getVegetationCapacity() + ";";
             }
             packet.addString(str);
+            
+            // Add player ecosystem's species ids
+            packet.addShort16((short) speciesList.size());
+
+            for (Species species : speciesList) {
+                packet.addInt32(species.getID());
+            }
         }
 
         return packet.getBytes();
@@ -69,5 +78,9 @@ public class ResponseEcosystem extends GameResponse {
 
     public void setZones(List<Zone> zones) {
         this.zones = zones;
+    }
+    
+    public void setEcoSpecies(List<Species> speciesList) {
+        this.speciesList = speciesList;
     }
 }

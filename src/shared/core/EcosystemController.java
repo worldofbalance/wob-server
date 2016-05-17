@@ -254,13 +254,14 @@ public class EcosystemController {
         	setLobby(lobby);
         }
         // Send Ecosystem to Player
-        if(!Constants.DEBUG_MODE){
-	        ResponseEcosystem response = new ResponseEcosystem();
-	        response.setEcosystem(ecosystem.getID(), ecosystem.getType(), ecosystem.getScore());
-	        response.setPlayer(player);
-	        response.setZones(zones);
-	        NetworkFunctions.sendToPlayer(response, player.getID());
-        }
+
+        ResponseEcosystem response = new ResponseEcosystem();
+        response.setEcosystem(ecosystem.getID(), ecosystem.getType(), ecosystem.getScore());
+        response.setPlayer(player);
+        response.setZones(zones);
+        response.setEcoSpecies(EcoSpeciesDAO.getSpecies(ecosystem.getID()));
+        NetworkFunctions.sendToPlayer(response, player.getID());
+                
         // Load Existing Species
         for (Species species : EcoSpeciesDAO.getSpecies(ecosystem.getID())) {
             lobby.getGameEngine().initializeSpecies(species, ecosystem);
