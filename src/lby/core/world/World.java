@@ -23,6 +23,7 @@ import shared.model.Player;
 import shared.model.SpeciesType;
 import lby.net.response.shop.ResponseShopAction;
 import shared.core.GameEngine;
+import shared.db.EcoDAO;
 import shared.db.EcoSpeciesDAO;
 import shared.db.StatsDAO;
 import shared.model.Ecosystem;
@@ -175,7 +176,12 @@ public class World {
             Log.println("item_id = " + item_id);
             if (species != null) {
                 int biomass = itemList.get(item_id);
-                totalCost += species.getCost() * Math.ceil(biomass / species.getBiomass()); //if species has a low biomass per unit, the price will be very high
+                if (species.getBiomass() < 1){
+                    float mass = species.getBiomass() + 1;
+                    totalCost += species.getCost() * Math.ceil(biomass / mass);
+                }
+                else 
+                    totalCost += species.getCost() * Math.ceil(biomass / species.getBiomass());
                   Log.println("biomass: " + biomass);
             } else {
                 return -1;
@@ -198,7 +204,7 @@ public class World {
             }
             //LobbyController.getInstance().getLobby(this).getEventHandler().execute(EventTypes.BIOMASS_BOUGHT, totalBiomass);
 
-                        // Insert these item values into the hashmap
+            // Insert these item values into the hashmap
             for (int item_id : itemList.keySet()) {
                 int amount = itemList.get(item_id);
                 // New item
@@ -250,22 +256,23 @@ public class World {
             short type = 1;
             ecosystem = new Ecosystem(player.getAccountID(),player.getAccountID(),player.getID(),player.getName(),type);
             player.setEcosystem(ecosystem);
+          
      
         }
         Log.println("eco after: " +ecosystem);
         Log.println("shoplist: " +shopList);
         
         World world = this;
-        //Lobby lobby = ;
+       //Lobby lobby = Lobby(, player);
         
         //gameEngine is null here
-        //gameEngine = GameEngine(lobby, world, ecosystem);
+        //gameEngine = GameEngine(GameEngine.getLobby(),world,ecosystem);
         createSpeciesByPurchase(player, shopList, ecosystem);
-   //     gameEngine.forceSimulation();
+        //gameEngine.forceSimulation();
         
         Log.println("process order");
+        
         String tempList = "";
-
         int index = 0;
         for (Entry<Integer, Integer> entry : shopList.entrySet()) {
             tempList += entry.getKey() + ":" + entry.getValue();
