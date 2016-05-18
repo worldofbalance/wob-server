@@ -51,8 +51,13 @@ public class RequestTilePrice extends GameRequest {
 
         ResponseTilePrice response = new ResponseTilePrice();
         
-        //check if the player owns any tiles
-        
+        boolean isOwned = true;
+        //check if the player owns any tiles or if tile is owned 
+        int ownerId = WorldZoneDAO.getOwner(zone_id);
+        //default NULL owner = 0
+        if(ownerId == 0 )
+            isOwned = false;
+
         playerZones = WorldZoneDAO.getZoneList(world_id,client.getPlayer().getID());
         if(playerZones.isEmpty())
         {
@@ -68,9 +73,9 @@ public class RequestTilePrice extends GameRequest {
         price = 10* zone_capacity;
         
         }
-        Log.println("Player's current credits" + client.getPlayer().getCredits());
-       //compare the price with the player's credits 
-        if (client.getPlayer().getCredits() >= price ){
+        Log.println("Player's current credits" + PlayerDAO.getCredits(client.getPlayer().getID()));
+       //compare the price with the player's credits  AND check if tile is owned
+        if (client.getPlayer().getCredits() >= price  && !isOwned){
             
             Log.println("Player can purchase. . .");
             canBuy = true;

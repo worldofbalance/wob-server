@@ -20,6 +20,7 @@ public class ResponseTilePurchase extends GameResponse {
     private short status;
     private int zone_id;
     private int price;
+    private int credits;
     
     
     public ResponseTilePurchase(){
@@ -33,6 +34,7 @@ public class ResponseTilePurchase extends GameResponse {
         packet.addShort16(status);
         
         packet.addInt32(zone_id);
+        packet.addInt32(credits);
         packet.addInt32(price);
         
         
@@ -51,4 +53,7 @@ public class ResponseTilePurchase extends GameResponse {
         this.price = price;
     }
     
+    public void setCredits(int newCredits){
+        this.credits = newCredits;
+    }
 }
