@@ -12,13 +12,14 @@ import shared.util.Log;
 /**
  * The RequestHeartbeat class is mainly used to release all pending responses
  * the client. Also used to keep the connection alive.
+ * Parses no data and returns an empty GameResponse packet 
  */
 public class RequestHeartbeat extends GameRequest {
 
-    private int playerX;
-    private int playerY;
-    private int playerDistanceTraveled;
-    private short gameover;
+//    private int playerX;
+//    private int playerY;
+//    private int playerDistanceTraveled;
+//    private short gameover;
 //    private ResponseHeartbeat responseHeartbeat;
 
     public RequestHeartbeat() {
