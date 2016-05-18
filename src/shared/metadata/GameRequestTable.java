@@ -119,8 +119,6 @@ public class GameRequestTable {
         add(NetworkCode.RETURN_LOBBY, "cow.net.request.RequestReturnLobby");
         add(NetworkCode.APPLY_FOOD, "cow.net.request.RequestFoodCard");
 
-
-
         Log.println("Done!");
     }
 
