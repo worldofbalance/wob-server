@@ -30,8 +30,10 @@ public final class WorldZoneDAO {
      * @param world_id
      * @return a list of tiles in the database
      */
-    public static Zone[][] getZoneList(int world_id) {
+    public static List<Zone> getZoneList(int world_id) {
+        
         Zone[][] zones = new Zone[40][40];
+        List<Zone> zoneList = new ArrayList();
 
         String query = "SELECT * FROM `world_zone` WHERE `world_id` = ? ORDER BY `zone_id`";
 
@@ -52,19 +54,19 @@ public final class WorldZoneDAO {
                 zone.setVegetationCapacity(rs.getInt("vegetation_capacity"));
                 zone.setOwner(rs.getInt("player_id"));
 
-                zones[zone.getRow()][zone.getColumn()] = zone;
+                zoneList.add(zone);
             }
         } catch (SQLException ex) {
             Log.println_e(ex.getMessage());
         } finally {
             GameDB.closeConnection(con, pstmt, rs);
         }
-
-        return zones;
+        
+        return zoneList;
     }
 
     public static List<Zone> getZoneList(int world_id, int player_id) {
-        List<Zone> zones = new ArrayList<Zone>();
+        List<Zone> zones = new ArrayList();
 
         String query = "SELECT * FROM `world_zone` WHERE `world_id` = ? AND `player_id` = ? ORDER BY `zone_id`";
 
@@ -222,6 +224,7 @@ public final class WorldZoneDAO {
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
+                //player_id 0 means its vacant
                 player_id = rs.getInt("player_id");
             }
         } catch (SQLException ex) {

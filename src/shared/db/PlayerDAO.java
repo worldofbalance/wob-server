@@ -290,6 +290,35 @@ public final class PlayerDAO {
 
         return status;
     }
+        public static int getCredits(int player_id) {
+        boolean status = false;
+        int userCredits = -1;
+
+        String query = "Select * FROM player P WHERE P.player_id = ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = GameDB.getConnection();
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, player_id);
+
+            rs = pstmt.executeQuery();
+            
+            if(rs.next()){
+                userCredits = rs.getInt("credits");   
+            }
+            
+        } catch (SQLException ex) {
+            Log.println_e(ex.getMessage());
+        } finally {
+            GameDB.closeConnection(con, pstmt);
+        }
+
+        return userCredits;
+    }
 
     public static boolean updateColor(int player_id, Color color) {
         boolean status = false;

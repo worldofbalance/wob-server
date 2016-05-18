@@ -18,6 +18,7 @@ public class ResponseLogin extends GameResponse {
     // Variables
     private short status;
     private int account_id;
+    private int player_id;
     private String username;
     private String last_logout;
 
@@ -33,12 +34,16 @@ public class ResponseLogin extends GameResponse {
         if (status == SUCCESS) {
             packet.addInt32(account_id);
             packet.addString(username);
+            packet.addInt32(player_id);
             packet.addString(last_logout);
         }
 
         return packet.getBytes();
     }
-
+    public void setPlayerId (int playerId){
+        this.player_id = playerId;
+    }
+    
     public void setStatus(short status) {
         this.status = status;
     }

@@ -63,16 +63,21 @@ public class RequestTilePurchase extends GameRequest{
         price = 10* zone_capacity;
         
         }
-        
+        System.out.println("Player Id: " +client.getPlayer().getID());
         Log.println("Player's current credits" + client.getPlayer().getCredits());
 
         //Deduct the price from the player credits
+        System.out.println("Player Credits before: " + PlayerDAO.getCredits(client.getPlayer().getID()));
         PlayerDAO.changeCredits(client.getPlayer().getID(), -price);
+
+        System.out.println("Player Credits After: " + PlayerDAO.getCredits(client.getPlayer().getID()));
         // update the zone database
         WorldZoneDAO.updateOwner(client.getPlayer().getID(),zone_id);
         
+        int newCredits = PlayerDAO.getCredits(client.getPlayer().getID());
         //setting all the information 
         response.setPrice(price);
+        response.setCredits(newCredits);
         response.setZoneId(zone_id);
         
         response.setStatus(ResponseTilePrice.SUCCESS);
