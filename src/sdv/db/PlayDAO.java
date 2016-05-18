@@ -8,7 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import sdv.model.Player;
-
+import shared.metadata.Constants;
 import shared.util.Log;
 
 /**
@@ -313,11 +313,73 @@ public class PlayDAO {
      * and other information for recording matches. Also removes temporary
      * match data from database.
      * @param playID the play being ended.
+     * @param winner the player_id of the player that won the match.
      * @throws SQLException 
      */
-    public static void endPlay(int playID) throws SQLException{
+    public static void endPlay(int playID, int winner, float finalScore) throws SQLException{
         Connection connection = null;
-        PreparedStatement pstmt;
+        PreparedStatement pstmt, pstmt1,pstmt2; 
+        
+        String updateRewardQuery = "UPDATE player SET credits=credits+? WHERE player_id=?";
+        
+        String removePlayQuery = "DELETE FROM sdv_playlist WHERE play_id=?";
+        //  winner's id.
+        String recordPlayQuery = "INSERT INTO sdv_playhistory (winner,final_score) VALUES (?,?)";
+        
+        //DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        
+        //Date date = new Date();
+        //rewarding the winner credits
+        if(winner > 0){
+        try{
+            connection = GameDB.getConnection();
+            pstmt = connection.prepareStatement(updateRewardQuery);
+            pstmt.setInt(1, Constants.CREDIT_REWARD); //credits to award
+            pstmt.setInt(2, winner); 
+            if(pstmt.executeUpdate() != 1){
+                throw new SQLException("couldn't update player "+winner+" credits");
+                
+            }            
+            Log.println("added 50 to player of id: "+winner);
+        }catch(SQLException e){
+            Log.println_e(e.getMessage());
+        }
+        
+        try{
+            pstmt2 = connection.prepareStatement(recordPlayQuery);
+            pstmt2.setInt(1, winner);
+            pstmt2.setFloat(2, finalScore);
+            if(pstmt2.executeUpdate() != 1){
+                throw new SQLException("could not insert record of match");
+            }
+            
+        }catch(SQLException e){
+            Log.println_e(e.getMessage());
+        }
+        
+        //removing the play from the database, 
+        try{
+            pstmt1 = connection.prepareStatement(removePlayQuery);
+            pstmt1.setInt(1, playID);
+            if(pstmt1.executeUpdate() != 1){
+                throw new SQLException("could not remove play "+playID+" from database");
+            }
+            Log.println("removed play "+playID+" from sdv_playlist");
+        }catch(SQLException e){
+            Log.println_e(e.getMessage());
+        }
+        
+        finally
+        {
+            if (connection != null)
+            {
+                connection.close();
+                //Log.println("Successfully disconnected from database.");
+            }
+        }
+        
+        Log.println("successfuly recorded match ending.");
+        }
     }
     
     /**
@@ -381,10 +443,10 @@ public class PlayDAO {
             
             Log.println("Updating number of players of play ID " + playID + "...");
             
-            // update number of players of race record (in `racelist_info`)
+            // update number of players of race record (in `sdv_playlist`)
             pstmt = connection.prepareStatement(updateNumPlayersQuery);
             
-            if (currentNumberOfPlayers == 2) // one more player in race
+            if (currentNumberOfPlayers == 2) // one more player in play
             {
                 pstmt.setInt(1, 1); // ... SET `num_players` = 1
             }
@@ -425,7 +487,7 @@ public class PlayDAO {
             if (connection != null)
             {
                 connection.close();
-                Log.println("Successfully disconnected from database.");
+                //Log.println("Successfully disconnected from database.");
             }
         }
     }
