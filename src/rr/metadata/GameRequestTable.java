@@ -41,6 +41,8 @@ public class GameRequestTable {
         add(Constants.CMSG_RRSTARTGAME, "RequestRRStartGame");
         add(Constants.CMSG_RRGETMAP, "RequestRRGetMap");
         add(Constants.CMSG_RRENDSESSION, "RequestRREndSession");
+        
+        add(Constants.CMSG_RRGETCURRENCY, "RequestCurrency");
 
     }
 

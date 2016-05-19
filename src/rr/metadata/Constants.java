@@ -45,6 +45,9 @@ public class Constants {
     public final static short CMSG_RRENDSESSION = 116;
     public final static short SMSG_RRENDSESSION = 216;
     
+    public final static short CMSG_RRGETCURRENCY = 117;
+    public final static short SMSG_RRGETCURRENCY = 217;
+    
     // Organism Type
     public static final short ORGANISM_TYPE_ANIMAL = 0;
     public static final short ORGANISM_TYPE_PLANT = 1;
