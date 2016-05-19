@@ -43,20 +43,20 @@ public class DBTest {
                 i+=1;
             }
             prey = new Prey(42,0.0F,0.0F);
-            NpcFishDAO.CreateNpcRecordsForPlay(preyMap, 2);
-            Log.println("recorded map of npcfish.");
-            NpcFishDAO.createNpcRecord(prey, 2);
-            Log.println("added final fish to game 2");
-            prey.setX(1.0F);
-            NpcFishDAO.updateNpcRecord(prey, 2);
-            Log.println("updated single fish record");
-            NpcFishDAO.updateAllNpcRecordsForPlay(preyMap, 2);
-            Log.println("updated map of prey objects.");
-            
-            NpcFishDAO.removeNpcRecord(prey.getPrey_id(), 2);
-            Log.println("removed indiv prey from game");
-            NpcFishDAO.removeNpcRecordsForPlay(2);
-            Log.println("npcrecords for play 2 removed from db");
+//            NpcFishDAO.CreateNpcRecordsForPlay(preyMap, 2);
+//            Log.println("recorded map of npcfish.");
+//            NpcFishDAO.createNpcRecord(prey, 2);
+//            Log.println("added final fish to game 2");
+//            prey.setX(1.0F);
+//            NpcFishDAO.updateNpcRecord(prey, 2);
+//            Log.println("updated single fish record");
+//            NpcFishDAO.updateAllNpcRecordsForPlay(preyMap, 2);
+//            Log.println("updated map of prey objects.");
+//            
+//            NpcFishDAO.removeNpcRecord(prey.getPrey_id(), 2);
+//            Log.println("removed indiv prey from game");
+//            NpcFishDAO.removeNpcRecordsForPlay(2);
+//            Log.println("npcrecords for play 2 removed from db");
             // race player 1
 //            r1.setRunnerSpeciesID(31);
 //            r1.setMaxHealth(100);
@@ -101,17 +101,18 @@ public class DBTest {
 //            
 //            
 //            
-//            // test race creation, joining, finishing, leaving logic
-//            //player 1 makes race, player 2 joins
-//            PlayDAO.createPlay(r1.getRaceID());
-//            PlayDAO.createPlayer(r1.getPlayer_id(), r1.getRaceID(),2);
-//            PlayDAO.createPlayer(r2.getPlayer_id(), r2.getRaceID(),1);
+            // test race creation, joining, finishing, leaving logic
+            //player 1 makes race, player 2 joins
+            PlayDAO.createPlay(r1.getRaceID());
+            PlayDAO.createPlayer(r1.getPlayer_id(), r1.getRaceID(),2);
+            PlayDAO.createPlayer(r2.getPlayer_id(), r2.getRaceID(),1);
 //            PlayDAO.updatePlay(r1);
 //            PlayDAO.updatePlay(r2);
-//            
-//            PlayDAO.leavePlay(r1);
-//            PlayDAO.leavePlay(r2);
-//            //changing the race
+            
+            PlayDAO.leavePlay(r1.getPlayer_id(),r1.getRaceID());
+            PlayDAO.leavePlay(r2.getPlayer_id(),r2.getRaceID());
+            PlayDAO.endPlay(r1.getRaceID(),r1.getPlayer_id(), 80);
+            //changing the race
 //            r1.setRaceID(101);
 //            r1.setRunnerSpeciesID(47);
 //            
@@ -121,10 +122,10 @@ public class DBTest {
 //            PlayDAO.createPlay(r2.getRaceID());
 //            PlayDAO.createPlayer(r2.getPlayer_id(), r2.getRaceID(),2);
 //            PlayDAO.createPlayer(r1.getPlayer_id(), r1.getRaceID(),1);
-//            
-//            
-////            PlayDAO.setPlayerSpecies(r1);
-////            PlayDAO.setPlayerSpecies(r2);
+            
+            
+//            PlayDAO.setPlayerSpecies(r1);
+//            PlayDAO.setPlayerSpecies(r2);
 //            PlayDAO.updatePlay(r1);
 //            PlayDAO.updatePlay(r2);
 //            rx = PlayInfoDAO.getPlayerInfo(r1.getPlayer_id());
