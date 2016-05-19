@@ -65,7 +65,7 @@ public class GameServer {
      * Create the GameServer by setting up the request types and creating a
      * connection with the database.
      */
-    public GameServer(int port) {
+    public GameServer() {
         // Load configuration file
         configure();
         // Initialize tables for global use
@@ -89,7 +89,7 @@ public class GameServer {
 
     public static GameServer getInstance() {
         if (gameServer == null) {
-            gameServer = new GameServer(20039);
+            gameServer = new GameServer();
         }
 
         return gameServer;
@@ -216,7 +216,7 @@ public class GameServer {
     private void run() {
         try {
             // Open a connection using the given port to accept incoming connections
-            serverSocket = new ServerSocket(20039);
+            serverSocket = new ServerSocket(configuration.getPortNumber());
             Log.printf("Server has started on port: %d", serverSocket.getLocalPort());
             Log.println("Waiting for clients...");
             // Loop indefinitely to establish multiple connections
@@ -363,7 +363,7 @@ public class GameServer {
         try {
             Log.printf("World of Balance Server v%s is starting...\n", Constants.CLIENT_VERSION);
 
-            gameServer = new GameServer(20039);
+            gameServer = new GameServer();
             gameServer.run();
         } catch (Exception ex) {
             Log.println_e("Server Crashed!");
