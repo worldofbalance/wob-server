@@ -18,7 +18,8 @@ import rr.db.RaceDAO;
 
 /**
  *Get keystrokes from Client. 
- * Confirms keystrokes sent from client, then updates 
+ * Confirms keystrokes sent from client, then updates the game state in the DB
+ * Sends the new ResponseKeyboard to the opponent
  * @author Sbc-ComEx
  */
 public class RequestKeyboard extends  GameRequest{

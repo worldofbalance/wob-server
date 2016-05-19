@@ -38,7 +38,7 @@ public class RequestLogin extends GameRequest {
 
     @Override
     public void doBusiness() throws Exception {
-        Log.printf("User '%s' is connecting...", user_id);
+        Log.printf("User '%s' is loggin into Running Rhino Server...", user_id);
 
         Player player = null;
         // Checks if the connecting client meets the minimum version required
