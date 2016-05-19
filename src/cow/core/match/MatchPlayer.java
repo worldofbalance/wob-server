@@ -64,7 +64,7 @@ public class MatchPlayer{
 		// to get player list before getting cards
 		Log.consoleln("setDeck()");
 		ArrayList<Integer> card_ids = new ArrayList<Integer>();
-        int[] cards = {1, 17, 2, 18, 19, 16, 22, 86, 80, 88, 8, 30, 30, 40, 75, 79, 79, 70, 92, 93, 94, 95, 89, 90, 91, 26, 42, 33, 66, 84, 84};
+        int[] cards = {1, 17, 2, 18, 19, 16, 22, 86, 80, 88, 8, 30, 30, 40, 75, 79, 79, 70, 92, 93, 94, 95, 89, 90, 91, 26, 42, 33, 66};
 		for(int i = 0; i < cards.length; i++){
 			card_ids.add(cards[i]);
 		}
