@@ -22,6 +22,7 @@ import shared.util.Log;
 //response for price
 import lby.net.response.ResponseTilePrice;
 import lby.net.response.ResponseTilePurchase;
+import shared.model.Ecosystem;
 /**
  *
  * @author Paul Broestl
@@ -46,6 +47,15 @@ public class RequestTilePurchase extends GameRequest{
     public void process() throws Exception {
 
         ResponseTilePurchase response = new ResponseTilePurchase();
+        Ecosystem ecosystem = client.getPlayer().getEcosystem();
+         Log.println("eco: " +ecosystem);
+        if(ecosystem == null)
+        {
+            short type = 1;
+            ecosystem = new Ecosystem(client.getPlayer().getAccountID(),client.getPlayer().getAccountID(),client.getPlayer().getID(),client.getPlayer().getName(),type);
+            client.getPlayer().setEcosystem(ecosystem);
+     
+        }
         
         //check if the player owns any tiles
         playerZones = WorldZoneDAO.getZoneList(world_id,client.getPlayer().getID());
