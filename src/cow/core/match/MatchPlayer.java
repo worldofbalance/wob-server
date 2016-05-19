@@ -64,58 +64,10 @@ public class MatchPlayer{
 		// to get player list before getting cards
 		Log.consoleln("setDeck()");
 		ArrayList<Integer> card_ids = new ArrayList<Integer>();
-               
-		card_ids.add(90);       // freez
-                
-		card_ids.add(13); // herbivores
-		card_ids.add(13);
-		card_ids.add(14);
-		card_ids.add(14);
-                card_ids.add(92);       // food card
-                card_ids.add(93);
-		card_ids.add(15);
-		card_ids.add(70);
-		card_ids.add(40);
-		card_ids.add(31);
-		card_ids.add(31);
-		card_ids.add(12);
-		card_ids.add(12); 
-		card_ids.add(13);
-		card_ids.add(12);
-		card_ids.add(12);
-		card_ids.add(7);
-		card_ids.add(7);
-		card_ids.add(21); // omnivores
-		card_ids.add(21);
-		card_ids.add(40);
-		card_ids.add(83);
-		card_ids.add(85);
-		card_ids.add(77);
-		card_ids.add(72);
-		card_ids.add(75);
-		card_ids.add(73);
-		card_ids.add(42); 
-		card_ids.add(45);
-		card_ids.add(28);
-		card_ids.add(34);
-		card_ids.add(22);
-		card_ids.add(22);
-		card_ids.add(20);
-		card_ids.add(13);
-		card_ids.add(13);
-		card_ids.add(21);	// carnivores
-		card_ids.add(17);
-		card_ids.add(18);
-		card_ids.add(18);
-		card_ids.add(86);
-		card_ids.add(86);
-		card_ids.add(17);
-		card_ids.add(35);
-		card_ids.add(38);
-		card_ids.add(40);
-                card_ids.add(91);       // rain
-                 card_ids.add(89);       // fire
-                
+        int[] cards = [1, 17, 2, 18, 19, 16, 22, 86, 80, 88, 8, 30, 30, 40, 75, 79, 79, 70, 92, 93, 94, 95, 89, 90, 91, 26, 42, 33, 66, 84, 84];
+		for(int i = 0; i < cards.length; i++){
+			card_ids.add(cards[i]);
+		}
 		deck = new CardDeck(card_ids);
 		deckIsBuilt(true);
 	}
