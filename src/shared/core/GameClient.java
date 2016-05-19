@@ -58,6 +58,12 @@ public class GameClient {
     private GameTimer saveTimer = new GameTimer();
     private long lastSave = System.currentTimeMillis(); // Last time saved to the database
     private long lastActivity = System.currentTimeMillis();
+    // DH change - for Multiplayer Convergence
+    private short host;   // 0 = not host, 1 = host
+    private int player_id;    // player_id obtained from MCMatchManager
+    private int match_id;     // match_id obtained from MCMatchManager
+    public static int betTime = 30;   // hardcoded initially
+    public static int bet = 100;     // hardcoded initially
 
     /**
      * Initialize the GameClient using the client socket and creating both input
@@ -354,4 +360,30 @@ public class GameClient {
     public void getGameRoom() {
         
     }
+    
+    public void setHost(short host) {
+        this.host = host;
+    }
+    
+    public void setPlayerID(int player_id) {
+        this.player_id = player_id;
+    }
+    
+    public int getPlayerID() {
+        return player_id;
+    }
+    
+    public int getBetTime() {
+        return betTime;
+    }
+    
+    public void setMatchID(int match_id) {
+        this.match_id = match_id;
+    }
+    
+    public int getMatchID() {
+        return match_id;
+    }
+    
+    
 }

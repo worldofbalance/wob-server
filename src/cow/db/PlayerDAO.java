@@ -9,7 +9,7 @@ import java.sql.Statement;
 
 // Other Imports
 import cow.model.Player;
-import cow.db.GameDB;
+import shared.db.GameDB;
 import shared.util.Color;
 import shared.util.Log;
 
@@ -186,6 +186,30 @@ public final class PlayerDAO {
             con = GameDB.getConnection();
             pstmt = con.prepareStatement(query);
             pstmt.setInt(1, credits);
+            pstmt.setInt(2, player_id);
+
+            status = pstmt.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            Log.println_e(ex.getMessage());
+        } finally {
+            GameDB.closeConnection(con, pstmt);
+        }
+
+        return status;
+    }
+
+    public static boolean changeCredits(int player_id, int deltaCredits) {
+        boolean status = false;
+
+        String query = "UPDATE `player` SET `credits` = `credits` + ? WHERE `player_id` = ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = GameDB.getConnection();
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, deltaCredits);
             pstmt.setInt(2, player_id);
 
             status = pstmt.executeUpdate() > 0;

@@ -1,11 +1,14 @@
 package cow.tests;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
 import cow.db.CardDAO;
 import cow.model.Card;
 import cow.model.CardType;
+import shared.db.GameDB;
 import shared.db.SpeciesDAO;
 import shared.model.SpeciesType;
 import shared.util.Log;
@@ -85,6 +88,28 @@ public class CardTest {
 			this.createCard(i, 1, 1, 1, type);
 		}
 	}
+
+	public void testInsert() {
+        String sql[] = {
+            "INSERT INTO `test`(`number`, `string`) VALUES(1, 'test')",
+            "INSERT INTO `test`(`number`, `string`) VALUES(2, 'good')",
+            "UPDATE `test` SET `string`='hello' WHERE `number`=2",
+            "DELETE FROM `test` WHERE `number`=2"
+        };
+        String select = "SELECT * FROM `test`";
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = GameDB.getConnection();
+            for (String str : sql) {
+                stmt = conn.prepareStatement(str);
+                stmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 	
 	
 	public static void main(String[] args) {
@@ -92,7 +117,7 @@ public class CardTest {
         CardTest dbt = new CardTest();
 //        dbt.run(false);
 //        dbt.createWeatherCard();
-        dbt.printCard(89);
+        dbt.testInsert();
         System.exit(0);
     }
 

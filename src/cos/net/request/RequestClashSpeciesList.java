@@ -5,12 +5,11 @@
  */
 package cos.net.request;
 
+import cos.db.SpeciesDAO;
+import cos.net.response.ResponseClashSpeciesList;
+
 import java.io.DataInputStream;
 import java.io.IOException;
-
-import cos.db.SpeciesDAO;
-import lby.net.request.GameRequest;
-import cos.net.response.ResponseClashSpeciesList;
 
 /**
  * Sent immediately after entry into the Clash of Species game

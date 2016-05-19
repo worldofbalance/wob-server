@@ -52,7 +52,14 @@ public final class GamePacket {
     }
 
     public void addString(String str) {
+        System.out.println("String16: " + (short)str.length());
         buffer.add((short) str.length());
+        buffer.add(str.getBytes());
+    }
+    
+    public void addString32(String str){
+        System.out.println("String32: " + str.length());
+        buffer.add(str.length());
         buffer.add(str.getBytes());
     }
 

@@ -48,7 +48,7 @@ public class RequestSummonCard extends GameRequest {
 
     @Override
     public void process() throws Exception {
-        Log.printf("RequestSummonCard with playerid:%d, cardId:%d, card-type:%s", playerID,cardID,type);
+     
         ResponseSummonCard response = new ResponseSummonCard();
         MatchAction action = new MatchAction();
         action.setActionID(NetworkCode.SUMMON_CARD);

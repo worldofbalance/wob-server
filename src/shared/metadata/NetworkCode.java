@@ -31,6 +31,12 @@ public class NetworkCode {
     
     public final static short SHOP = 116;
     public final static short SHOP_ACTION = 117;
+    public final static short TILE_SHOP_ACTION = 1172;
+    
+    public final static short TILE_PURCHASE = 301;
+    public final static short TILE_PRICE = 302;
+    
+    public final static short STATUS = 1171;
     public final static short PARAMS = 118;
     public final static short CHANGE_PARAMETERS = 119;
     public final static short GET_FUNCTIONAL_PARAMETERS = 120;
@@ -70,6 +76,15 @@ public class NetworkCode {
     public final static short CONVERGE_HINT = 150;
     public final static short CONVERGE_HINT_COUNT = 151;
     public final static short CONVERGE_NEW_ATTEMPT_SCORE = 152;
+
+    // DH change
+    // Multiplayer Convergence 
+    public final static short MC_MATCH_INIT = 180;
+    public final static short MC_GET_TIME = 181;
+    public final static short MC_BET_UPDATE = 182;
+    public final static short MC_GET_NAMES = 183;
+    public final static short MC_GET_OTHER_SCORE = 184;
+    public final static short MC_CHECK_PLAYERS = 185;
     
     public final static short TOPLIST = 153;
     
@@ -95,8 +110,38 @@ public class NetworkCode {
     public final static short BACK_TO_LOBBY = 192;
     public final static short PLAY_GAME = 193;
     public final static short END_GAME = 194;
-    
-    
+
+    // Cards of the wild
+    public final static short MATCH_INIT= 201;
+    public final static short MATCH_STATUS = 202;
+    public final static short GET_DECK = 203;
+    public final static short SUMMON_CARD = 204;
+    public final static short CARD_ATTACK = 205;
+    public final static short QUIT_MATCH = 206;
+    public final static short MATCH_OVER = 207;
+    public final static short END_TURN = 208;
+    public final static short DEAL_CARD = 209;
+    public final static short TREE_ATTACK = 210;
+    public final static short MATCH_ACTION = 211;
+    public final static short MATCH_START = 212;
+    public final static short RETURN_LOBBY = 213;
+    public final static short APPLY_FOOD = 214;
+
+  // Sea Divided
+    public final static short SD_GAME_LOGIN = 400;
+    public final static short SD_PLAY_INIT = 401;
+    public final static short SD_START_GAME = 402;
+    public final static short SD_END_GAME = 403;
+    public final static short SD_KEYBOARD = 404;
+    public final static short SD_PLAYER_POSITION = 405;
+    public final static short SD_PREY = 406;
+    public final static short SD_EAT_PREY = 407;
+    public final static short SD_SCORE = 408;
+    public final static short SD_DISCONNECT = 409;
+    public final static short SD_RECONNECT = 410;
+    public final static short SD_HEARTBEAT = 411;
+    public final static short SD_NPCPOSITION = 412;
+    public final static short SD_RESPAWN = 413;
 
     /**
      * Check for duplicate values, if any.

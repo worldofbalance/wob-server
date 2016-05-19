@@ -49,20 +49,24 @@ public class RequestMatchOver extends GameRequest {
         Match match = manager.getMatchByPlayer(playerID);
 
         
-        //testing
-        CardWinsTests test = new CardWinsTests();
-        WinsLosses wins = test.getPlayersWinsLosses(playerID);
-        test.showWinsLosses(wins);
+//        //testing
+//        CardWinsTests test = new CardWinsTests();
+//        WinsLosses wins = test.getPlayersWinsLosses(playerID);
+//        test.showWinsLosses(wins);
         
         // Update player's win table and add credits 
         if (wonGame == 1) {
         	CardWinsDAO.playerWon(playerID, true);
-
+            PlayerDAO.changeCredits(playerID, wonAmount);
+            response.setCredits(wonAmount);
         } else {
         	CardWinsDAO.playerWon(playerID, false);
-
+            PlayerDAO.changeCredits(playerID, lossAmount);
+            response.setCredits(lossAmount);
         }
 
+        //Change player's credits in player table
+        //TODO: set the amount of winnerCredits and loserCredits, then update credit by calling PlayerDAO.changeCredits()
         
         /*testing
         Log.printf("%d wins; credits: %d",winner.getID(), winnerCredits);
@@ -72,11 +76,9 @@ public class RequestMatchOver extends GameRequest {
         PlayerDAO.updateCredits(loser.getID(), loserCredits);
        	*/
         Log.printf("End of match");
-        
-                
-        // TODO:
+
         response.setStatus((short)0);
-    	
+
         client.add(response);
         if (!Constants.SINGLE_PLAYER){
         	match.addMatchAction(playerID, action);

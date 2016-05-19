@@ -30,8 +30,10 @@ public final class WorldZoneDAO {
      * @param world_id
      * @return a list of tiles in the database
      */
-    public static Zone[][] getZoneList(int world_id) {
+    public static List<Zone> getZoneList(int world_id) {
+        
         Zone[][] zones = new Zone[40][40];
+        List<Zone> zoneList = new ArrayList();
 
         String query = "SELECT * FROM `world_zone` WHERE `world_id` = ? ORDER BY `zone_id`";
 
@@ -52,19 +54,19 @@ public final class WorldZoneDAO {
                 zone.setVegetationCapacity(rs.getInt("vegetation_capacity"));
                 zone.setOwner(rs.getInt("player_id"));
 
-                zones[zone.getRow()][zone.getColumn()] = zone;
+                zoneList.add(zone);
             }
         } catch (SQLException ex) {
             Log.println_e(ex.getMessage());
         } finally {
             GameDB.closeConnection(con, pstmt, rs);
         }
-
-        return zones;
+        
+        return zoneList;
     }
 
     public static List<Zone> getZoneList(int world_id, int player_id) {
-        List<Zone> zones = new ArrayList<Zone>();
+        List<Zone> zones = new ArrayList();
 
         String query = "SELECT * FROM `world_zone` WHERE `world_id` = ? AND `player_id` = ? ORDER BY `zone_id`";
 
@@ -222,6 +224,7 @@ public final class WorldZoneDAO {
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
+                //player_id 0 means its vacant
                 player_id = rs.getInt("player_id");
             }
         } catch (SQLException ex) {
@@ -269,14 +272,14 @@ public final class WorldZoneDAO {
         float carrying_capacity = -1.f;
 
         try {
-            String query = "SELECT carrying_capacity FROM zone WHERE zone_id = ?";
+            String query = "SELECT vegetation_capacity FROM world_zone WHERE zone_id = ?";
 
             connection = GameDB.getConnection();
             pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, zone_id);
             rs = pstmt.executeQuery();
             if (rs.next()) {
-                carrying_capacity = rs.getFloat("carrying_capacity");
+                carrying_capacity = rs.getFloat("vegetation_capacity");
             }
             rs.close();
             pstmt.close();

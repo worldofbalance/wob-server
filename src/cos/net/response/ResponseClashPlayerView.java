@@ -5,17 +5,13 @@
  */
 package cos.net.response;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-
-import shared.metadata.NetworkCode;
+import cos.metadata.NetworkCode;
 import cos.model.DefenseConfig;
-import cos.model.Player;
-import lby.net.response.GameResponse;
-import shared.util.GamePacket;
-import shared.util.Vector2;
+import cos.util.GamePacket;
+import cos.util.Vector2;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Container for the Clash of Species-related data on a specific

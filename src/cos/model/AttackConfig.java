@@ -1,9 +1,8 @@
 package cos.model;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+
 import java.util.Arrays;
-import java.util.List;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Represents a player's attack configuration in Clash of Species, which is

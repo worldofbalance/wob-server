@@ -81,6 +81,7 @@ public class GameRequestTable {
         add(NetworkCode.MATCH_START, "RequestMatchStart");
         add(NetworkCode.RETURN_LOBBY, "RequestReturnLobby");
         add(NetworkCode.APPLY_FOOD, "RequestFoodCard");
+         add(NetworkCode.APPLY_WEATHER, "RequestWeatherCard");
         Log.println("Done!");
     }
 

@@ -1,12 +1,13 @@
 package cos.db;
 
 // Java Imports
+
+import cos.model.Battle;
+import cos.util.Log;
+
 import java.sql.*;
 
 // Other Imports
-import cos.model.Battle;
-import shared.util.Log;
-import shared.db.GameDB;
 
 /**
  * Database methods for model.clashgame.Battle
