@@ -127,8 +127,21 @@ public class NetworkCode {
     public final static short RETURN_LOBBY = 213;
     public final static short APPLY_FOOD = 214;
 
-
-
+  // Sea Divided
+    public final static short SD_GAME_LOGIN = 400;
+    public final static short SD_PLAY_INIT = 401;
+    public final static short SD_START_GAME = 402;
+    public final static short SD_END_GAME = 403;
+    public final static short SD_KEYBOARD = 404;
+    public final static short SD_PLAYER_POSITION = 405;
+    public final static short SD_PREY = 406;
+    public final static short SD_EAT_PREY = 407;
+    public final static short SD_SCORE = 408;
+    public final static short SD_DISCONNECT = 409;
+    public final static short SD_RECONNECT = 410;
+    public final static short SD_HEARTBEAT = 411;
+    public final static short SD_NPCPOSITION = 412;
+    public final static short SD_RESPAWN = 413;
 
     /**
      * Check for duplicate values, if any.

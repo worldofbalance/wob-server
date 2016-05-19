@@ -57,6 +57,9 @@ public class RequestLogin extends GameRequest {
 
                         response.setStatus(ResponseLogin.SUCCESS);
                         response.setAccount(account.getID(), account.getUsername(), account.getLastLogout());
+                        response.setPlayerId(player.getID());
+                        client.setPlayerID(player.getID());
+                        
                         Log.printf("User '%s' has successfully logged in.", account.getUsername());
                     } else {
                         Log.println_e("Player not found");

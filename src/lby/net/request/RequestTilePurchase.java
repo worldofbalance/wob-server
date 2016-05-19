@@ -22,6 +22,7 @@ import shared.util.Log;
 //response for price
 import lby.net.response.ResponseTilePrice;
 import lby.net.response.ResponseTilePurchase;
+import shared.model.Ecosystem;
 /**
  *
  * @author Paul Broestl
@@ -46,6 +47,15 @@ public class RequestTilePurchase extends GameRequest{
     public void process() throws Exception {
 
         ResponseTilePurchase response = new ResponseTilePurchase();
+        Ecosystem ecosystem = client.getPlayer().getEcosystem();
+         Log.println("eco: " +ecosystem);
+        if(ecosystem == null)
+        {
+            short type = 1;
+            ecosystem = new Ecosystem(client.getPlayer().getAccountID(),client.getPlayer().getAccountID(),client.getPlayer().getID(),client.getPlayer().getName(),type);
+            client.getPlayer().setEcosystem(ecosystem);
+     
+        }
         
         //check if the player owns any tiles
         playerZones = WorldZoneDAO.getZoneList(world_id,client.getPlayer().getID());
@@ -63,16 +73,21 @@ public class RequestTilePurchase extends GameRequest{
         price = 10* zone_capacity;
         
         }
-        
+        System.out.println("Player Id: " +client.getPlayer().getID());
         Log.println("Player's current credits" + client.getPlayer().getCredits());
 
         //Deduct the price from the player credits
+        System.out.println("Player Credits before: " + PlayerDAO.getCredits(client.getPlayer().getID()));
         PlayerDAO.changeCredits(client.getPlayer().getID(), -price);
+
+        System.out.println("Player Credits After: " + PlayerDAO.getCredits(client.getPlayer().getID()));
         // update the zone database
         WorldZoneDAO.updateOwner(client.getPlayer().getID(),zone_id);
         
+        int newCredits = PlayerDAO.getCredits(client.getPlayer().getID());
         //setting all the information 
         response.setPrice(price);
+        response.setCredits(newCredits);
         response.setZoneId(zone_id);
         
         response.setStatus(ResponseTilePrice.SUCCESS);

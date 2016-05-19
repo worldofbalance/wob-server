@@ -154,7 +154,7 @@ public final class EcoSpeciesDAO {
             int prev_id = -1;
 
             Species species = null;
-            
+
             while (rs.next()) {
                 int species_id = rs.getInt("species_id");
 
@@ -164,12 +164,13 @@ public final class EcoSpeciesDAO {
                     if (speciesType != null) {
                         species = new Species(species_id, speciesType);
                         speciesList.add(species);
+                    } else {
+                        continue;
                     }
                 }
 
-                // Group IDs are currently all zeros, so we are going to ignore them.
-                // int group_id = rs.getInt("group_id"), biomass = rs.getInt("biomass");
-                // species.add(new SpeciesGroup(species, group_id, biomass, new Vector3<Integer>(rs.getInt("pos_x"), rs.getInt("pos_y"), rs.getInt("pos_z"))));
+                int group_id = rs.getInt("group_id"), biomass = rs.getInt("biomass");
+                species.add(new SpeciesGroup(species, group_id, biomass, new Vector3<Integer>(rs.getInt("pos_x"), rs.getInt("pos_y"), rs.getInt("pos_z"))));
             }
         } catch (SQLException ex) {
             Log.println_e(ex.getMessage());

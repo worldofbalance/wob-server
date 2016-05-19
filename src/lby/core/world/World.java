@@ -45,7 +45,7 @@ public class World {
     private float time_rate = 1.0f;
     private int day = 1;
     // Other
-    private Zone[][] zoneList;
+    private List<Zone> zoneList;
     private final Map<Integer, Player> playerList = new HashMap<Integer, Player>();
     private final Map<Integer, Integer> shopList = new HashMap<Integer, Integer>();
     private final GameTimer worldTimer = new GameTimer();
@@ -114,24 +114,16 @@ public class World {
         return this.day = day;
     }
     
-    public Zone[][] getZones() {
+    public List<Zone> getZones() {
         return zoneList;
     }
     
-    public Zone[][] setZones(Zone[][] zoneList) {
+    public List<Zone> setZones(List<Zone> zoneList) {
         return this.zoneList = zoneList;
     }
     
     public List<Zone> getZoneList() {
-        List<Zone> zones = new ArrayList<Zone>();
-
-        for (int i = 0; i < 40; i++) {
-            for (int j = 0; j < 40; j++) {
-                zones.add(zoneList[i][j]);
-            }
-        }
-
-        return zones;
+        return zoneList;
     }
 
     public Clock getClock() {
