@@ -12,13 +12,13 @@ import java.io.IOException;
 import rr.db.RaceDAO;
 import shared.util.Log;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 /**
- *
+ * Stores all the data important to a to a RR race. 
+ * Keeps every race identifiable by a race ID and stores all relevant data
+ * such as the players involved in the race and the Map ID (which is
+ * currently not used)
+ * This is used by RaceManager to get the players and their respective
+ * opponents to give race information
  * @author markfavis
  */
 public class Race {

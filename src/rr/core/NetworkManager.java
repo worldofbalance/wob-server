@@ -5,6 +5,11 @@ import rr.model.Player;
 import rr.net.response.GameResponse;
 import shared.util.Log;
 
+/**
+ * Pushes pending responses out to clients based on their player ID
+ * or to all connected clients
+ * 
+ */
 public class NetworkManager {
 
     private NetworkManager() {

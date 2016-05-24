@@ -18,6 +18,9 @@ import rr.net.response.ResponseRREndGame;
 
 /**
  *
+ * Manages RR races by creating and destroying races as needed. 
+ * Creates a new Race object when two clients request to join a race
+ * and destroys the Race object when the game is over.
  * @author markfavis
  */
 public class RaceManager {
