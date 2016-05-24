@@ -14,13 +14,14 @@ import rr.race.RaceManager;
 import shared.util.DataReader;
 
 /**
- *
+ * Request sent by Client when they run over a boost.
+ * Responds with Boost Item ID
  * @author markfavis
  */
 public class RequestRRBoost extends GameRequest {
 
     private int boostItemID;
-    private int p_id;
+    private int opponentID;
     private ResponseRRBoost responseRRBoost;
 
     @Override
@@ -37,19 +38,19 @@ public class RequestRRBoost extends GameRequest {
         responseRRBoost.setBoostItemID(boostItemID);
 
         // inform opponent
-        p_id = RaceManager.manager.getRaceByPlayerID(client.getPlayer().getID())
+        opponentID = RaceManager.manager.getRaceByPlayerID(client.getPlayer().getID())
                 .getOpponent(client.getPlayer()).getID();
         
         // get the player and update with the item
         /*
-        player = RaceManager.manager.getRaceByPlayerID(p_id).getPlayers().get(p_id);
+        player = RaceManager.manager.getRaceByPlayerID(opponentID).getPlayers().get(opponentID);
         player.setItemID(boostItemID);
         numItems = player.getNumItems();
         player.setNumItems(numItems + 1);
         */
         
-        //NetworkManager.addResponseForUser(p_id, responsekeyboard);
-        GameServer.getInstance().getThreadByPlayerID(p_id).send(responseRRBoost);
+        //NetworkManager.addResponseForUser(opponentID, responsekeyboard);
+        GameServer.getInstance().getThreadByPlayerID(opponentID).send(responseRRBoost);
         
         // RaceDAO.updateRace(player);
     }

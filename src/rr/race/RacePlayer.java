@@ -7,7 +7,9 @@ import rr.model.Player;
 /**
  * The Player class holds important information about the player including, most
  * importantly, the account. Such information includes the username, password,
- * email, and the player ID.
+ * email, and the player ID. Also retrievable in this class are all of the
+ * player's in-game variables, such as x,y position which is crucial for
+ * keeping the game state.
  */
 public class RacePlayer extends Player {
 

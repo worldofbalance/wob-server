@@ -17,13 +17,15 @@ import rr.db.RaceDAO;
 // import utility.Log;
 
 /**
- *
+ *Get keystrokes from Client. 
+ * Confirms keystrokes sent from client, then updates the game state in the DB
+ * Sends the new ResponseKeyboard to the opponent
  * @author Sbc-ComEx
  */
 public class RequestKeyboard extends  GameRequest{
     
     private int keytype,key;
-    private int p_id;
+    private int opponentPlayerID;
     private  ResponseKeyboard responsekeyboard;
     
     public RequestKeyboard() {
@@ -36,7 +38,7 @@ public class RequestKeyboard extends  GameRequest{
     }
     
     public void doBusiness() throws Exception {
-        RacePlayer player;
+        RacePlayer Opponent;
       //  System.out.println("key type:  " +  keytype + "key :  " + key);
         
         responsekeyboard = new ResponseKeyboard();
@@ -50,11 +52,11 @@ public class RequestKeyboard extends  GameRequest{
 //        Log.println(Integer.toString(RaceManager.getInstance().getRaceByPlayerID(client.getPlayer().getID()).getID()));        
 //        Log.println(Integer.toString(RaceManager.manager.getRaceByPlayerID(client.getPlayer().getID()).getOpponent(client.getPlayer()).getID()));
    
-        //The playerID of the oppenet of the player who sent the request
-        p_id = RaceManager.manager.getRaceByPlayerID(client.getPlayer().getID())
+        //The playerID of the oppenet of the Opponent who sent the request
+        opponentPlayerID = RaceManager.manager.getRaceByPlayerID(client.getPlayer().getID())
                 .getOpponent(client.getPlayer()).getID();
-        
-        player = RaceManager.manager.getRaceByPlayerID(p_id).getPlayers().get(p_id);
+        //Gets the player object of the opponent of the person who sent the request
+        Opponent = RaceManager.manager.getRaceByPlayerID(opponentPlayerID).getPlayers().get(opponentPlayerID);
         
         
         // keytype
@@ -70,35 +72,40 @@ public class RequestKeyboard extends  GameRequest{
         // left or right
         if (keytype == 1)
         {
-            if (key == -1) player.setLeft(true);
-            else if (key == 1) player.setRight(true);
+            if (key == -1) Opponent.setLeft(true);
+            else if (key == 1) Opponent.setRight(true);
             else if (key == 0)
             {
-                player.setLeft(false);
-                player.setRight(false);
+                Opponent.setLeft(false);
+                Opponent.setRight(false);
             }
         }
         
         // jump
         else if (keytype == 2)
         {
-            if (key == 1) player.setJump(true);
-            else if (key == 0) player.setJump(false);
+            if (key == 1) Opponent.setJump(true);
+            else if (key == 0) Opponent.setJump(false);
         }
         
         // invalid key?
         else
         {
-            player.setLeft(false);
-            player.setRight(false);
-            player.setJump(false);
+            Opponent.setLeft(false);
+            Opponent.setRight(false);
+            Opponent.setJump(false);
         }
         
         
-        //NetworkManager.addResponseForUser(p_id, responsekeyboard);
+        //NetworkManager.addResponseForUser(opponentPlayerID, responsekeyboard);
         
-        GameServer.getInstance().getThreadByPlayerID(p_id).send(responsekeyboard);
-        RaceDAO.updateRace(player); // write to DB
+        //Send Player's location to opponent
+        GameServer.getInstance().getThreadByPlayerID(opponentPlayerID).send(responsekeyboard);
+        
+        //Debug: Could cause problems when retrieving game state from server: 
+        //Looks like every player pushes their opponenrs position to the DB, not
+        //their own
+        RaceDAO.updateRace(Opponent); // write to DB
     }
     
     

@@ -14,14 +14,16 @@ import rr.race.RaceManager;
 import shared.util.DataReader;
 
 /**
- *
+ * Request sent by client when they win the game. 
+ * Gives the information to RaceManager, where RaceManager creates
+ * the response and gives it to opponent.
  * @author markfavis
  */
 public class RequestRREndGame extends GameRequest {
 
-    private boolean gameCompleted;
+    private boolean gameCompleted; //Should be removed, not used
     private String finalTime;
-    private int p_id;
+    //private int p_id;
     private ResponseRREndGame responseRREndGame;
 
     public RequestRREndGame() {

@@ -14,18 +14,19 @@ import rr.race.RaceManager;
 import shared.util.DataReader;
 
 /**
- *
+ * Parses the species ID from request, sends this to opponent.
+ * Parses an int representing species ID
  * @author Sbc-ComEx
  */
 public class RequestRRSpecies extends GameRequest {
     
-    private int id;
-    private int p_id;
+    private int speciesID;
+    private int opponentID;
     private ResponseRRSpecies responseRRSpecies;
     
     
      public void parse() throws IOException {
-        id = DataReader.readInt(dataInput);
+        speciesID = DataReader.readInt(dataInput);
  
     }
 
@@ -34,8 +35,8 @@ public class RequestRRSpecies extends GameRequest {
         // RacePlayer player;
         
         responseRRSpecies = new ResponseRRSpecies();
-        responseRRSpecies.setId(id);
-       System.out.println("speciec: " + id);
+        responseRRSpecies.setId(speciesID);
+       System.out.println("species: " + speciesID);
 //        RaceManager.getInstance();
 //        client.getPlayer().getID();
         
@@ -44,16 +45,16 @@ public class RequestRRSpecies extends GameRequest {
 //        Log.println(Integer.toString(RaceManager.manager.getRaceByPlayerID(client.getPlayer().getID()).getOpponent(client.getPlayer()).getID()));
    
         //The playerID of the oppenet of the player who sent the request
-        p_id = RaceManager.manager.getRaceByPlayerID(client.getPlayer().getID())
+        opponentID = RaceManager.manager.getRaceByPlayerID(client.getPlayer().getID())
                 .getOpponent(client.getPlayer()).getID();
         
         // get the player and set species
-        // player = RaceManager.manager.getRaceByPlayerID(p_id).getPlayers().get(p_id);
-        // player.setRunnerSpeciesID(id);
+        // player = RaceManager.manager.getRaceByPlayerID(opponentID).getPlayers().get(opponentID);
+        // player.setRunnerSpeciesID(speciesID);
         
-        //NetworkManager.addResponseForUser(p_id, responsekeyboard);
+        //NetworkManager.addResponseForUser(opponentID, responsekeyboard);
         
-        GameServer.getInstance().getThreadByPlayerID(p_id).send(responseRRSpecies);
+        GameServer.getInstance().getThreadByPlayerID(opponentID).send(responseRRSpecies);
         
         // RaceDAO.setPlayerSpecies(player);
     }

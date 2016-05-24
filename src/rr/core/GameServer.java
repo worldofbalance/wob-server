@@ -84,7 +84,7 @@ public class GameServer {
         gameManager = new RaceManager();
         
         //Hardcoded for testing a protype of a game
-//        game = new Race();
+        //game = new Race();
     }
 
     public static GameServer getInstance() {
@@ -232,6 +232,8 @@ public class GameServer {
                     addToActiveThreads(client);
                     // Initiate the client
                     clientThreadPool.submit(client);
+                    
+                    
 //                     Add client to the GamesManager
 //                     gameManager.addClientToGame(client);
                 } catch (IOException e) {

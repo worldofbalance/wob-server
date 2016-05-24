@@ -5,25 +5,25 @@
  */
 package rr.net.request;
 
-import rr.core.GameServer;
+//import rr.core.GameServer;
 import java.io.IOException;
-import rr.net.response.ResponseRRStartGame;
-import rr.race.Race;
+//import rr.net.response.ResponseRRStartGame;
+//import rr.race.Race;
+//import rr.race.RaceManager;
 import rr.race.RaceManager;
-import rr.race.RaceManager;
-import shared.util.DataReader;
+//import shared.util.DataReader;
 import shared.util.Log;
 
 /**
- *
+ * Gets the request to Start the game, gives this to Race Manager
  * @author markfavis
  */
 public class RequestRRStartGame extends GameRequest {
 
-    private int p_id1;
-    private int p_id2;
+    //private int p_id1;
+    //private int p_id2;
 
-    private ResponseRRStartGame responseRRStartGame;
+    //private ResponseRRStartGame responseRRStartGame;
 
     @Override
     public void parse() throws IOException {
