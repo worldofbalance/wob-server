@@ -14,21 +14,19 @@ import rr.race.RacePlayer;
 import shared.util.DataReader;
 
 /**
- *
+ * Receive the current position of the player and send to opponent.
+ * Receives 2 Strings in the packet, and parses them to floats 
+ * representing player's x,y coordinates. Sends responds to opponent
  * @author markfavis
  */
 public class RequestRRPosition extends GameRequest {
     
-//    private int x, y;
     private float x, y;
-    private int p_id;
+    private int opponentID;
     private ResponseRRPosition responseRRPosition;
     
     @Override
     public void parse() throws IOException {
-
-//        x = DataReader.readInt(dataInput);
-//        y = DataReader.readInt(dataInput);
 
         x = Float.parseFloat(DataReader.readString(dataInput));
         y = Float.parseFloat(DataReader.readString(dataInput));
@@ -38,17 +36,10 @@ public class RequestRRPosition extends GameRequest {
     public void doBusiness() throws Exception {
         RacePlayer player; // the RacePlayer sending the request
         System.out.println("X:  " +  x + "Y :  " + y);
-//<<<<<<< HEAD:SpeedServer/src/networking/request/RRRequestPosition.java
-//
-//        rrResponsePosition = new RRResponsePosition();
-//        rrResponsePosition.setX(x);
-//        rrResponsePosition.setY(y);
-////=======
-//        
+    
         responseRRPosition = new ResponseRRPosition();
         responseRRPosition.setX(x);
         responseRRPosition.setY(y);
-//>>>>>>> start:SpeedServer/src/networking/request/RequestRRPosition.java
         
 //        RaceManager.getInstance();
 //        client.getPlayer().getID();
@@ -58,17 +49,17 @@ public class RequestRRPosition extends GameRequest {
 //        Log.println(Integer.toString(RaceManager.manager.getRaceByPlayerID(client.getPlayer().getID()).getOpponent(client.getPlayer()).getID()));
    
         //The playerID of the oppenet of the player who sent the request
-        p_id = RaceManager.manager.getRaceByPlayerID(client.getPlayer().getID())
+        opponentID = RaceManager.manager.getRaceByPlayerID(client.getPlayer().getID())
                 .getOpponent(client.getPlayer()).getID();
                 
-        //NetworkManager.addResponseForUser(p_id, responsekeyboard);
+        //NetworkManager.addResponseForUser(opponentID, responsekeyboard);
         
         // get the player and define x and y at the time of request
-        player = RaceManager.manager.getRaceByPlayerID(p_id).getPlayers().get(p_id);
+        player = RaceManager.manager.getRaceByPlayerID(opponentID).getPlayers().get(opponentID);
         player.setX(x);
         player.setY(y);
         
-        GameServer.getInstance().getThreadByPlayerID(p_id).send(responseRRPosition);
+        GameServer.getInstance().getThreadByPlayerID(opponentID).send(responseRRPosition);
         
         RaceDAO.updateRace(player); // write to DB
     }

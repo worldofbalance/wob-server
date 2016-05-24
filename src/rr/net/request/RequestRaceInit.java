@@ -15,7 +15,8 @@ import shared.util.DataReader;
 import shared.util.Log;
 
 /**
- *
+ * Initializes a race in a new room.
+ * If there is already a race, send response to players in race. 
  * @author Lowell Milliken
  */
 public class RequestRaceInit extends GameRequest {

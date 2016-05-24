@@ -11,7 +11,9 @@ import rr.race.RaceManager;
 import shared.util.DataReader;
 
 /**
- *
+ * Responds with player ID and map ID.
+ * Currently not used, there is only one map, this protocol is 
+ * irrelevant for how the game actually works. Not used
  * @author markfavis
  */
 public class RequestRRGetMap extends GameRequest {
