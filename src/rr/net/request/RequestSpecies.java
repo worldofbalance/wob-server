@@ -12,13 +12,14 @@ import rr.race.RaceManager;
 import shared.util.DataReader;
 
 /**
- *
+ * Player sends their Species ID. 
+ * Server responds to player’s opponent with the ID.
  * @author Sbc-ComEx
  */
 public class RequestSpecies extends GameRequest {
     
     private int id;
-    private int p_id;
+    private int opponentID;
     private RRResponseSpecies rrResponseSpecies;
     
     
@@ -41,12 +42,12 @@ public class RequestSpecies extends GameRequest {
 //        Log.println(Integer.toString(RaceManager.manager.getRaceByPlayerID(client.getPlayer().getID()).getOpponent(client.getPlayer()).getID()));
    
         //The playerID of the oppenet of the player who sent the request
-        p_id = RaceManager.manager.getRaceByPlayerID(client.getPlayer().getID())
+        opponentID = RaceManager.manager.getRaceByPlayerID(client.getPlayer().getID())
                 .getOpponent(client.getPlayer()).getID();
                 
-        //NetworkManager.addResponseForUser(p_id, responsekeyboard);
+        //NetworkManager.addResponseForUser(opponentID, responsekeyboard);
         
-        GameServer.getInstance().getThreadByPlayerID(p_id).send(rrResponseSpecies);
+        GameServer.getInstance().getThreadByPlayerID(opponentID).send(rrResponseSpecies);
     }
     
     
