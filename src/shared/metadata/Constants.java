@@ -69,7 +69,7 @@ public class Constants {
     public final static int MONTH_DURATION = 180;
     public final static int MAX_SPECIES_SIZE = 10;
     public final static String CSV_SAVE_PATH = "src/log/sim/";
-    public final static String ATN_CSV_SAVE_PATH = "/home/student/ivang/src/log/atn/";
+    public final static String ATN_CSV_SAVE_PATH = "/src/log/atn/";
     public final static int MAX_CLIENT_THREADS = 10;
     public final static int ECOSYSTEM_TYPE = 1;
     public final static int TICK_RATE = 30;

@@ -58,6 +58,7 @@ public class RequestConvergeNonhostConfig extends GameRequest {
         Log.consoleln("Time window is: " + timeWindowRes);
         Log.consoleln("bet amount is: " + betAmountRes);
         Log.consoleln("Eco number is: " + ecoNumberRes);
+        Log.consoleln("allow sliders number is: " + allowSlidersRes);
             response.setNumRounds(numRoundsRes);
             response.setTimeWindow(timeWindowRes);
             response.setBetAmount(betAmountRes);
