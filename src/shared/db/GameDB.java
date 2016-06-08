@@ -1,10 +1,6 @@
 package shared.db;
 
 // Java Imports
-import cow.core.GameServer;
-import java.io.File;
-import java.net.URISyntaxException;
-import java.security.CodeSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -50,27 +46,8 @@ public class GameDB {
      */
     private void configure() {
         // Parse the configuration file
-        try 
-        {
-            String separator=System.getProperty("file.separator");
-            String dbFilePath="conf"+separator+"db.conf";
-            File f = new File(dbFilePath);
-            if (!f.exists()) 
-            {
-                // get current absolute path for cards of wild
-                CodeSource codeSource = cow.core.GameServer.class.getProtectionDomain().getCodeSource();
-                File jarFile = new File(codeSource.getLocation().toURI().getPath());
-                dbFilePath = jarFile.getParentFile().getPath() +separator +".."+separator+"conf"+separator+"db.conf";
-            }
-            
-            ConfFileParser confFileParser = new ConfFileParser(dbFilePath);
-            configuration.setConfRecords(confFileParser.parse());
-        }
-        catch (Exception e) 
-        {
-            System.out.println("Error loading database file");
-            e.printStackTrace(System.out);
-        }
+        ConfFileParser confFileParser = new ConfFileParser("conf/db.conf");
+        configuration.setConfRecords(confFileParser.parse());
     }
 
     /**

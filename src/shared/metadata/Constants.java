@@ -69,7 +69,7 @@ public class Constants {
     public final static int MONTH_DURATION = 180;
     public final static int MAX_SPECIES_SIZE = 10;
     public final static String CSV_SAVE_PATH = "src/log/sim/";
-    public final static String ATN_CSV_SAVE_PATH = "/src/log/atn/";
+    public final static String ATN_CSV_SAVE_PATH = "src/log/atn/";
     public final static int MAX_CLIENT_THREADS = 10;
     public final static int ECOSYSTEM_TYPE = 1;
     public final static int TICK_RATE = 30;
@@ -143,15 +143,11 @@ public class Constants {
     public static final double INIT_BSI_STEPSIZE = 0.1;
     public static final double MAX_BSI_ERR = 0.5;
     public static final int ADDITIONAL_TIMESTEPS = 2;	//Needed so that it aligns with Simulationengine, otherwise client will be in processing state
-	public static boolean useSimEngine = true;		//To run both the simulation engine and the atn engine set useSimEngine =true && useAtnEngine == true
+	public static boolean useSimEngine = false;		//To run both the simulation engine and the atn engine set useSimEngine =true && useAtnEngine == true
 	public static boolean useAtnEngine = true;
 	public static final boolean DEBUG_MODE = true;
 
-        //for use in Cards of the Wild and Convergence
-    //public static final boolean SINGLE_PLAYER = true;
-    public static final boolean SINGLE_PLAYER = false;
-    public static final short  STATUS_NO_MATCH = 2;
-    
-    public static final short STATUS_SUCCESS_CARDS = 0;
-    public static final short STATUS_FAILURE_CARDS = 1;
+    // DH change
+    // Multiplayer Convergence
+    public static boolean SINGLE_PLAYER = false;
 }

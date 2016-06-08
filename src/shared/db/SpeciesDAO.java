@@ -128,7 +128,6 @@ public final class SpeciesDAO {
             }
         } catch (SQLException ex) {
             Log.println_e(ex.getMessage());
-            ex.printStackTrace(System.out);
         } finally {
             GameDB.closeConnection(con, pstmt, rs);
         }

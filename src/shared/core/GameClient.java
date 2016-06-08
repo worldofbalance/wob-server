@@ -62,8 +62,6 @@ public class GameClient {
     private short host;   // 0 = not host, 1 = host
     private int player_id;    // player_id obtained from MCMatchManager
     private int match_id;     // match_id obtained from MCMatchManager
-    public static int betTime = 30;   // hardcoded initially
-    public static int bet = 100;     // hardcoded initially
 
     /**
      * Initialize the GameClient using the client socket and creating both input
@@ -144,7 +142,6 @@ public class GameClient {
                         // Send responses to client, if any
                         send();
                     } catch (Exception ex) {
-                        Log.println(ex.getClass().getName());
                         Log.printf_e("Request [%d] Error:\n%s", request_id, ex.getMessage());
                     }
                 }
@@ -374,10 +371,6 @@ public class GameClient {
         return player_id;
     }
     
-    public int getBetTime() {
-        return betTime;
-    }
-    
     public void setMatchID(int match_id) {
         this.match_id = match_id;
     }
@@ -385,12 +378,5 @@ public class GameClient {
     public int getMatchID() {
         return match_id;
     }
-    
-    public void setBet(int bet){
-        this.bet = bet;
-    }
-    
-    public void setBetTime(int betTime){
-        this.betTime = betTime;
-    }
+
 }

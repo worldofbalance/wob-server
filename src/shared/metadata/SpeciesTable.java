@@ -28,7 +28,7 @@ public class SpeciesTable {
     public void initialize() throws ConfigureException {
         Log.console("Loading Species...");
 
-	List<SpeciesType> speciesList = SpeciesDAO.getSpecies();
+		List<SpeciesType> speciesList = SpeciesDAO.getSpecies();
         if (speciesList.isEmpty()) {
             throw new ConfigureException("Species retrieval failure");
         }

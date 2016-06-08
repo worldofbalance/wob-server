@@ -63,7 +63,8 @@ public class ATN {
         //load properties file containing ATN model parameter values
         propertiesConfig = new Properties();
         try {
-            propertiesConfig.load(new FileInputStream("/src/shared/atn/SimJobConfig.properties"));
+            propertiesConfig.load(new FileInputStream(
+                    "src/shared/atn/SimJobConfig.properties"));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ATN.class.getName()).log(
                     Level.SEVERE, null, ex);
@@ -364,7 +365,6 @@ public class ATN {
         System.out.println("Network output will be written to:");
         psATN = Functions.getPrintStream("ATN", Constants.ATN_CSV_SAVE_PATH);
     }
-    
 
     public static void main(String args[]) throws FileNotFoundException {
 

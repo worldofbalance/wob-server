@@ -67,7 +67,7 @@ public class RequestConvergeCheckPlayers extends GameRequest {
             Log.println("RCCP: checking players. This player id is " + player_id);
             // Check which players have not responded. Remove the first one you find        
             found = false;   // found someone not answered yet
-            bet = client.bet;
+            bet = match.getBetAmount();
             totalBet = 0; 
             tieCount = 1;
             bestImprove = -1000000;

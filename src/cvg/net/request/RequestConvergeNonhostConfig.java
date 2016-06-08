@@ -32,9 +32,6 @@ public class RequestConvergeNonhostConfig extends GameRequest {
      @Override
     public void process() throws Exception {
         ResponseConvergeNonHostConfig response = new ResponseConvergeNonHostConfig();
-        
-        
-        
         MCMatchManager manager = MCMatchManager.getInstance();
         Log.consoleln("Check if manager is null: " + manager.toString());
         MCMatch match = manager.getMatchByPlayer(client.getPlayerID());
@@ -59,14 +56,12 @@ public class RequestConvergeNonhostConfig extends GameRequest {
         Log.consoleln("bet amount is: " + betAmountRes);
         Log.consoleln("Eco number is: " + ecoNumberRes);
         Log.consoleln("allow sliders number is: " + allowSlidersRes);
-            response.setNumRounds(numRoundsRes);
-            response.setTimeWindow(timeWindowRes);
-            response.setBetAmount(betAmountRes);
-            response.setEcoNumber(ecoNumberRes);
-            response.setSliders(allowSlidersRes);
-            client.setBet(betAmountRes);
-            client.setBetTime(timeWindowRes);
-            client.add(response);
+        response.setNumRounds(numRoundsRes);
+        response.setTimeWindow(timeWindowRes);
+        response.setBetAmount(betAmountRes);
+        response.setEcoNumber(ecoNumberRes);
+        response.setSliders(allowSlidersRes);
+        client.add(response);
             
         long timeValue = System.currentTimeMillis();
         match.setStartTime(timeValue);

@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 import shared.metadata.Constants;
 import shared.model.SpeciesType;
 import shared.util.CSVParser;
-import shared.util.Log;
 
 /**
  *Create and run simulation for the converge game
@@ -29,26 +28,19 @@ public class SimJobConverge {
     public SimJobConverge(String config, int timesteps) {
 
         GameServer.getInstance();  //load species information
-        Log.consoleln("After GameServer.getInstance()");
         /* read in experimental variables only used for running simulation jobs*/
         if (SimJob.DFLT_USE_SIMTESTNODE_VALS) {
             SpeciesType.loadSimTestNodeParams(Constants.ECOSYSTEM_TYPE);
             SpeciesType.loadSimTestLinkParams(Constants.ECOSYSTEM_TYPE); 
         }
 
-        Log.consoleln("before jobMgr");
+
         jobMgr = new SimJobManager();
-        Log.consoleln("before SimJob");
         simJob = new SimJob(config, timesteps);
-        Log.consoleln("before setSimJob");//jobMgr is broken
         jobMgr.setSimJob(simJob);
-        //jobMgr = new SimJobManager(simJob);//this breaks not sure why
-        Log.consoleln("after setSimJob");//
+
         try {
-            Log.consoleln("Before JobId");//this next line breaks
             jobId = jobMgr.runSimJob();
-            Log.consoleln("jobID is: " + jobId);
-            Log.consoleln("Broken?");
         } catch (Exception ex) {
             Logger.getLogger(SimJobConverge.class.getName()).log(Level.SEVERE, null, ex);
         } finally {

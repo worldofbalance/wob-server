@@ -41,16 +41,14 @@ public class RequestConvergeSpecifyParams extends GameRequest{
         MCMatchManager manager = MCMatchManager.getInstance();
         MCMatch match = manager.getMatchByPlayer(player_id);
         int matchID = match.getMatchID();
-        match.setNumRounds(numRounds);
-        match.setTimeWindow(timeWindow);
-        match.setBetAmount(betAmount);
         match.setEcoNumber(ecoNumber);
         match.setSliders(allowSliders);
+        match.setNumRounds(numRounds);
+        match.setTimeWindow(timeWindow);
+        match.setBetAmount(betAmount);        
         
-        short status = 0;//0 indicates success
+        short status = 0;     //0 indicates success
         response.setStatus(status);
-        client.setBetTime(timeWindow);
-        client.setBet(betAmount);//updates bet to custom value rather than hardcoded value
         client.add(response);
         //changes to rest time
         long timeValue = System.currentTimeMillis();

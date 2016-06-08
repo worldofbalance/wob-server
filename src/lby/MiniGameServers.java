@@ -67,6 +67,7 @@ public class MiniGameServers {
     
     private void initMiniGames() {
         MiniGame game;
+        /*
 
         game = new MiniGame("Cards of the Wild");
         game.setAsMultiPlayerGame("mini_game_server_jar/WoC_Server/dist/Cards_Server.jar", 20038);
@@ -79,5 +80,6 @@ public class MiniGameServers {
         game = new MiniGame("Sea Divided");
         game.setAsMultiPlayerGame("mini_game_server_jar/SeaDividedServer/dist/SeaDivided.jar", 20040);
         miniGames.put(game.getName(), game);
+                */
     }
 }

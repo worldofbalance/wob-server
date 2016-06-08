@@ -100,6 +100,7 @@ public class GameRequestTable {
 	add(NetworkCode.CLASH_END_BATTLE, "cos.net.request.RequestClashEndBattle");
 
         //Cards of the wild
+        /*
         add(NetworkCode.MATCH_INIT, "cow.net.request.RequestMatchInit");
         add(NetworkCode.MATCH_STATUS, "cow.net.request.RequestMatchStatus");
         add(NetworkCode.GET_DECK, "cow.net.request.RequestGetDeck");
@@ -114,6 +115,7 @@ public class GameRequestTable {
         add(NetworkCode.MATCH_START, "cow.net.request.RequestMatchStart");
         add(NetworkCode.RETURN_LOBBY, "cow.net.request.RequestReturnLobby");
         add(NetworkCode.APPLY_FOOD, "cow.net.request.RequestFoodCard");
+        */
 
 
 

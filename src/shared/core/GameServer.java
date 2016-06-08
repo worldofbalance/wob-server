@@ -114,7 +114,6 @@ public class GameServer {
                 Log.println_e(ex.getMessage());
             }
         }
-       
     }
 
     public void shutdown() {
@@ -212,14 +211,13 @@ public class GameServer {
 
         try {
             Log.console("Loading Configuration File...");
-            String separator = System.getProperty("file.separator");
-            GameServerConf config = new GameServerConf(new ConfFileParser("conf"+separator+"gameServer.conf").parse());
+            GameServerConf config = new GameServerConf(new ConfFileParser("conf/gameServer.conf").parse());
             Log.println("Done!");
 
             server = new GameServer(config.getPortNumber(), Constants.MAX_CLIENT_THREADS);
             server.configure();
             
-            //MiniGameServers.getInstance().runServers();
+            MiniGameServers.getInstance().runServers();
             
             server.run();
         } catch (IOException ex) {
@@ -230,8 +228,7 @@ public class GameServer {
             Log.println_e("Server Crashed!");
             Log.println_e(ex.getMessage());
         }
-       
-        
+
         System.exit(0);
     }
 }

@@ -77,11 +77,11 @@ public class SimulationEngine{
         propertiesConfig = new Properties();
         try {
             propertiesLogin.load(new FileInputStream(
-                    "/conf/simulation/webserviceLogin.properties"));
+                    "conf/simulation/webserviceLogin.properties"));
             user = new User();
             user.setUsername(propertiesLogin.getProperty("username"));
             propertiesConfig.load(new FileInputStream(
-                    "/conf/simulation/SimulationEngineConfig.properties"));
+                    "conf/simulation/SimulationEngineConfig.properties"));
             proxy.setEndpoint(propertiesConfig.getProperty("wsdlurl"));
 //            proxy.setEndpoint(propertiesConfig.getProperty("stagingurl"));            
 //            proxy.setEndpoint(propertiesConfig.getProperty("devurl"));                        
@@ -1525,7 +1525,7 @@ public class SimulationEngine{
         final String name = filename, extension = ".csv";
 
         // Determine filename
-        String[] files = new File(Constants.ATN_CSV_SAVE_PATH).list(new FilenameFilter() {
+        String[] files = new File(Constants.CSV_SAVE_PATH).list(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return name.startsWith(name) && name.endsWith(extension);
@@ -1560,16 +1560,16 @@ public class SimulationEngine{
             if (!biomassCSV.isEmpty()) {
                 biomassCSV = "Manipulation ID: " + manipulation_id + "\n\n" + biomassCSV;
 
-                PrintStream p = new PrintStream(new FileOutputStream(Constants.ATN_CSV_SAVE_PATH + csvFilename));
+                PrintStream p = new PrintStream(new FileOutputStream(Constants.CSV_SAVE_PATH + csvFilename));
                 p.println(biomassCSV);
                 p.close();
 
-                Log.println("Saved CSV to: " + Constants.ATN_CSV_SAVE_PATH + csvFilename);
+                Log.println("Saved CSV to: " + Constants.CSV_SAVE_PATH + csvFilename);
             } else {
                 Log.println_e("CSV Not Found!");
             }
         } catch (FileNotFoundException ex) {
-            Log.println_e("Failed to save CSV to: " + Constants.ATN_CSV_SAVE_PATH + csvFilename);
+            Log.println_e("Failed to save CSV to: " + Constants.CSV_SAVE_PATH + csvFilename);
         }
     }
 
@@ -1715,10 +1715,10 @@ public class SimulationEngine{
             String biomassCSV) {
         //9/16/14 - jtc - had to change WOB to WoB for replaceFirst to work.
         //cannot figure out why this used to work!
-        final String name = "WOB_Data", extension = ".csv";
+        final String name = "WoB_Data", extension = ".csv";
 
         // Determine filename
-        String[] files = new File(Constants.ATN_CSV_SAVE_PATH).list(new FilenameFilter() {
+        String[] files = new File(Constants.CSV_SAVE_PATH).list(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return name.startsWith(name) && name.endsWith(extension);
@@ -1759,17 +1759,17 @@ public class SimulationEngine{
 
                 PrintStream p = new PrintStream(
                         
-                        new FileOutputStream(Constants.ATN_CSV_SAVE_PATH + csvFilename));
+                        new FileOutputStream(Constants.CSV_SAVE_PATH + csvFilename));
                 p.println(biomassCSV);
                 p.close();
 
-                Log.println("Saved CSV to: " + Constants.ATN_CSV_SAVE_PATH + csvFilename);
+                Log.println("Saved CSV to: " + Constants.CSV_SAVE_PATH + csvFilename);
             } else {
                 Log.println_e("CSV Not Found!");
             }
         } catch (FileNotFoundException e) {
             Log.println_e("Failed to save CSV to: " + 
-                    Constants.ATN_CSV_SAVE_PATH + csvFilename);
+                    Constants.CSV_SAVE_PATH + csvFilename);
         }
     }
 

@@ -48,10 +48,10 @@ public class RequestConvergeBetUpdate extends GameRequest {
         MCMatchManager manager = MCMatchManager.getInstance();
         player_id = client.getPlayerID();
         match_id = client.getMatchID();
-        bet = client.bet;
         
         // Put this player's information in playerList
         match = manager.getMatch(match_id);
+        bet = match.getBetAmount();
         playerList = match.playerList;
         Integer i1 = new Integer(player_id);
         player = playerList.get(player_id);
