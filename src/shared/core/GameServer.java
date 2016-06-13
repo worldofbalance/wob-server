@@ -211,9 +211,11 @@ public class GameServer {
 
         try {
             Log.console("Loading Configuration File...");
-            GameServerConf config = new GameServerConf(new ConfFileParser("conf/gameServer.conf").parse());
+            
+            String sep = System.getProperty("file.separator");
+            GameServerConf config = new GameServerConf(new ConfFileParser("conf/gameServer.conf").parse());                    
             Log.println("Done!");
-
+            
             server = new GameServer(config.getPortNumber(), Constants.MAX_CLIENT_THREADS);
             server.configure();
             

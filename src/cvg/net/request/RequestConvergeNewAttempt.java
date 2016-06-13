@@ -85,7 +85,7 @@ public class RequestConvergeNewAttempt extends GameRequest {
 
         client.add(response);
         endTime = System.nanoTime();
-        double difference = (startTime - endTime)/1e6;
-        Log.consoleln("Processing RequestConvergeNewAttempt time taken:"+difference); 
+        double difference = (endTime - startTime)/1e6;
+        Log.consoleln("Processing RequestConvergeNewAttempt time taken: "+difference); 
     }
 }

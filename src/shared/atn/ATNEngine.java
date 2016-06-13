@@ -13,6 +13,7 @@ species information.
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -90,8 +91,9 @@ public class ATNEngine {
        //load properties file containing ATN model parameter values
        propertiesConfig = new Properties();
        try {
-           propertiesConfig.load(new FileInputStream(
-                   "src/shared/atn/SimJobConfig.properties"));
+           InputStream in = this.getClass().getClassLoader()
+                            .getResourceAsStream("shared/atn/SimJobConfig.properties");
+           propertiesConfig.load(in);
        } catch (FileNotFoundException ex) {
            Logger.getLogger(ATNEngine.class.getName()).log(
                    Level.SEVERE, null, ex);
