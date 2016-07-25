@@ -1,40 +1,32 @@
 package rr.core;
 
 // Java Imports
-import java.io.IOException;
-import java.net.Socket;
-import java.net.ServerSocket;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-// Other Imports
 import rr.config.GameServerConf;
 import rr.db.DAO;
-import rr.db.SpeciesDAO;
-import rr.db.RunnerSpeciesDAO;
 import rr.db.RunnerItemsDAO;
-import java.io.File;
-import java.net.URISyntaxException;
-import java.security.CodeSource;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import rr.db.RunnerSpeciesDAO;
+import rr.db.SpeciesDAO;
 import rr.metadata.Constants;
 import rr.metadata.GameRequestTable;
-import rr.model.AnimalType;
-import rr.model.PlantType;
-import rr.model.Player;
-import rr.model.RunnerSpecies;
-import rr.model.RunnerItems;
+import rr.model.*;
 import rr.race.RaceManager;
-import rr.model.SpeciesType;
 import shared.util.ConfFileParser;
 import shared.util.Log;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.URISyntaxException;
+import java.security.CodeSource;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+// Other Imports
 
 /**
  * The GameServer class serves as the main module that runs the server.
@@ -70,6 +62,7 @@ public class GameServer {
         configure();
         // Initialize tables for global use
         GameRequestTable.init(); // Contains request codes and classes
+        Log.console("Initialized Requests");
         // Initialize database connection
         if (DAO.getInstance() == null) {
             Log.println_e("Database Connection Failed!");

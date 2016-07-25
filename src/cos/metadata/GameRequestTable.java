@@ -53,6 +53,9 @@ public class GameRequestTable {
         add(NetworkCode.CLASH_PLAYER_VIEW, "RequestClashPlayerView");
         add(NetworkCode.CLASH_INITIATE_BATTLE, "RequestClashInitiateBattle");
         add(NetworkCode.CLASH_END_BATTLE, "RequestClashEndBattle");
+        add(NetworkCode.CLASH_PLAYER_HISTORY, "RequestClashPlayerHistory");
+        add(NetworkCode.CLASH_LEADERBOARD, "RequestClashLeaderboard");
+        add(NetworkCode.CLASH_NOTIFICATION, "RequestClashNotification");
 
     }
 

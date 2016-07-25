@@ -21,6 +21,6 @@ public class GameServerConf {
     }
 
     public int getPortNumber() {
-        return Integer.valueOf(confRecords.get("portNumber"));
+        return Integer.valueOf(confRecords.get("RRPortNumber"));
     }
 }

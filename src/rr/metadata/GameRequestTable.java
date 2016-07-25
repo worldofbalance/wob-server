@@ -1,12 +1,13 @@
 package rr.metadata;
 
 // Java Imports
+import rr.net.request.GameRequest;
+import shared.util.Log;
+
 import java.util.HashMap;
 import java.util.Map;
 
 // Other Imports
-import rr.net.request.GameRequest;
-import shared.util.Log;
 
 /**
  * The GameRequestTable class stores a mapping of unique request code numbers
@@ -56,7 +57,7 @@ public class GameRequestTable {
      */
     public static void add(short code, String name) {
         try {
-            requestTable.put(code, Class.forName("networking.request." + name));
+            requestTable.put(code, Class.forName("rr.net.request." + name));
         } catch (ClassNotFoundException e) {
             Log.println_e(e.getMessage());
         }

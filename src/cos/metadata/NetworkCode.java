@@ -80,7 +80,11 @@ public class NetworkCode {
     public final static short CLASH_PLAYER_VIEW = 166;
     public final static short CLASH_INITIATE_BATTLE = 167;
     public final static short CLASH_END_BATTLE = 168;
-    
+    public final static short CLASH_PLAYER_HISTORY = 169;
+    public final static short CLASH_LEADERBOARD = 170;
+    public final static short CLASH_NOTIFICATION = 171;
+
+
     /**
      * Check for duplicate values, if any.
      */

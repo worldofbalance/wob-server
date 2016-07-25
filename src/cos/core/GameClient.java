@@ -171,7 +171,7 @@ public class GameClient {
         // test
         player = PlayerDAO.getPlayerByAccount(getAccount().getID());
         player.setClient(this);       
-        Log.printf("Selecting player: %d", player.getID());
+        Log.printf("Selecting login player : %d", player.getID());
         PlayerDAO.updateLastPlayed(player.getID());
         GameServer.getInstance().setActivePlayer(player);
 
