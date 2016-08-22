@@ -80,6 +80,7 @@ public class NetworkCode {
     public final static short MC_CHECK_PLAYERS = 185;
     public final static short MC_HOST_CONFIG = 186;
     public final static short MC_NONHOST_CONFIG = 187;
+    public final static short MC_SETUP = 188;
     
     public final static short TOPLIST = 153;
     

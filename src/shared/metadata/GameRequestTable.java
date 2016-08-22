@@ -74,6 +74,7 @@ public class GameRequestTable {
         add(NetworkCode.MC_CHECK_PLAYERS, "cvg.net.request.RequestConvergeCheckPlayers");
         add(NetworkCode.MC_HOST_CONFIG, "cvg.net.request.RequestConvergeSpecifyParams");
         add(NetworkCode.MC_NONHOST_CONFIG, "cvg.net.request.RequestConvergeNonhostConfig");
+        add(NetworkCode.MC_SETUP, "lby.net.request.RequestMCSetup");
         
         add(NetworkCode.TOPLIST, "lby.net.request.RequestTopList");
         

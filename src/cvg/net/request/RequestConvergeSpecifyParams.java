@@ -24,6 +24,7 @@ public class RequestConvergeSpecifyParams extends GameRequest{
     private short betAmount;
     private short ecoNumber;
     private short allowSliders;
+    
     @Override
     public void parse(DataInputStream dataInput) throws IOException {
         numRounds = DataReader.readShort(dataInput);
@@ -36,6 +37,8 @@ public class RequestConvergeSpecifyParams extends GameRequest{
     @Override
     public void process() throws Exception {
         System.out.println("Inside RequestConvergeSpecifyParams");
+        System.out.println("1st: eco#, allowSliders, #Rounds, timeWindow, bet");
+        System.out.println("" + ecoNumber + " " + allowSliders + " " + numRounds + " " + timeWindow + " " + betAmount);
         int player_id = client.getPlayerID();
         ResponseConvergeSpecifyParams response = new ResponseConvergeSpecifyParams();
         MCMatchManager manager = MCMatchManager.getInstance();
@@ -45,8 +48,9 @@ public class RequestConvergeSpecifyParams extends GameRequest{
         match.setSliders(allowSliders);
         match.setNumRounds(numRounds);
         match.setTimeWindow(timeWindow);
-        match.setBetAmount(betAmount);        
-        
+        match.setBetAmount(betAmount);     
+        System.out.println("2nd: eco#, allowSliders, #Rounds, timeWindow, bet");
+        System.out.println("" + ecoNumber + " " + allowSliders + " " + numRounds + " " + timeWindow + " " + betAmount);
         short status = 0;     //0 indicates success
         response.setStatus(status);
         client.add(response);
