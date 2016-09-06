@@ -77,7 +77,6 @@ public class NetworkCode {
     public final static short CONVERGE_HINT_COUNT = 151;
     public final static short CONVERGE_NEW_ATTEMPT_SCORE = 152;
 
-    // DH change
     // Multiplayer Convergence 
     public final static short MC_MATCH_INIT = 180;
     public final static short MC_GET_TIME = 181;
@@ -85,6 +84,9 @@ public class NetworkCode {
     public final static short MC_GET_NAMES = 183;
     public final static short MC_GET_OTHER_SCORE = 184;
     public final static short MC_CHECK_PLAYERS = 185;
+    public final static short MC_HOST_CONFIG = 186;
+    public final static short MC_NONHOST_CONFIG = 187;
+    public final static short MC_SETUP = 188;
     
     public final static short TOPLIST = 153;
     

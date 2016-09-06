@@ -149,9 +149,11 @@ public class Constants {
 	public static boolean useAtnEngine = true;
 	public static final boolean DEBUG_MODE = true;
 
-        //for use in Cards of the Wild and Convergence
+    // DH change
+    // Multiplayer Convergence
+    public static boolean SINGLE_PLAYER = false;
+    //for use in Cards of the Wild and Convergence
     //public static final boolean SINGLE_PLAYER = true;
-    public static final boolean SINGLE_PLAYER = false;
     public static final short  STATUS_NO_MATCH = 2;
     
     public static final short STATUS_SUCCESS_CARDS = 0;
@@ -160,7 +162,7 @@ public class Constants {
     
     // for SeaDivided
     public static final int TIMEOUT_SECONDS = 90;
-      public static final short MAX_NUMBER_OF_PLAYERS = 2;
+    public static final short MAX_NUMBER_OF_PLAYERS = 2;
     public static final int NUM_PREY = 40;
     public static final int X_MIN = -120;
     public static final int X_MAX = 120;

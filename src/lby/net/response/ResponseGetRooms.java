@@ -31,6 +31,14 @@ public class ResponseGetRooms extends GameResponse {
             packet.addShort16((short)room.getID());
             packet.addShort16((short)room.getGameID());
             packet.addString(room.getHost());
+            // DH for Multiplayer Convergence 
+            packet.addShort16(room.getTotalPlayers());
+            packet.addShort16(room.getNumRounds());
+            packet.addShort16(room.getSecPerRound());
+            packet.addShort16(room.getBetAmt());
+            packet.addShort16(room.getEcoNum());
+            packet.addShort16(room.getHelps());
+            
             packet.addShort16((short)room.getNumClients());
             
             for (int i = 0; i < room.getNumClients(); ++i)  {

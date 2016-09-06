@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import shared.metadata.Constants;
 import shared.model.SpeciesType;
 import shared.util.CSVParser;
+import shared.util.Log;
 
 /**
  *Create and run simulation for the converge game
@@ -33,8 +34,7 @@ public class SimJobConverge {
             SpeciesType.loadSimTestNodeParams(Constants.ECOSYSTEM_TYPE);
             SpeciesType.loadSimTestLinkParams(Constants.ECOSYSTEM_TYPE); 
         }
-
-
+        
         jobMgr = new SimJobManager();
         simJob = new SimJob(config, timesteps);
         jobMgr.setSimJob(simJob);
@@ -44,9 +44,8 @@ public class SimJobConverge {
         } catch (Exception ex) {
             Logger.getLogger(SimJobConverge.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            status = jobMgr.getStatus();            
+            status = jobMgr.getStatus();   
         }
-        
     }
     
     public int getStatus () {

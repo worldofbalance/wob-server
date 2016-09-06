@@ -5,7 +5,6 @@
  */
 package cvg.net.response;
 
-import cvg.ATNConverter;
 import shared.metadata.Constants;
 import shared.metadata.NetworkCode;
 import lby.net.response.GameResponse;
@@ -45,7 +44,7 @@ public class ResponseConvergeNewAttempt extends GameResponse {
     }
     
     public void setCSV (String csv) {
-        this.csv = ATNConverter.ConvertCSV(csv, 200);
+        this.csv = csv;
     }
     
     @Override

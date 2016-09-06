@@ -8,6 +8,8 @@
 //		2 - clash of species
 //		3 - running rhino
 //		4 - cards of wild
+//              5 - Multiplayer Convergence
+// 
 // credits - if don't eat me, # of credits won
 //
 // response parameters:
@@ -36,6 +38,10 @@ public class RequestEndGame extends GameRequest {
         if (game_id == 1) {
             credits = DataReader.readInt(dataInput);
         }
+        
+        if (game_id == 5) {
+            credits = DataReader.readInt(dataInput);
+        }
     }
 
     @Override
@@ -48,6 +54,10 @@ public class RequestEndGame extends GameRequest {
                 creditDiff = credits;
                 break;
             
+            case 5: //Multiplayer Convergence - sends final credits
+                creditDiff = credits - oldCredits;   // This is credit difference
+                break;        
+                
             default: //all other games give 20 credits
                 creditDiff = 20;
                 break;

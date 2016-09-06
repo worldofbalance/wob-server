@@ -35,7 +35,7 @@ public class RequestConvergeGetTime extends GameRequest {
         int player_id = client.getPlayerID();
         MCMatchManager manager = MCMatchManager.getInstance();
         MCMatch match = manager.getMatchByPlayer(player_id);
-        betTime = (short) client.getBetTime();
+        betTime = (short) match.getTimeWindow();
         
         long startTime = match.getStartTime();
         long presentTime = System.currentTimeMillis();

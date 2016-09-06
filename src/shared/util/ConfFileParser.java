@@ -3,8 +3,10 @@ package shared.util;
 // Java Imports
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,9 +37,10 @@ public class ConfFileParser {
      */
     public void openFile() {
         try {
-            fis = new FileInputStream(fileName);
-            bur = new BufferedReader(new InputStreamReader(fis));
-        } catch (FileNotFoundException ex) {
+            InputStream in = this.getClass().getClassLoader()
+                            .getResourceAsStream(fileName);
+            bur = new BufferedReader(new InputStreamReader(in));
+        } catch (Exception ex) {
             System.err.println("[In ConfFileParser.java]---No such file, please check.");
         }
     }
