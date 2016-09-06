@@ -25,7 +25,7 @@ public class RequestZoneList extends GameRequest {
         if (world != null) {
             response.setStatus(ResponseZoneList.SUCCESS);
             response.setZonePlayers(WorldZoneDAO.getZonePlayers(world.getID()));
-            response.setZoneList((short) 40, (short) 40, world.getZoneList());
+            response.setZoneList((short) 40, (short) 40, WorldZoneDAO.getZoneList(world.getID()));
         } else {
             response.setStatus(ResponseZoneList.FAILED);
         }

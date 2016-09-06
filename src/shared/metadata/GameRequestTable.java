@@ -46,11 +46,16 @@ public class GameRequestTable {
 
         add(NetworkCode.UPDATE_TIME, "lby.net.request.RequestUpdateTime");
 
+        //MENU
+        add(NetworkCode.STATUS, "lby.net.request.RequestStatus");
+        
         // Badge
         add(NetworkCode.BADGE_LIST, "lby.net.request.badge.RequestBadgeList");
         // Shop
         add(NetworkCode.SHOP, "lby.net.request.shop.RequestShop");
         add(NetworkCode.SHOP_ACTION, "lby.net.request.shop.RequestShopAction");
+        add(NetworkCode.TILE_PRICE, "lby.net.request.RequestTilePrice");
+        add(NetworkCode.TILE_PURCHASE, "lby.net.request.RequestTilePurchase");        
         // World
         add(NetworkCode.WORLD, "lby.net.request.world.RequestWorld");
         add(NetworkCode.ZONE_LIST, "lby.net.request.world.RequestZoneList");
@@ -117,8 +122,6 @@ public class GameRequestTable {
         add(NetworkCode.RETURN_LOBBY, "cow.net.request.RequestReturnLobby");
         add(NetworkCode.APPLY_FOOD, "cow.net.request.RequestFoodCard");
         */
-
-
 
         Log.println("Done!");
     }

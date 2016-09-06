@@ -2,3 +2,5 @@
 .idea/*
 /nbproject/private/
 /dist/
+/out
+/src/shared/log/

@@ -5,21 +5,21 @@
  */
 package cos.net.request;
 
+import cos.db.BattleDAO;
+import cos.db.DefenseConfigDAO;
+import cos.db.PlayerDAO;
+import cos.db.MatchRecordDAO;
+import cos.model.Battle;
+import cos.model.DefenseConfig;
+import cos.model.Player;
+import cos.model.MatchRecord;
+import cos.net.response.ResponseClashEndBattle;
+import cos.util.DataReader;
+import cos.util.Log;
+
 import java.io.DataInputStream;
 import java.io.IOException;
-
-import shared.core.GameServer;
-import shared.db.PlayerDAO;
-import cos.db.DefenseConfigDAO;
-import lby.net.request.GameRequest;
-import cos.net.response.ResponseClashEndBattle;
-import shared.util.DataReader;
 import java.util.Date;
-import shared.model.Player;
-import cos.model.DefenseConfig;
-
-import cos.db.BattleDAO;
-import cos.model.Battle;
 
 /**
  * Sent when the client has finished a battle
@@ -31,6 +31,7 @@ public class RequestClashEndBattle extends GameRequest {
      * The result of the battle: win, lose or draw
      */
     Battle.Outcome outcome;
+    String matchResult;
 
     /**
      * Reads the result from the input stream and fills the outcome
@@ -44,10 +45,13 @@ public class RequestClashEndBattle extends GameRequest {
         
         if (value == 0) {
             outcome = Battle.Outcome.WIN;
+            matchResult = "WIN";
         } else if (value == 1) {
             outcome = Battle.Outcome.LOSE;
+            matchResult = "LOSE";
         } else {
             outcome = Battle.Outcome.DRAW;
+            matchResult = "DRAW";
         }
     }
 
@@ -71,6 +75,16 @@ public class RequestClashEndBattle extends GameRequest {
 
         DefenseConfig df = DefenseConfigDAO.findByDefenseConfigId(battle.defenseConfigId);
         Player defender = PlayerDAO.getPlayer(df.playerId);
+
+        //record game result in DB
+        MatchRecord matchRecord = new MatchRecord();
+        matchRecord.playerId = p.getID();
+        matchRecord.opponentId = df.playerId;
+        matchRecord.matchResult = matchResult;
+        matchRecord.playedOn = new Date();
+        Log.console(String.valueOf(matchRecord.playerId));
+        Log.console(String.valueOf(matchRecord.opponentId));
+        MatchRecordDAO.create(matchRecord);
 
         int attackerCredits = PlayerDAO.getPlayer(p.getID()).getCredits();
         int defenderCredits = defender.getCredits();
