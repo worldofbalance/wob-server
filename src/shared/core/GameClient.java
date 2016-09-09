@@ -62,8 +62,6 @@ public class GameClient {
     private short host;   // 0 = not host, 1 = host
     private int player_id;    // player_id obtained from MCMatchManager
     private int match_id;     // match_id obtained from MCMatchManager
-    public static int betTime = 30;   // hardcoded initially
-    public static int bet = 100;     // hardcoded initially
 
     /**
      * Initialize the GameClient using the client socket and creating both input
@@ -373,10 +371,6 @@ public class GameClient {
         return player_id;
     }
     
-    public int getBetTime() {
-        return betTime;
-    }
-    
     public void setMatchID(int match_id) {
         this.match_id = match_id;
     }
@@ -384,6 +378,5 @@ public class GameClient {
     public int getMatchID() {
         return match_id;
     }
-    
-    
+
 }

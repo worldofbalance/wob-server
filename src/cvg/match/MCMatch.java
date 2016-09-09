@@ -28,9 +28,13 @@ public class MCMatch {
 	private int turnCount = 0;
 	// sessionID set by Lobby -- Not currently used
 	private String sessionId;
-        // DH change
         // Time from start of bidding
         private long startTime;
+        private short numRounds;
+        private short timeWindow;
+        private short betAmount;
+        private short ecoNumber;
+        private short sliders;
         
 	
 	public MCMatch (List<Player> players, int matchID){
@@ -267,6 +271,46 @@ public class MCMatch {
     
     public void setStartTime(long startTime) {
         this.startTime = startTime;
+    }
+
+    public void setTimeWindow(short timeWindow) {
+        this.timeWindow = timeWindow;
+    }
+
+    public void setNumRounds(short numRounds) {
+        this.numRounds = numRounds;
+    }
+
+    public void setBetAmount(short betAmount) {
+        this.betAmount = betAmount;
+    }
+
+    public void setEcoNumber(short ecoNumber) {
+        this.ecoNumber = ecoNumber;
+    }
+    
+    public void setSliders(short sliders){
+        this.sliders = sliders;
+    }
+    
+    public short getNumRounds(){
+        return numRounds;
+    }
+    
+    public short getTimeWindow(){
+        return timeWindow;
+    }
+    
+    public short getBetAmount(){
+        return betAmount;
+    }
+    
+    public short getEcoNumber(){
+        return ecoNumber;
+    }
+    
+    public short getSliders(){
+        return sliders;
     }
     
 }

@@ -47,6 +47,6 @@ public class RequestPair extends GameRequest {
         response.setID(room.getID());
         response.setGameID(gameID);
         
-        room.sendResponse(response);
+        room.sendResponse(response);   // Sends reponse to all clients 
     }
 }

@@ -5,8 +5,8 @@
  */
 package cvg.net.response;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import shared.metadata.NetworkCode;
 import lby.net.response.GameResponse;
 import shared.util.GamePacket;
@@ -38,7 +38,7 @@ public class ResponseConvergeGetTime extends GameResponse {
         
         packet.addShort16(betTime);
         
-        for (HashMap.Entry<Integer, Integer> entry : betStatusList.entrySet()) {
+        for (Map.Entry<Integer, Integer> entry : betStatusList.entrySet()) {
             int key = entry.getKey();
             short value = entry.getValue().shortValue();
             packet.addInt32(key);

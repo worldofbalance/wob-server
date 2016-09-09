@@ -87,7 +87,7 @@ public final class ConvergeAttemptDAO {
                 + "(SELECT * FROM ( "
                 + "SELECT `ecosystem_id` FROM `converge_attempt` "
                 + "WHERE `player_id` = ? "
-                + "ORDER BY `time` DESC LIMIT 1) " //note descending order to get most recent ecosystem
+                + "ORDER BY `time` DESC ) " //note descending order to get most recent ecosystem. DH: drop LIMIT 1
                 + "temp_tab) " 
 				+ "GROUP BY `ecosystem_id` "
                 + "ORDER BY `attempt_id` "
@@ -104,7 +104,24 @@ public final class ConvergeAttemptDAO {
             pstmt.setInt(2, player_id);
 
             rs = pstmt.executeQuery();
-
+            
+            do {
+                if (rs.next()) {
+                    ecoInfo[0] = rs.getInt("ecosystem_id");
+                    ecoInfo[1] = rs.getInt("count");
+                    Log.consoleln("ConvergeAttemptDAO, eco_id, count: " + ecoInfo[0] +" " + ecoInfo[1]);
+                    //even if count is zero, returns a row because it is a summary
+                    //need to check count and reinit ecoInfo[0]
+                    if (ecoInfo[1] == 0) {
+                        ecoInfo[0] = Constants.ID_NOT_SET;
+                    }
+                } else {
+                    ecoInfo[0] = Constants.ID_NOT_SET;
+                    ecoInfo[1] = 0;
+                }
+            } while (ecoInfo[0] >= 1000);
+            
+            /*
             if (rs.next()) {
                 ecoInfo[0] = rs.getInt("ecosystem_id");
                 ecoInfo[1] = rs.getInt("count");
@@ -114,6 +131,7 @@ public final class ConvergeAttemptDAO {
                     ecoInfo[0] = Constants.ID_NOT_SET;
                 }
             }
+            */
             
         } catch (SQLException ex) {
             Log.println_e(ex.getMessage());

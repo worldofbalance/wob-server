@@ -42,7 +42,7 @@ public class WorldController {
         }
 
         for (Entry<Integer, World> entry : worlds.entrySet()) {
-            entry.getValue().setZones(WorldZoneDAO.getZoneList(entry.getKey()));
+            entry.getValue().setZones(WorldZoneDAO.getZoneList(entry.getKey().intValue()));
         }
 
         Log.println("Done!");

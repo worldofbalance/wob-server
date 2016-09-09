@@ -11,15 +11,24 @@ import lby.net.response.GameResponse;
 public class GameRoom {
     
     private final GameClient mClients[];
-    private final int CAPACITY = 2;
+    private int CAPACITY = 2;     // DH removed "final". Need to change for Multiplayer Convergence   
+    // DH
+    private final int MAX_CAPACITY = 5;
     
     private int mNumClients = 0;
     private int mID = 0;
     private int mGameID = 0;
     private String mHostName = "";
+    // DH Used only for Multiplayer Convergence. Otherwise default of -1
+    private short totalPlayers = -1;
+    private short numRounds = -1;
+    private short secPerRound = -1;
+    private short betAmt = -1;
+    private short ecoNum = -1;
+    private short helps = -1;
     
     public GameRoom () {
-        mClients = new GameClient[CAPACITY];
+        mClients = new GameClient[MAX_CAPACITY];
     }
     
     public int getNumClients() {
@@ -102,5 +111,49 @@ public class GameRoom {
      */
     public void setGameID(int id) {
         this.mGameID = id;
+    }
+    
+    // DH   for Multiplayer Convergence     
+    public void setTotalPlayers(short totalPlayers) {
+        this.totalPlayers = totalPlayers;
+        this.CAPACITY = totalPlayers;
+    }
+    public short getTotalPlayers() {
+        return totalPlayers;
+    }
+    
+    public void setNumRounds(short numRounds) {
+        this.numRounds = numRounds;
+    }
+    public short getNumRounds() {
+        return numRounds;
+    }
+    
+    public void setSecPerRound(short secPerRound) {
+        this.secPerRound = secPerRound;
+    }
+    public short getSecPerRound() {
+        return secPerRound;
+    }
+    
+    public void setBetAmt(short betAmt) {
+        this.betAmt = betAmt;
+    }
+    public short getBetAmt() {
+        return betAmt;
+    }
+    
+    public void setEcoNum(short ecoNum) {
+        this.ecoNum = ecoNum;
+    }
+    public short getEcoNum() {
+        return ecoNum;
+    }
+
+    public void setHelps(short helps) {
+        this.helps = helps;
+    }
+    public short getHelps() {
+        return helps;
     }
 }

@@ -70,7 +70,6 @@ public class GameRequestTable {
         add(NetworkCode.CONVERGE_HINT_COUNT, "cvg.net.request.RequestConvergeHintCount");
         add(NetworkCode.CONVERGE_NEW_ATTEMPT_SCORE, "cvg.net.request.RequestConvergeNewAttemptScore");
 
-        // DH change
         // Multiplayer Convergence
         add(NetworkCode.MC_MATCH_INIT, "cvg.net.request.RequestMCMatchInit");   
         add(NetworkCode.MC_GET_TIME, "cvg.net.request.RequestConvergeGetTime");
@@ -78,6 +77,9 @@ public class GameRequestTable {
         add(NetworkCode.MC_GET_NAMES, "cvg.net.request.RequestConvergeGetNames");
         add(NetworkCode.MC_GET_OTHER_SCORE, "cvg.net.request.RequestConvergeGetOtherScore");
         add(NetworkCode.MC_CHECK_PLAYERS, "cvg.net.request.RequestConvergeCheckPlayers");
+        add(NetworkCode.MC_HOST_CONFIG, "cvg.net.request.RequestConvergeSpecifyParams");
+        add(NetworkCode.MC_NONHOST_CONFIG, "cvg.net.request.RequestConvergeNonhostConfig");
+        add(NetworkCode.MC_SETUP, "lby.net.request.RequestMCSetup");
         
         add(NetworkCode.TOPLIST, "lby.net.request.RequestTopList");
         
@@ -104,6 +106,7 @@ public class GameRequestTable {
 	add(NetworkCode.CLASH_END_BATTLE, "cos.net.request.RequestClashEndBattle");
 
         //Cards of the wild
+        /*
         add(NetworkCode.MATCH_INIT, "cow.net.request.RequestMatchInit");
         add(NetworkCode.MATCH_STATUS, "cow.net.request.RequestMatchStatus");
         add(NetworkCode.GET_DECK, "cow.net.request.RequestGetDeck");
@@ -118,6 +121,7 @@ public class GameRequestTable {
         add(NetworkCode.MATCH_START, "cow.net.request.RequestMatchStart");
         add(NetworkCode.RETURN_LOBBY, "cow.net.request.RequestReturnLobby");
         add(NetworkCode.APPLY_FOOD, "cow.net.request.RequestFoodCard");
+        */
 
         Log.println("Done!");
     }
