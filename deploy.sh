@@ -33,6 +33,7 @@ ssh wob_wob@thecity.sfsu.edu <<WOB_WOB
     # Restart all the JAR servers
 
     # Lobby
+    chmod u+x ~/scripts/start_lobby.sh
     nohup ~/scripts/start_lobby.sh
     echo "Lobby Started"
     exit
