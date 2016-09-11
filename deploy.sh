@@ -34,14 +34,13 @@ ssh wob_wob@thecity.sfsu.edu <<WOB_WOB
 
     # Lobby
     chmod u+x ~/scripts/start_lobby.sh
-    nohup ~/scripts/start_lobby.sh > lobby.log
+    nohup /opt/java8/bin/java -jar ~/wob_server/lobby/main.jar & > lobby.log
     echo "Lobby Started"
     exit
 
 #    # Cards of Wild
 #    nohup /opt/java8/bin/java -jar cards_of_wild/dist/Cards_Server.jar &
 #    echo "Cards of Wild started"
-#    /bin/sleep 5
 #
 #    # Clash of Species
 #    nohup /opt/java8/bin/java -jar clash_of_species/dist/cos-server.jar &
