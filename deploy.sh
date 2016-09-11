@@ -34,7 +34,7 @@ ssh wob_wob@thecity.sfsu.edu <<WOB_WOB
 
     # Lobby
     chmod u+x ~/scripts/start_lobby.sh
-    nohup /opt/java8/bin/java -jar ~/wob_server/lobby/main.jar & > lobby.log
+    nohup ~/scripts/start_lobby.sh ~/wob_server/lobby/main.jar > lobby.log
     echo "Lobby Started"
     exit
 

@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
-printf "\n" | /opt/java8/bin/java -jar ~/wob_server/lobby/main.jar & printf "\n"
+path = $1
+printf "\n" | /opt/java8/bin/java -jar $1 & printf "\n"
 
