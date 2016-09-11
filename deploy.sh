@@ -34,27 +34,29 @@ ssh wob_wob@thecity.sfsu.edu <<WOB_WOB
 
     # Lobby
     chmod u+x ~/scripts/start_lobby.sh
-    nohup ~/scripts/start_lobby.sh ~/wob_server/lobby/main.jar > lobby.log
+    nohup ~/scripts/start_lobby.sh > lobby.log
     echo "Lobby Started"
-    exit
 
-#    # Cards of Wild
-#    nohup /opt/java8/bin/java -jar cards_of_wild/dist/Cards_Server.jar &
-#    echo "Cards of Wild started"
-#
-#    # Clash of Species
-#    nohup /opt/java8/bin/java -jar clash_of_species/dist/cos-server.jar &
-#    echo "Clash of Species started"
-#    /bin/sleep 5
-#
-#    # Running Rhino
-#    nohup /opt/java8/bin/java -jar running_rhino/dist/Speed_Server.jar &
-#    echo "Running Rhino Started"
-#    /bin/sleep 5
-#
-#    # A Sea Divided
-#    nohup /opt/java8/bin/java -jar a_sea_divided/dist/SeaDivided.jar &
-#    echo "A sea divided started"
+    # Cards of Wild
+    chmod u+x ~/scripts/start_cow.sh
+    nohup ~/scripts/start_cow.sh > cow.log
+    echo "Cards of Wild started"
+
+   # Clash of Species
+    chmod u+x ~/scripts/start_cos.sh
+    nohup ~/scripts/start_cos.sh > cos.log
+    echo "Clash of Species started."
+
+
+    # Running Rhino
+    chmod u+x ~/scripts/start_rno.sh
+    nohup ~/scripts/start_rno.sh > rno.log
+    echo "Running Rhino Started"
+
+    # A Sea Divided
+    chmod u+x ~/scripts/start_sdv.sh
+    nohup ~/scripts/start_sdv.sh > sdv.log
+    echo "A sea divided started"
 WOB_WOB
 
 
