@@ -36,7 +36,6 @@ ssh wob_wob@thecity.sfsu.edu <<WOB_WOB
     chmod u+x ~/scripts/start_lobby.sh
     nohup ~/scripts/start_lobby.sh > lobby.log
     echo "Lobby Started"
-    ~.
     exit
 
 #    # Cards of Wild
