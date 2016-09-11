@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
-rsync -av ./dist/ wob_wob@thecity.sfsu.edu:~/wob_server
+echo "deploying to thecity.sfsu.edu"
+rsync -avr ./dist/ wob_wob@thecity.sfsu.edu:~/wob_server
