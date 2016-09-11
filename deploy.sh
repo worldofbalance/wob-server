@@ -34,28 +34,28 @@ ssh wob_wob@thecity.sfsu.edu <<WOB_WOB
 
     # Lobby
     chmod u+x ~/scripts/start_lobby.sh
-    nohup ~/scripts/start_lobby.sh > lobby.log
+    nohup ~/scripts/start_lobby.sh > ~/logs/lobby.log
     echo "Lobby Started"
 
     # Cards of Wild
     chmod u+x ~/scripts/start_cow.sh
-    nohup ~/scripts/start_cow.sh > cow.log
+    nohup ~/scripts/start_cow.sh > ~/logs/cow.log
     echo "Cards of Wild started"
 
    # Clash of Species
     chmod u+x ~/scripts/start_cos.sh
-    nohup ~/scripts/start_cos.sh > cos.log
+    nohup ~/scripts/start_cos.sh > ~/logs/cos.log
     echo "Clash of Species started."
 
 
     # Running Rhino
     chmod u+x ~/scripts/start_rno.sh
-    nohup ~/scripts/start_rno.sh > rno.log
+    nohup ~/scripts/start_rno.sh > ~/logs/rno.log
     echo "Running Rhino Started"
 
     # A Sea Divided
     chmod u+x ~/scripts/start_sdv.sh
-    nohup ~/scripts/start_sdv.sh > sdv.log
+    nohup ~/scripts/start_sdv.sh > ~/logs/sdv.log
     echo "A sea divided started"
 WOB_WOB
 
