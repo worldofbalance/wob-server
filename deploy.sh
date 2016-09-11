@@ -26,33 +26,33 @@ rsync -avr ./mini_games/ wob_wob@thecity.sfsu.edu:~/wob_server
 
 # log into thecity again, this time to start the JAR Files, everything under this is executed under the WOB_WOB user
 ssh wob_wob@thecity.sfsu.edu <<WOB_WOB
-    cd ~/wob_server
-
-    # Restart all the JAR servers
-
-    # Lobby
-    nohup /opt/java8/bin/java -jar lobby/main.jar &
-    echo "Lobby Started"
-    /bin/sleep 5
-
-    # Cards of Wild
-    nohup /opt/java8/bin/java -jar cards_of_wild/dist/Cards_Server.jar &
-    echo "Cards of Wild started"
-    /bin/sleep 5
-
-    # Clash of Species
-    nohup /opt/java8/bin/java -jar clash_of_species/dist/cos-server.jar &
-    echo "Clash of Species started"
-    /bin/sleep 5
-
-    # Running Rhino
-    nohup /opt/java8/bin/java -jar running_rhino/dist/Speed_Server.jar &
-    echo "Running Rhino Started"
-    /bin/sleep 5
-
-    # A Sea Divided
-    nohup /opt/java8/bin/java -jar a_sea_divided/dist/SeaDivided.jar &
-    echo "A sea divided started"
+#    cd ~/wob_server
+#
+#    # Restart all the JAR servers
+#
+#    # Lobby
+#    nohup /opt/java8/bin/java -jar lobby/main.jar &
+#    echo "Lobby Started"
+#    /bin/sleep 5
+#
+#    # Cards of Wild
+#    nohup /opt/java8/bin/java -jar cards_of_wild/dist/Cards_Server.jar &
+#    echo "Cards of Wild started"
+#    /bin/sleep 5
+#
+#    # Clash of Species
+#    nohup /opt/java8/bin/java -jar clash_of_species/dist/cos-server.jar &
+#    echo "Clash of Species started"
+#    /bin/sleep 5
+#
+#    # Running Rhino
+#    nohup /opt/java8/bin/java -jar running_rhino/dist/Speed_Server.jar &
+#    echo "Running Rhino Started"
+#    /bin/sleep 5
+#
+#    # A Sea Divided
+#    nohup /opt/java8/bin/java -jar a_sea_divided/dist/SeaDivided.jar &
+#    echo "A sea divided started"
 WOB_WOB
 
 
