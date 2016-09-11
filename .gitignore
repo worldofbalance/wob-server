@@ -4,3 +4,4 @@
 /dist/
 /out
 /src/shared/log/
+*.class
