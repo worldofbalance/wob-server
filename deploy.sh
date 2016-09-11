@@ -26,15 +26,15 @@ rsync -avr ./mini_games/ wob_wob@thecity.sfsu.edu:~/wob_server
 
 # log into thecity again, this time to start the JAR Files, everything under this is executed under the WOB_WOB user
 ssh wob_wob@thecity.sfsu.edu <<WOB_WOB
-#    cd ~/wob_server
-#
-#    # Restart all the JAR servers
-#
-#    # Lobby
-#    nohup /opt/java8/bin/java -jar lobby/main.jar &
-#    echo "Lobby Started"
-#    /bin/sleep 5
-#
+    cd ~/wob_server
+
+    # Restart all the JAR servers
+
+    # Lobby
+    nohup /opt/java8/bin/java -jar lobby/main.jar &
+    echo "Lobby Started"
+    /bin/sleep 5
+
 #    # Cards of Wild
 #    nohup /opt/java8/bin/java -jar cards_of_wild/dist/Cards_Server.jar &
 #    echo "Cards of Wild started"
@@ -53,6 +53,7 @@ ssh wob_wob@thecity.sfsu.edu <<WOB_WOB
 #    # A Sea Divided
 #    nohup /opt/java8/bin/java -jar a_sea_divided/dist/SeaDivided.jar &
 #    echo "A sea divided started"
+     exit
 WOB_WOB
 
 
