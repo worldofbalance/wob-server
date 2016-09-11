@@ -8,6 +8,11 @@ import java.util.Map;
 import lby.net.request.GameRequest;
 import shared.util.Log;
 
+// Do not remove these import statements!!!!! Even if your IDE says they are not used.
+import lby.net.request.*;
+import cvg.net.request.*;
+
+
 /**
  * The GameRequestTable class stores a mapping of unique request code numbers
  * with its corresponding request class.
@@ -95,15 +100,15 @@ public class GameRequestTable {
         add(NetworkCode.BACK_TO_LOBBY, "lby.net.request.RequestBackToLobby");
         add(NetworkCode.PLAY_GAME, "lby.net.request.RequestPlayGame");
         add(NetworkCode.END_GAME, "lby.net.request.RequestEndGame");
-        
-        //Clash of species
-	add(NetworkCode.CLASH_ENTRY, "cos.net.request.RequestClashEntry");
-	add(NetworkCode.CLASH_SPECIES_LIST, "cos.net.request.RequestClashSpeciesList");
-	add(NetworkCode.CLASH_DEFENSE_SETUP, "cos.net.request.RequestClashDefenseSetup");
-	add(NetworkCode.CLASH_PLAYER_LIST, "cos.net.request.RequestClashPlayerList");
-	add(NetworkCode.CLASH_PLAYER_VIEW, "cos.net.request.RequestClashPlayerView");
-	add(NetworkCode.CLASH_INITIATE_BATTLE, "cos.net.request.RequestClashInitiateBattle");
-	add(NetworkCode.CLASH_END_BATTLE, "cos.net.request.RequestClashEndBattle");
+        //
+        //        //Clash of species
+        //	add(NetworkCode.CLASH_ENTRY, "cos.net.request.RequestClashEntry");
+        //	add(NetworkCode.CLASH_SPECIES_LIST, "cos.net.request.RequestClashSpeciesList");
+        //	add(NetworkCode.CLASH_DEFENSE_SETUP, "cos.net.request.RequestClashDefenseSetup");
+        //	add(NetworkCode.CLASH_PLAYER_LIST, "cos.net.request.RequestClashPlayerList");
+        //	add(NetworkCode.CLASH_PLAYER_VIEW, "cos.net.request.RequestClashPlayerView");
+        //	add(NetworkCode.CLASH_INITIATE_BATTLE, "cos.net.request.RequestClashInitiateBattle");
+        //	add(NetworkCode.CLASH_END_BATTLE, "cos.net.request.RequestClashEndBattle");
 
         //Cards of the wild
         /*

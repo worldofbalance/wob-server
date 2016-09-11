@@ -1,16 +1,19 @@
 #!/usr/bin/env bash
-
 rm -rf ./dist
+rm -rf sources.txt
 mkdir ./dist
 
 cd src
+find . -name "*.java" > sources.txt
 
 # compile the Lobby Entry Point, use the src and lib folder to find java classes.
-javac -cp "./../lib/*:./../chartlib/*:." -target 1.8 shared/core/GameServer.java
+javac -cp "./../lib/*:./../chartlib/*:." -target 1.8 @sources.txt
+rm -rf sources.txt
 
 # create a jar file with GameServer entry point and include all files in the src directory
-# jar cfev '../dist/main.jar' shared/core/GameServer *
+jar cfm '../dist/main.jar' 'lobby.manifest.txt'  *
 
 cd ..
 
-# cp -r conf ./dist
+cp -r lib/* ./dist
+cp -r chartlib/* ./dist
