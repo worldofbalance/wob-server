@@ -85,6 +85,7 @@ public class GameRequestTable {
         add(NetworkCode.MC_HOST_CONFIG, "cvg.net.request.RequestConvergeSpecifyParams");
         add(NetworkCode.MC_NONHOST_CONFIG, "cvg.net.request.RequestConvergeNonhostConfig");
         add(NetworkCode.MC_SETUP, "lby.net.request.RequestMCSetup");
+        add(NetworkCode.MC_GET_FINAL_SCORES, "cvg.net.request.RequestConvergeGetFinalScores");
         
         add(NetworkCode.TOPLIST, "lby.net.request.RequestTopList");
         

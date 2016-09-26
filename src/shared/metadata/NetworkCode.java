@@ -87,6 +87,7 @@ public class NetworkCode {
     public final static short MC_HOST_CONFIG = 186;
     public final static short MC_NONHOST_CONFIG = 187;
     public final static short MC_SETUP = 188;
+    public final static short MC_GET_FINAL_SCORES = 189;
     
     public final static short TOPLIST = 153;
     

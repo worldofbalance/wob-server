@@ -43,6 +43,7 @@ public class MCMatchPlayer{
         // 1 = not betting
         // 2 = betting
         private int betStatus = 0;
+        private int winnings = 0;
         private int improveAmount = 0;   // amount of improvement	
         private int[] scores = new int[5];  // stores the 5 most recent score values
         private ResponseConvergeBetUpdate response;
@@ -90,15 +91,13 @@ public class MCMatchPlayer{
 		getPlayer().getClient().add(response);
 	}
 	
-
 	/**
 	 * @return the isReady
 	 */
 	public boolean isReady() {
 		return isReady;
 	}
-
-
+        
 	/**
 	 * @return the matchID
 	 */
@@ -106,14 +105,12 @@ public class MCMatchPlayer{
 		return matchID;
 	}
 
-
 	/**
 	 * @param isReady the isReady to set
 	 */
 	public void setReady(boolean isReady) {
 		this.isReady = isReady;
 	}
-
 
 	/**
 	 * @param matchID the matchID to set
@@ -129,7 +126,6 @@ public class MCMatchPlayer{
 		return isActive;
 	}
 
-
 	/**
 	 * @param isActive the isActive to set
 	 */
@@ -137,11 +133,9 @@ public class MCMatchPlayer{
 		this.isActive = isActive;
 	}
 
-
 	public Player getPlayer() {
 		return player;
 	}
-
 
 	public void setPlayer(Player player) {
 		this.player = player;
@@ -178,7 +172,13 @@ public class MCMatchPlayer{
         }
         public String getPlayerName() {
             return playerName;
-        }        
+        }  
+        public void setWinnings(int winnings) {
+            this.winnings = winnings;
+        }
+        public int getWinnings() {
+            return winnings;
+        }
         
         public GameClient getClient() {
             return client;
@@ -198,4 +198,5 @@ public class MCMatchPlayer{
         public int[] getScores() {
             return scores;
         }
+        
 }
