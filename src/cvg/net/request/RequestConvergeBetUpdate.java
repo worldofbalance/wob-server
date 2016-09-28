@@ -66,7 +66,7 @@ public class RequestConvergeBetUpdate extends GameRequest {
         player.setResponse(response);
         player.setWinnings(player.getWinnings() - bet);
         
-        Log.println("RCBU: player score status"); 
+        Log.println("RCBU: player score status");
         for (int i = 0; i < 5; i++) {
             Log.println(" " + i + " " + scores[i]);
         }
