@@ -16,7 +16,7 @@ import shared.util.Log;
 
 /**
  *
- * @author justinacotter
+ * @author David Hoff
  */
 public class RequestConvergeGetFinalScores extends GameRequest {
     
@@ -49,15 +49,13 @@ public class RequestConvergeGetFinalScores extends GameRequest {
             playerLastImprove[index] = MCPlayer.getImproveAmount();
             Log.println(key + " " + playerWinnings[index] + " " + playerLastImprove[index]);
             index++;
-        }   
-        
+        }           
         while (index < 5) {
             playerId[index] = -1;
             playerWinnings[index] = 0;
             playerLastImprove[index] = 0;
             index++;
         } 
-
         
         response.setPlayerId(playerId);
         response.setPlayerWinnings(playerWinnings);
@@ -65,6 +63,4 @@ public class RequestConvergeGetFinalScores extends GameRequest {
         client.add(response);
         Log.println("Processed RequestConvergeGetFinalScores");
     }
-    
-
 }

@@ -36,6 +36,7 @@ public class MCMatch {
         private short ecoNumber;
         private short sliders;
         private short curRound;   // The current round in play
+        private boolean checking;    // false: check players not running, ok to run
         
 	
 	public MCMatch (List<Player> players, int matchID){
@@ -287,6 +288,10 @@ public class MCMatch {
         this.curRound = curRound;
     }
     
+    public void setChecking(boolean checking) {
+        this.checking = checking;
+    }
+    
     // DH change
     public long getStartTime() {
         return startTime;
@@ -308,7 +313,9 @@ public class MCMatch {
     }
     public short getCurRound() {
         return curRound;
-    }
-    
+    }    
+    public boolean getChecking() {
+        return checking;
+    }    
 }
 

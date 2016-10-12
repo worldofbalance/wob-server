@@ -48,7 +48,7 @@ public class RequestConvergeCheckPlayers extends GameRequest {
         // MCMatchPlayer BetStatus
         // 0 -> no response yet
         // 1 -> response, not betting
-        // 2 -> response, betting
+        // 2 -> response, betting 
         
         // Find out if we've checked yet this found
         // If all betStatus = 0 then we have already removed gone players
@@ -63,13 +63,15 @@ public class RequestConvergeCheckPlayers extends GameRequest {
             }
         }
         
-        if (anyBet) {
+        if (anyBet && !match.getChecking()) {
+            match.setChecking(true);    // Make sure only 1 instance of CheckPlayers runs per round
             Log.println("RCCP: checking players. This player id is " + player_id);
             // Check which players have not responded. Remove the first one you find        
             found = false;   // found someone not answered yet
             bet = match.getBetAmount();
             totalBet = 0; 
             tieCount = 1;
+            int bestPlayer_id = 0;
             bestImprove = -1000000;
         
             it = playerList.keySet().iterator();
@@ -83,7 +85,9 @@ public class RequestConvergeCheckPlayers extends GameRequest {
                     if (improve1 > bestImprove) {
                         bestImprove = improve1;
                         tieCount = 1;
+                        bestPlayer_id = key;
                     } else if (improve1 == bestImprove) {
+                        bestPlayer_id = 0;  // For tie, no player is considered winner
                         tieCount++;
                     }
                 }
@@ -103,18 +107,25 @@ public class RequestConvergeCheckPlayers extends GameRequest {
             if (found) {  // found some to remove - so you can repond
                 response.setStatus((short)1);
                 Log.println("RCCP: found: Best Improved / Tie count = " + bestImprove + " " + tieCount);
+                if (match.getNumRounds() == match.getCurRound()) {
+                    int gameTotalBet = match.getNumRounds() * match.getBetAmount() * match.getPlayers().size();
+                    Log.println("RCBU: Last round, total game bet: " + gameTotalBet);
+                    totalBet += gameTotalBet/2;
+                }
                 int dividedBet = totalBet / tieCount;
                 short won = 1;
                 short lost = 0;            
                 for (Map.Entry<Integer, MCMatchPlayer> entry : playerList.entrySet()) {
                     MCMatchPlayer player1 = getValue(entry);
                     ResponseConvergeBetUpdate response1 = player1.getResponse();
+                    response1.setWinner(bestPlayer_id);
                     Log.println("This player improved: " + player1.getImproveAmount());
                     if (player1.getBetStatus() == 2) { // if this player betted
                         if (player1.getImproveAmount() == bestImprove) {
                             Log.println("He won");
                             response1.setWon(won);
                             response1.setWonAmount(dividedBet);
+                            player1.setWinnings(player1.getWinnings() + dividedBet);
                         } else {
                             Log.println("He lost");
                             response1.setWon(lost);
@@ -130,6 +141,9 @@ public class RequestConvergeCheckPlayers extends GameRequest {
                     client1.add(response1);
                 } 
             
+                short shortResult = match.getCurRound();
+                shortResult += (short) 1;
+                match.setCurRound(shortResult);
                 long timeValue = System.currentTimeMillis();
                 Log.println("RCCP Current time is: " + timeValue);
                 manager.getMatch(match_id).setStartTime(timeValue);   
