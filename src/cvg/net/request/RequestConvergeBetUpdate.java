@@ -51,6 +51,7 @@ public class RequestConvergeBetUpdate extends GameRequest {
         
         // Put this player's information in playerList
         match = manager.getMatch(match_id);
+        match.setChecking(false);
         bet = match.getBetAmount();
         playerList = match.playerList;
         Integer i1 = new Integer(player_id);
@@ -64,7 +65,9 @@ public class RequestConvergeBetUpdate extends GameRequest {
         player.setScores(scores);
         player.setClient(client);
         player.setResponse(response);
-        player.setWinnings(player.getWinnings() - bet);
+        if (betStatus == 1) {
+            player.setWinnings(player.getWinnings() - bet);            
+        }        
         
         Log.println("RCBU: player score status");
         for (int i = 0; i < 5; i++) {
@@ -87,9 +90,10 @@ public class RequestConvergeBetUpdate extends GameRequest {
                 if (improve1 > bestImprove) {
                     bestImprove = improve1;
                     tieCount = 1;
-                    // Player_id of round winner. If tie, only first is captured
+                    // Player_id of round winner.
                     bestPlayer_id = entry.getKey();   
                 } else if (improve1 == bestImprove) {
+                    bestPlayer_id = 0;    // For tie, no player is considered winner
                     tieCount++;
                 }
             }
