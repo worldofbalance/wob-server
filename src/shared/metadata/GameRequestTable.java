@@ -14,8 +14,6 @@ import lby.net.request.world.RequestZone;
 import lby.net.request.world.RequestZoneList;
 import lby.net.request.world.RequestZoneUpdate;
 import shared.util.Log;
-
-// Do not remove these import statements!!!!! Even if your IDE says they are not used.
 import lby.net.request.*;
 import cvg.net.request.*;
 
