@@ -37,8 +37,9 @@ public class GameRequestTable {
         add(NetworkCode.REGISTER, "lby.net.request.RequestRegister");
         add(NetworkCode.ERROR_LOG, "lby.net.request.RequestErrorLog");
         add(NetworkCode.MESSAGE, "lby.net.request.RequestMessage");
-
+        add(NetworkCode.CHAT, "lby.net.request.RequestChat");
         add(NetworkCode.PLAYERS, "lby.net.request.RequestPlayers");
+
         add(NetworkCode.STATISTICS, "lby.net.request.RequestStats");
         add(NetworkCode.HIGH_SCORE, "lby.net.request.RequestHighScore");
         add(NetworkCode.CHART, "lby.net.request.RequestChart");

@@ -106,25 +106,25 @@ public class GameClient {
                 lastActivity = System.currentTimeMillis();
                 // Separate the remaining package from the data stream
                 byte[] buffer = new byte[size];
-		//to allow for network latency, check number of bytes read and continue reading
-                //until expected data is received
-		int bytesRead = 0;
-		int counter = 0;
-                do {
-                    bytesRead += inputStream.read(buffer, bytesRead, size - bytesRead);
-                    counter++;
-		}
-		while(bytesRead < size);
-                DataInputStream dataInput = new DataInputStream(new ByteArrayInputStream(buffer));
-                // Extract the request identifier
-                short request_id = DataReader.readShort(dataInput);
-		if (counter > 1) {
-                    Log.printf (
-			"Note, network latency issue identified, wait count = %d, protocol ID = %d", 
-			counter,
-			request_id
-                    );
-		}
+                //to allow for network latency, check number of bytes read and continue reading
+                            //until expected data is received
+                int bytesRead = 0;
+                int counter = 0;
+                            do {
+                                bytesRead += inputStream.read(buffer, bytesRead, size - bytesRead);
+                                counter++;
+                }
+                while(bytesRead < size);
+                            DataInputStream dataInput = new DataInputStream(new ByteArrayInputStream(buffer));
+                            // Extract the request identifier
+                            short request_id = DataReader.readShort(dataInput);
+                if (counter > 1) {
+                                Log.printf (
+                  "Note, network latency issue identified, wait count = %d, protocol ID = %d",
+                  counter,
+                  request_id
+                                );
+                }
                 //output packet to screen for packet level debugging purposes
                 //DebugPacket (buffer, (int) request_id, false);
                 
