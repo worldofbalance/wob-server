@@ -6,6 +6,13 @@ import java.util.Map;
 
 // Other Imports
 import lby.net.request.GameRequest;
+import lby.net.request.badge.RequestBadgeList;
+import lby.net.request.shop.RequestShop;
+import lby.net.request.shop.RequestShopAction;
+import lby.net.request.world.RequestWorld;
+import lby.net.request.world.RequestZone;
+import lby.net.request.world.RequestZoneList;
+import lby.net.request.world.RequestZoneUpdate;
 import shared.util.Log;
 
 // Do not remove these import statements!!!!! Even if your IDE says they are not used.
@@ -28,80 +35,80 @@ public class GameRequestTable {
         Log.console("Loading Requests...");
 
         NetworkCode.check();
-        // Populate the table using request codes and class names
-        add(NetworkCode.CLIENT, "lby.net.request.RequestClient");
-        add(NetworkCode.HEARTBEAT, "lby.net.request.RequestHeartbeat");
-        add(NetworkCode.ACTIVITY, "lby.net.request.RequestActivity");
-        add(NetworkCode.LOGIN, "lby.net.request.RequestLogin");
-        add(NetworkCode.LOGOUT, "lby.net.request.RequestLogout");
-        add(NetworkCode.REGISTER, "lby.net.request.RequestRegister");
-        add(NetworkCode.ERROR_LOG, "lby.net.request.RequestErrorLog");
-        add(NetworkCode.MESSAGE, "lby.net.request.RequestMessage");
-        add(NetworkCode.CHAT, "lby.net.request.RequestChat");
-        add(NetworkCode.PLAYERS, "lby.net.request.RequestPlayers");
+        // Populate the table using request codes and class variables
+        add(NetworkCode.CLIENT, RequestClient.class);
+        add(NetworkCode.HEARTBEAT, RequestHeartbeat.class);
+        add(NetworkCode.ACTIVITY, RequestActivity.class);
+        add(NetworkCode.LOGIN, RequestLogin.class);
+        add(NetworkCode.LOGOUT, RequestLogin.class);
+        add(NetworkCode.REGISTER, RequestRegister.class);
+        add(NetworkCode.ERROR_LOG, RequestErrorLog.class);
+        add(NetworkCode.MESSAGE, RequestMessage.class);
+        add(NetworkCode.CHAT, RequestChat.class);
+        add(NetworkCode.PLAYERS, RequestPlayers.class);
 
-        add(NetworkCode.STATISTICS, "lby.net.request.RequestStats");
-        add(NetworkCode.HIGH_SCORE, "lby.net.request.RequestHighScore");
-        add(NetworkCode.CHART, "lby.net.request.RequestChart");
-        add(NetworkCode.SPECIES_LIST, "lby.net.request.RequestSpeciesList");
-        add(NetworkCode.SPECIES_ACTION, "lby.net.request.RequestSpeciesAction");
-        add(NetworkCode.PREDICTION, "lby.net.request.RequestPrediction");
+        add(NetworkCode.STATISTICS, RequestStats.class);
+        add(NetworkCode.HIGH_SCORE, RequestHighScore.class);
+        add(NetworkCode.CHART, RequestChart.class);
+        add(NetworkCode.SPECIES_LIST, RequestSpeciesList.class);
+        add(NetworkCode.SPECIES_ACTION, RequestSpeciesAction.class);
+        add(NetworkCode.PREDICTION, RequestPrediction.class);
         
-        add(NetworkCode.PLAYER_SELECT, "lby.net.request.RequestPlayerSelect");
-        add(NetworkCode.ECOSYSTEM, "lby.net.request.RequestEcosystem");
+        add(NetworkCode.PLAYER_SELECT, RequestPlayerSelect.class);
+        add(NetworkCode.ECOSYSTEM, RequestEcosystem.class);
 
-        add(NetworkCode.UPDATE_TIME, "lby.net.request.RequestUpdateTime");
+        add(NetworkCode.UPDATE_TIME, RequestUpdateTime.class);
 
         //MENU
-        add(NetworkCode.STATUS, "lby.net.request.RequestStatus");
+        add(NetworkCode.STATUS, RequestStatus.class);
         
         // Badge
-        add(NetworkCode.BADGE_LIST, "lby.net.request.badge.RequestBadgeList");
+        add(NetworkCode.BADGE_LIST, RequestBadgeList.class);
         // Shop
-        add(NetworkCode.SHOP, "lby.net.request.shop.RequestShop");
-        add(NetworkCode.SHOP_ACTION, "lby.net.request.shop.RequestShopAction");
-        add(NetworkCode.TILE_PRICE, "lby.net.request.RequestTilePrice");
-        add(NetworkCode.TILE_PURCHASE, "lby.net.request.RequestTilePurchase");        
+        add(NetworkCode.SHOP, RequestShop.class);
+        add(NetworkCode.SHOP_ACTION, RequestShopAction.class);
+        add(NetworkCode.TILE_PRICE, RequestTilePrice.class);
+        add(NetworkCode.TILE_PURCHASE, RequestTilePurchase.class);
         // World
-        add(NetworkCode.WORLD, "lby.net.request.world.RequestWorld");
-        add(NetworkCode.ZONE_LIST, "lby.net.request.world.RequestZoneList");
-        add(NetworkCode.ZONE, "lby.net.request.world.RequestZone");
-        add(NetworkCode.ZONE_UPDATE, "lby.net.request.world.RequestZoneUpdate");
+        add(NetworkCode.WORLD, RequestWorld.class);
+        add(NetworkCode.ZONE_LIST, RequestZoneList.class);
+        add(NetworkCode.ZONE, RequestZone.class);
+        add(NetworkCode.ZONE_UPDATE, RequestZoneUpdate.class);
         //Convergence Game
-        add(NetworkCode.CONVERGE_ECOSYSTEMS, "cvg.net.request.RequestConvergeEcosystems");
-        add(NetworkCode.CONVERGE_NEW_ATTEMPT, "cvg.net.request.RequestConvergeNewAttempt");
-        add(NetworkCode.CONVERGE_PRIOR_ATTEMPT, "cvg.net.request.RequestConvergePriorAttempt");
-        add(NetworkCode.CONVERGE_PRIOR_ATTEMPT_COUNT, "cvg.net.request.RequestConvergePriorAttemptCount");
-        add(NetworkCode.CONVERGE_HINT, "cvg.net.request.RequestConvergeHint");
-        add(NetworkCode.CONVERGE_HINT_COUNT, "cvg.net.request.RequestConvergeHintCount");
-        add(NetworkCode.CONVERGE_NEW_ATTEMPT_SCORE, "cvg.net.request.RequestConvergeNewAttemptScore");
+        add(NetworkCode.CONVERGE_ECOSYSTEMS, RequestConvergeEcosystems.class);
+        add(NetworkCode.CONVERGE_NEW_ATTEMPT, RequestConvergeNewAttempt.class);
+        add(NetworkCode.CONVERGE_PRIOR_ATTEMPT, RequestConvergePriorAttempt.class);
+        add(NetworkCode.CONVERGE_PRIOR_ATTEMPT_COUNT, RequestConvergePriorAttemptCount.class);
+        add(NetworkCode.CONVERGE_HINT, RequestConvergeHint.class);
+        add(NetworkCode.CONVERGE_HINT_COUNT, RequestConvergeHintCount.class);
+        add(NetworkCode.CONVERGE_NEW_ATTEMPT_SCORE, RequestConvergeNewAttemptScore.class);
 
         // Multiplayer Convergence
-        add(NetworkCode.MC_MATCH_INIT, "cvg.net.request.RequestMCMatchInit");   
-        add(NetworkCode.MC_GET_TIME, "cvg.net.request.RequestConvergeGetTime");
-        add(NetworkCode.MC_BET_UPDATE, "cvg.net.request.RequestConvergeBetUpdate");
-        add(NetworkCode.MC_GET_NAMES, "cvg.net.request.RequestConvergeGetNames");
-        add(NetworkCode.MC_GET_OTHER_SCORE, "cvg.net.request.RequestConvergeGetOtherScore");
-        add(NetworkCode.MC_CHECK_PLAYERS, "cvg.net.request.RequestConvergeCheckPlayers");
-        add(NetworkCode.MC_HOST_CONFIG, "cvg.net.request.RequestConvergeSpecifyParams");
-        add(NetworkCode.MC_NONHOST_CONFIG, "cvg.net.request.RequestConvergeNonhostConfig");
-        add(NetworkCode.MC_SETUP, "lby.net.request.RequestMCSetup");
-        add(NetworkCode.MC_GET_FINAL_SCORES, "cvg.net.request.RequestConvergeGetFinalScores");
+        add(NetworkCode.MC_MATCH_INIT, RequestMCMatchInit.class);
+        add(NetworkCode.MC_GET_TIME, RequestConvergeGetTime.class);
+        add(NetworkCode.MC_BET_UPDATE, RequestConvergeBetUpdate.class);
+        add(NetworkCode.MC_GET_NAMES, RequestConvergeGetNames.class);
+        add(NetworkCode.MC_GET_OTHER_SCORE, RequestConvergeGetOtherScore.class);
+        add(NetworkCode.MC_CHECK_PLAYERS, RequestConvergeCheckPlayers.class);
+        add(NetworkCode.MC_HOST_CONFIG, RequestConvergeSpecifyParams.class);
+        add(NetworkCode.MC_NONHOST_CONFIG, RequestConvergeNonhostConfig.class);
+        add(NetworkCode.MC_SETUP, RequestMCSetup.class);
+        add(NetworkCode.MC_GET_FINAL_SCORES, RequestConvergeGetFinalScores.class);
         
-        add(NetworkCode.TOPLIST, "lby.net.request.RequestTopList");
+        add(NetworkCode.TOPLIST, RequestTopList.class);
         
-        add(NetworkCode.WAITFORGAME, "lby.net.request.RequestWaitForGame");
-        add(NetworkCode.NOWAITFORGAME, "lby.net.request.RequestNoWaitForGame");
-        add(NetworkCode.WAITLIST, "lby.net.request.RequestWaitList");
-        add(NetworkCode.WAITSTATUS, "lby.net.request.RequestWaitStatus");
-        add(NetworkCode.STARTGAME, "lby.net.request.RequestStartGame");
+        add(NetworkCode.WAITFORGAME, RequestWaitForGame.class);
+        add(NetworkCode.NOWAITFORGAME, RequestNoWaitForGame.class);
+        add(NetworkCode.WAITLIST, RequestWaitList.class);
+        add(NetworkCode.WAITSTATUS, RequestWaitStatus.class);
+        add(NetworkCode.STARTGAME, RequestStartGame.class);
         
-        add(NetworkCode.PAIR, "lby.net.request.RequestPair");
-        add(NetworkCode.QUIT_ROOM, "lby.net.request.RequestQuitRoom");
-        add(NetworkCode.GET_ROOMS, "lby.net.request.RequestGetRooms");
-        add(NetworkCode.BACK_TO_LOBBY, "lby.net.request.RequestBackToLobby");
-        add(NetworkCode.PLAY_GAME, "lby.net.request.RequestPlayGame");
-        add(NetworkCode.END_GAME, "lby.net.request.RequestEndGame");
+        add(NetworkCode.PAIR, RequestPair.class);
+        add(NetworkCode.QUIT_ROOM, RequestQuitRoom.class);
+        add(NetworkCode.GET_ROOMS, RequestGetRooms.class);
+        add(NetworkCode.BACK_TO_LOBBY, RequestBackToLobby.class);
+        add(NetworkCode.PLAY_GAME, RequestPlayGame.class);
+        add(NetworkCode.END_GAME, RequestEndGame.class);
         //
         //        //Clash of species
         //	add(NetworkCode.CLASH_ENTRY, "cos.net.request.RequestClashEntry");
@@ -141,15 +148,11 @@ public class GameRequestTable {
      * @param request_id a value that uniquely identifies the request type
      * @param name a string value that holds the name of the request class
      */
-    public static void add(short request_id, String name) {
-        try {
-            if (!requestTable.containsKey(request_id)) {
-                requestTable.put(request_id, Class.forName(name));
-            } else {
-                Log.printf_e("Request ID [%d] already exists! Ignored '%s'\n", request_id, name);
-            }
-        } catch (ClassNotFoundException ex) {
-            Log.printf_e("%s not found", ex.getMessage());
+    public static void add(short request_id, Class<?> cls) {
+        if (!requestTable.containsKey(request_id)) {
+            requestTable.put(request_id, cls);
+        }   else {
+            Log.printf_e("Request ID [%d] already exists! Ignored '%s'\n", request_id, cls.getName());
         }
     }
 
