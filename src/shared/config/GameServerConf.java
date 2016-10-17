@@ -1,6 +1,8 @@
 package shared.config;
 
 // Java Imports
+import conf.Configuration;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,13 +12,13 @@ import java.util.Map;
  */
 public class GameServerConf {
 
-    private Map<String, String> confRecords = new HashMap<String, String>(); // Stores server config. variables
+    // private Map<String, String> confRecords = new HashMap<String, String>(); // Stores server config. variables
 
-    public GameServerConf(Map<String, String> confRecords) {
-        this.confRecords = confRecords;
-    }
+//    public GameServerConf(Map<String, String> confRecords) {
+//        this.confRecords = confRecords;
+//    }
 
-    public int getPortNumber() {
-        return Integer.valueOf(confRecords.get("portNumber"));
-    }
+//    public int getPortNumber() {
+//        return Configuration.portNumber;
+//    }
 }

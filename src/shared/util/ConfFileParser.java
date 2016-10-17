@@ -41,7 +41,7 @@ public class ConfFileParser {
                             .getResourceAsStream(fileName);
             bur = new BufferedReader(new InputStreamReader(in));
         } catch (Exception ex) {
-            System.err.println("[In ConfFileParser.java]---No such file, please check.");
+            System.err.printf("[In ConfFileParser.java]---No such file %s, please check.", fileName);
         }
     }
 

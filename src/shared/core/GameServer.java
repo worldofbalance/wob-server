@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.UUID;
 
 // Other Imports
+import conf.Configuration;
+import jdk.nashorn.internal.runtime.regexp.joni.Config;
 import shared.config.GameServerConf;
 import lby.core.badge.BadgeController;
 import lby.core.world.WorldController;
@@ -207,23 +209,16 @@ public class GameServer {
      * @param args contains additional launching parameters
      */
     public static void main(String[] args) {
-        Log.printf("World of Balance Server v%s is starting...", Constants.CLIENT_VERSION);
-
+        Log.printf("World of Balance Lobby Server is starting on port: %d", Configuration.lobbyPortNumber);
         try {
-            Log.console("Loading Configuration File...");
-            
-            String sep = System.getProperty("file.separator");
-            GameServerConf config = new GameServerConf(new ConfFileParser("conf/gameServer.conf").parse());                    
-            Log.println("Done!");
-            
-            server = new GameServer(config.getPortNumber(), Constants.MAX_CLIENT_THREADS);
+            server = new GameServer(Configuration.lobbyPortNumber, Constants.MAX_CLIENT_THREADS);
             server.configure();
             
             MiniGameServers.getInstance().runServers();
             
             server.run();
         } catch (IOException ex) {
-            Log.printf_e("Port %d is in use", server.getPort());
+            Log.printf_e("Failed to start server. Port %d is already in use", Configuration.lobbyPortNumber);
         } catch (ConfigureException ex) {
             Log.printf_e(ex.getMessage());
         } catch (Exception ex) {

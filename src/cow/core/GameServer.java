@@ -213,22 +213,22 @@ public class GameServer {
         Log.printf("Cards of the Wild Server v%s is starting...", Constants.CLIENT_VERSION);
 
         try {
-            Log.console("Loading Configuration File...");
-            //String serverConf = "conf/gameServer.conf";
-            CodeSource codeSource = cow.core.GameServer.class.getProtectionDomain().getCodeSource();
-            File jarFile = new File(codeSource.getLocation().toURI().getPath());
-            String separator = System.getProperty("file.separator");
-            String serverConf = jarFile.getParentFile().getPath() + separator + ".."+separator+"conf" + separator + "gameServer.conf";
-           
-            File f = new File(serverConf);
-            if (!f.exists()) {
-                // get current absolute path
-                System.out.println("Error loading config file for COW");
-                serverConf = jarFile.getParentFile().getPath() + separator +"conf" + separator + "gameServer.conf";
-            }
-            System.out.println("config file path:"+serverConf);
-            GameServerConf config = new GameServerConf(new ConfFileParser(serverConf).parse());
-            Log.println("Done!");
+//            Log.console("Loading Configuration File...");
+//            //String serverConf = "conf/gameServer.conf";
+//            CodeSource codeSource = cow.core.GameServer.class.getProtectionDomain().getCodeSource();
+//            File jarFile = new File(codeSource.getLocation().toURI().getPath());
+//            String separator = System.getProperty("file.separator");
+//            String serverConf = jarFile.getParentFile().getPath() + separator + ".."+separator+"conf" + separator + "gameServer.conf";
+//
+//            File f = new File(serverConf);
+//            if (!f.exists()) {
+//                // get current absolute path
+//                System.out.println("Error loading config file for COW");
+//                serverConf = jarFile.getParentFile().getPath() + separator +"conf" + separator + "gameServer.conf";
+//            }
+//            System.out.println("config file path:"+serverConf);
+//            // GameServerConf config = new GameServerConf(new ConfFileParser(serverConf).parse());
+//            Log.println("Done!");
 
             //server = new GameServer(config.getPortNumber(), Constants.MAX_CLIENT_THREADS);
             server = new GameServer(20038, Constants.MAX_CLIENT_THREADS);

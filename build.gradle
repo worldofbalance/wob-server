@@ -1,0 +1,26 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+mainClassName = 'shared.core.GameServer'
+dependencies {
+    compile fileTree(dir: 'lib', include: ['*.jar'])
+    compile fileTree(dir: 'chartlib', include: ['*.jar'])
+}
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+    }
+}
+jar {
+    manifest {
+        attributes('Main-Class': 'shared.core.GameServer')
+    }
+    baseName = 'wob-lobby'
+    version =  '0.1.0'
+}
+
