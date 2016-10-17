@@ -19,7 +19,7 @@ WOB_WOB
 # now we are back in Travis.
 
 # Deploy lobby server
-rsync -avr ./dist/ wob_wob@thecity.sfsu.edu:~/wob_server/lobby
+rsync -avr ./build/distributions/wob-server/ wob_wob@thecity.sfsu.edu:~/wob_server/lobby
 
 # Deploy lobby server
 rsync -avr ./mini_games/ wob_wob@thecity.sfsu.edu:~/wob_server

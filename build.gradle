@@ -16,11 +16,4 @@ sourceSets {
         }
     }
 }
-jar {
-    manifest {
-        attributes('Main-Class': 'shared.core.GameServer')
-    }
-    baseName = 'wob-lobby'
-    version =  '0.1.0'
-}
 
