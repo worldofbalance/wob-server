@@ -17,6 +17,7 @@ public class ResponseConvergeBetUpdate extends GameResponse {
 
     private short won = 0;
     private int wonAmount = 0;
+    private int bestPlayer_id;
     
     public ResponseConvergeBetUpdate() {
         response_id = NetworkCode.MC_BET_UPDATE;
@@ -29,6 +30,10 @@ public class ResponseConvergeBetUpdate extends GameResponse {
     public void setWonAmount (int wonAmount) {
         this.wonAmount = wonAmount; 
     }
+    
+    public void setWinner(int bestPlayer_id) {
+        this.bestPlayer_id = bestPlayer_id;
+    }
             
 
     @Override
@@ -37,6 +42,7 @@ public class ResponseConvergeBetUpdate extends GameResponse {
 
         packet.addShort16(won);
         packet.addInt32(wonAmount);
+        packet.addInt32(bestPlayer_id);
 
         return packet.getBytes();
     }

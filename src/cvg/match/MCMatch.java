@@ -11,7 +11,7 @@ import shared.util.Log;
 
 /**
  * 
- * @author nathanael
+ * @author nathanael / David extended and used for Multiplayer Convergence 
  * The match class holds instances of both payers and the matchID and turn
  * count. Provides getters and setters along with methods to access 
  * opponents status. 
@@ -35,20 +35,22 @@ public class MCMatch {
         private short betAmount;
         private short ecoNumber;
         private short sliders;
+        private short curRound;   // The current round in play
+        private boolean checking;    // false: check players not running, ok to run
         
 	
 	public MCMatch (List<Player> players, int matchID){
-		this.matchID = matchID;
+            this.matchID = matchID;
 		
-                if (players != null) {
-                    player1 = new MCMatchPlayer(players.get(0).getID(), matchID);
-                    playerList.put(player1.getID(), player1);
+            if (players != null) {
+                player1 = new MCMatchPlayer(players.get(0).getID(), matchID);
+                playerList.put(player1.getID(), player1);
 
-                    if (!Constants.SINGLE_PLAYER){
-                            player2 = new MCMatchPlayer(players.get(1).getID(), matchID);
-                            playerList.put(player2.getID(), player2);		
-                    }
+                if (!Constants.SINGLE_PLAYER){
+                    player2 = new MCMatchPlayer(players.get(1).getID(), matchID);
+                    playerList.put(player2.getID(), player2);		
                 }
+            }
 	}
 	
 	public MCMatch (List<Player> players, int matchID, String sessionID){
@@ -264,54 +266,56 @@ public class MCMatch {
         return (player == player1) ? player2 : player1;
     }
     
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+    public void setTimeWindow(short timeWindow) {
+        this.timeWindow = timeWindow;
+    }
+    public void setNumRounds(short numRounds) {
+        this.numRounds = numRounds;
+    }
+    public void setBetAmount(short betAmount) {
+        this.betAmount = betAmount;
+    }
+    public void setEcoNumber(short ecoNumber) {
+        this.ecoNumber = ecoNumber;
+    }    
+    public void setSliders(short sliders){
+        this.sliders = sliders;
+    }
+    public void setCurRound(short curRound) {
+        this.curRound = curRound;
+    }
+    
+    public void setChecking(boolean checking) {
+        this.checking = checking;
+    }
+    
     // DH change
     public long getStartTime() {
         return startTime;
     }
-    
-    public void setStartTime(long startTime) {
-        this.startTime = startTime;
-    }
-
-    public void setTimeWindow(short timeWindow) {
-        this.timeWindow = timeWindow;
-    }
-
-    public void setNumRounds(short numRounds) {
-        this.numRounds = numRounds;
-    }
-
-    public void setBetAmount(short betAmount) {
-        this.betAmount = betAmount;
-    }
-
-    public void setEcoNumber(short ecoNumber) {
-        this.ecoNumber = ecoNumber;
-    }
-    
-    public void setSliders(short sliders){
-        this.sliders = sliders;
-    }
-    
     public short getNumRounds(){
         return numRounds;
-    }
-    
+    }    
     public short getTimeWindow(){
         return timeWindow;
-    }
-    
+    }    
     public short getBetAmount(){
         return betAmount;
-    }
-    
+    }    
     public short getEcoNumber(){
         return ecoNumber;
-    }
-    
+    }    
     public short getSliders(){
         return sliders;
     }
-    
+    public short getCurRound() {
+        return curRound;
+    }    
+    public boolean getChecking() {
+        return checking;
+    }    
 }
 
