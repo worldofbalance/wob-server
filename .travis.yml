@@ -15,8 +15,6 @@ addons:
     - 111.22.33.44
 before_install:
   - openssl aes-256-cbc -K $encrypted_dc1c0b2897bc_key -iv $encrypted_dc1c0b2897bc_iv -in deploy_rsa.enc -out deploy_rsa -d
-script:
-  - sh compile.sh
 before_deploy:
   - eval "$(ssh-agent -s)"
   - chmod 600 $TRAVIS_BUILD_DIR/deploy_rsa

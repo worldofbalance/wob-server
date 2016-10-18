@@ -19,12 +19,12 @@ WOB_WOB
 # now we are back in Travis.
 
 # Deploy lobby server
-rsync -avr ./build/distributions/*.tar wob_wob@thecity.sfsu.edu:~/.tmp/
+rsync -avr ./build/distributions/ wob_wob@thecity.sfsu.edu:~/.tmp/
 
 # Deploy other servers
-rsync -avr ./mini_games/ wob_wob@thecity.sfsu.edu:~/wob_server
+# rsync -avr ./mini_games/ wob_wob@thecity.sfsu.edu:~/wob_server
 
-rsync -avr ./scripts/ wob_wob@thecity.sfsu.edu:~/scripts
+# sync -avr ./scripts/ wob_wob@thecity.sfsu.edu:~/scripts
 
 ## log into thecity again, this time to start the JAR Files, everything under this is executed under the WOB_WOB user
 #ssh wob_wob@thecity.sfsu.edu <<WOB_WOB
