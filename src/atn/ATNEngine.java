@@ -36,6 +36,12 @@ import org.datacontract.schemas._2004._07.ManipulationParameter.ManipulatingNode
 import org.datacontract.schemas._2004._07.ManipulationParameter.ManipulatingParameter;
 import org.datacontract.schemas._2004._07.ManipulationParameter.NodeBiomass;
 
+import org.apache.commons.math3.ode.FirstOrderIntegrator;
+import org.apache.commons.math3.ode.nonstiff.GraggBulirschStoerIntegrator;
+import org.apache.commons.math3.ode.sampling.StepHandler;
+import org.apache.commons.math3.ode.sampling.StepNormalizer;
+import org.apache.commons.math3.ode.sampling.FixedStepHandler;
+
 import metadata.Constants;
 import model.Ecosystem;
 import model.Species;
@@ -159,36 +165,70 @@ public class ATNEngine {
     	   calcBiomass[0][i] =  currBiomass[i];
        }
 
-       //create integration object
-       boolean isTest = false;
-       BulirschStoerIntegration bsi = new BulirschStoerIntegration(
-               timeIntvl,
-               speciesID,
-               sztArray,
-               ecosysRelationships,
-               lPs,
-               maxBSIErr,
-               equationSet
-       );
+       if (true) {
 
-       //calculate delta-biomass and biomass "contributions" from each related
-       //species
-       for (int t = initTimeIdx + 1; t < timesteps; t++) {
-           boolean success = bsi.performIntegration(time(initTime, t), currBiomass);
-           if (!success) {
-               System.out.printf("Integration failed to converge, t = %d\n", t);
-               System.out.print(bsi.extrapArrayToString(biomassScale));
-               break;
-           }
-           currBiomass = bsi.getYNew();
-           System.arraycopy(currBiomass, 0, calcBiomass[t], 0, speciesCnt);
+           // Use Apache Commons Math GraggBulirschStoerIntegrator
 
-           contribsT = bsi.getContribs();
-           for (int i = 0; i < speciesCnt; i++) {
-               System.arraycopy(contribsT[i], 0, contribs[t - 1][i], 0, speciesCnt);
-           }
+           FirstOrderIntegrator integrator = new GraggBulirschStoerIntegrator(1.0e-8, 100.0, 1.0e-10, 1.0e-10);
 
-       }  //timestep loop
+           // Set up the ATN equations based on the current food web and parameters
+           ATNEquations ode = new ATNEquations(sztArray, ecosysRelationships, lPs);
+
+           // Set up the StepHandler, which is triggered at each time step by the integrator,
+           // and copies the current biomass of each species into calcBiomass[timestep].
+           // See the "Continuous Output" section of https://commons.apache.org/proper/commons-math/userguide/ode.html
+           StepHandler stepHandler = new StepNormalizer(timeIntvl, new FixedStepHandler() {
+               public void init(double t0, double[] y0, double t) {
+               }
+
+               private int timestep = 0;
+
+               public void handleStep (double t, double[] y, double[] yDot, boolean isLast) {
+                   System.arraycopy(y, 0, calcBiomass[timestep], 0, speciesCnt);
+                   timestep++;
+               }
+           });
+           integrator.addStepHandler(stepHandler);
+
+           // Run the integrator to compute the biomass time series
+           integrator.integrate(ode, 0.0, currBiomass, timeIntvl * (double) (timesteps - 1) , currBiomass);
+
+       } else {
+
+           // Use BulirschStoerIntegration
+
+           //create integration object
+           boolean isTest = false;
+           BulirschStoerIntegration bsi = new BulirschStoerIntegration(
+                   timeIntvl,
+                   speciesID,
+                   sztArray,
+                   ecosysRelationships,
+                   lPs,
+                   maxBSIErr,
+                   equationSet
+           );
+
+           //calculate delta-biomass and biomass "contributions" from each related
+           //species
+           for (int t = initTimeIdx + 1; t < timesteps; t++) {
+               boolean success = bsi.performIntegration(time(initTime, t), currBiomass);
+               if (!success) {
+                   System.out.printf("Integration failed to converge, t = %d\n", t);
+                   System.out.print(bsi.extrapArrayToString(biomassScale));
+                   break;
+               }
+               currBiomass = bsi.getYNew();
+               System.arraycopy(currBiomass, 0, calcBiomass[t], 0, speciesCnt);
+
+               contribsT = bsi.getContribs();
+               for (int i = 0; i < speciesCnt; i++) {
+                   System.arraycopy(contribsT[i], 0, contribs[t - 1][i], 0, speciesCnt);
+               }
+
+           }  //timestep loop
+
+       }
 
 	   double[][] webServicesData = new double[speciesCnt][timesteps];
        if(Constants.useSimEngine){		//We need the webServicesData only for marginOfErrorCalculation
