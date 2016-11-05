@@ -169,7 +169,11 @@ public class ATNEngine {
 
            // Use Apache Commons Math GraggBulirschStoerIntegrator
 
-           FirstOrderIntegrator integrator = new GraggBulirschStoerIntegrator(1.0e-8, 100.0, 1.0e-10, 1.0e-10);
+           FirstOrderIntegrator integrator = new GraggBulirschStoerIntegrator(
+                   1.0e-8,    // minimal step
+                   100.0,     // maximal step
+                   1.0e-10,   // allowed absolute error
+                   1.0e-10);  // allowed relative error
 
            // Set up the ATN equations based on the current food web and parameters
            ATNEquations ode = new ATNEquations(sztArray, ecosysRelationships, lPs);
@@ -184,7 +188,10 @@ public class ATNEngine {
                private int timestep = 0;
 
                public void handleStep (double t, double[] y, double[] yDot, boolean isLast) {
-                   System.arraycopy(y, 0, calcBiomass[timestep], 0, speciesCnt);
+                   // Ensure we don't go past the last time step due to rounding error
+                   if (timestep < calcBiomass.length) {
+                       System.arraycopy(y, 0, calcBiomass[timestep], 0, speciesCnt);
+                   }
                    timestep++;
                }
            });

@@ -15,8 +15,11 @@ import java.util.Map;
  */
 public class ATNEquations implements FirstOrderDifferentialEquations {
 
+    private final double EXTINCT = 1.0e-15;  // Extinction threshold
+
     private int numSpecies;  // Number of species
     private int[] nodeID;    // Node ID of each species
+    private double[] B;      // Current biomass of each species
 
     // Organism type of each species (Constants.ORGANISM_TYPE_PLANT or Constants.ORGANISM_TYPE_ANIMAL)
     private int[] organismType;
@@ -48,6 +51,7 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
                         LinkParams linkParams) {
 
         numSpecies = speciesZoneTypes.length;
+        B = new double[numSpecies];
 
         // Build list of node IDs
         nodeID = new int[numSpecies];
@@ -144,23 +148,28 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
     }
 
     /**
-     * The equations come from section 2.1 of Justina Cotter's master's thesis.
+     * Compute the derivatives of biomass of each species.
      *
      * @param t Time
-     * @param B Biomass of each species at time t
+     * @param Bt Biomass of each species at time t
      * @param BDot Output: derivative of biomass of each species at time t
      */
     @Override
-    public void computeDerivatives(double t, double[] B, double[] BDot) {
+    public void computeDerivatives(double t, double[] Bt, double[] BDot) {
+
+        // Copy Bt to B, setting biomass below extinction threshold to 0
+        // (Copying because API doesn't specify whether state vector Bt can be modified)
+        for (int i = 0; i < numSpecies; i++) {
+            B[i] = Bt[i] < EXTINCT ? 0.0 : Bt[i];
+        }
 
         // Compute functional response values
         for (int i : consumers) {
             for (int j : preyOf.get(i)) {
-                double numerator = Math.pow(B[j] / b0[i][j], 1 + q[i][j]);
-                double denominator = 1 + d[i][j] * B[i];
-                for (int k : preyOf.get(i)) {
-                    // FIXME: this is the same as the numerator calculation; factor it out
-                    denominator += Math.pow(B[k] / b0[i][k], 1 + q[i][k]);
+                double numerator = Math.pow(B[j], 1 + q[i][j]);
+                double denominator = Math.pow(b0[i][j], 1 + q[i][j]);
+                for (int m : preyOf.get(i)) {
+                    denominator += a[i][m] * Math.pow(B[m], 1 + q[i][m]);
                 }
                 F[i][j] = numerator / denominator;
             }
@@ -171,7 +180,7 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
             double G = 1 - B[i] / k[i];
             BDot[i] = r[i] * B[i] * G - x[i] * B[i];
             for (int j : predatorsOf.get(i)) {
-                BDot[i] -= x[j] * y[j][i] * B[j] * F[j][i] / e[j][i];
+                BDot[i] -= x[j] * y[j][i] * a[j][i] * F[j][i] * B[j] / e[j][i];
             }
         }
 
@@ -179,12 +188,10 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
         for (int i : consumers) {
             BDot[i] = -x[i] * B[i];
             for (int j : preyOf.get(i)) {
-                // FIXME: Factor this out to avoid recomputation
-                BDot[i] += x[i] * y[i][j] * B[i] * F[i][j];
+                BDot[i] += x[i] * y[i][j] * a[i][j] * F[i][j] * B[i];
             }
             for (int j : predatorsOf.get(i)) {
-                // FIXME: this is the same as the predator loop above - factor it out
-                BDot[i] -= x[j] * y[j][i] * B[j] * F[j][i] / e[j][i];
+                BDot[i] -= x[j] * y[j][i] * a[j][i] * F[j][i] * B[j] / e[j][i];
             }
         }
     }
