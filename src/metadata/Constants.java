@@ -145,5 +145,10 @@ public class Constants {
     public static final int ADDITIONAL_TIMESTEPS = 2;	//Needed so that it aligns with Simulationengine, otherwise client will be in processing state
 	public static boolean useSimEngine = false;		//To run both the simulation engine and the atn engine set useSimEngine =true && useAtnEngine == true
 	public static boolean useAtnEngine = true;
+
+    // Set to true to run simulations using GraggBulirschStoerIntegrator from Apache Commons Math
+    // Set to false to run simulations using BulirschStoerIntegration instead
+    public static boolean useCommonsMathIntegrator = true;
+
 	public static final boolean DEBUG_MODE = true;
 }

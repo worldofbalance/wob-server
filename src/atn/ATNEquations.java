@@ -9,6 +9,7 @@ import java.util.Map;
 
 /**
  * Implements the ATN model differential equations in a form usable by the Apache Commons Math integrators.
+ * The equations come from the Dynamics.bioenergetic.ModelDerivative class in the Network3D web services codebase.
  *
  * @author Ben Saylor
  * @see <a href="https://commons.apache.org/proper/commons-math/userguide/ode.html">The Apache Commons Math ode package documentation</a>

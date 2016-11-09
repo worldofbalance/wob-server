@@ -165,7 +165,7 @@ public class ATNEngine {
     	   calcBiomass[0][i] =  currBiomass[i];
        }
 
-       if (true) {
+       if (Constants.useCommonsMathIntegrator) {
 
            // Use Apache Commons Math GraggBulirschStoerIntegrator
 

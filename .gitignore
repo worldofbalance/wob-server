@@ -3,3 +3,4 @@
 .syntastic_javac_config
 conf/db.conf
 src/log/
+/bin/
