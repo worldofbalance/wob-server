@@ -10,15 +10,10 @@ Relies on WoB_Server source code for objects that store simulation timesteps and
 species information.
 */
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,10 +26,9 @@ import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 
-import org.datacontract.schemas._2004._07.ManipulationParameter.ManipulatingNode;
-import org.datacontract.schemas._2004._07.ManipulationParameter.ManipulatingNodeProperty;
-import org.datacontract.schemas._2004._07.ManipulationParameter.ManipulatingParameter;
-import org.datacontract.schemas._2004._07.ManipulationParameter.NodeBiomass;
+import ch.systemsx.cisd.hdf5.HDF5Factory;
+import ch.systemsx.cisd.hdf5.HDF5IntStorageFeatures;
+import ch.systemsx.cisd.hdf5.IHDF5Writer;
 
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.GraggBulirschStoerIntegrator;
@@ -53,7 +47,6 @@ import simulation.SimulationException;
 import simulation.SpeciesZoneType;
 import simulation.SpeciesZoneType.SpeciesTypeEnum;
 import simulation.config.ManipulatingParameterName;
-import simulation.config.ManipulationActionType;
 import simulation.simjob.ConsumeMap;
 import simulation.simjob.EcosystemTimesteps;
 import simulation.simjob.NodeTimesteps;
@@ -74,6 +67,10 @@ public class ATNEngine {
 
    private static UserInput userInput;
    public static Properties propertiesConfig;
+
+    // If true, disable CSV output and produce HDF5 files instead
+    public static boolean useHDF5 = false;
+
    private PrintStream psATN = null;
    /*
     The first two timesteps values produced by WebServices do not
@@ -237,6 +234,11 @@ public class ATNEngine {
 
        }
 
+       if (useHDF5) {
+           saveHDF5OutputFile(calcBiomass, speciesID, job.getNode_Config());
+           return null;
+       }
+
 	   double[][] webServicesData = new double[speciesCnt][timesteps];
        if(Constants.useSimEngine){		//We need the webServicesData only for marginOfErrorCalculation
            //extract timestep data from CSV
@@ -351,6 +353,36 @@ public class ATNEngine {
        return mSpecies;
    }
 
+    /**
+     * Save a generated biomass dataset to an HDF5 file in the output directory
+     * given by Constants.ATN_CSV_SAVE_PATH.
+     *
+     * @param biomass The generated biomass as a (num_timesteps) x (num_nodes) array
+     * @param nodeIDs The node IDs. The order must correspond to the columns of the biomass array
+     * @param nodeConfig The node configuration string used to generate the data
+     */
+   private void saveHDF5OutputFile(double[][] biomass, int[] nodeIDs, String nodeConfig) {
+
+       // Scale biomass for consistency with CSV output, and cast to short to save disk space
+       short[][] scaledBiomass = new short[biomass.length][nodeIDs.length];
+       for (int i = 0; i < biomass.length; i++) {
+           for (int j = 0; j < nodeIDs.length; j++) {
+               scaledBiomass[i][j] = (short) Math.round((biomass[i][j] * Constants.BIOMASS_SCALE));
+           }
+       }
+
+       // Determine the filename
+       File file = Functions.getNewOutputFile(new File(Constants.ATN_CSV_SAVE_PATH), "ATN", ".h5");
+       System.out.println("Writing output to " + file.toString());
+
+       // Write the data to the output file
+       IHDF5Writer writer = HDF5Factory.configure(file).writer();
+       writer.int16().writeMatrix("biomass", scaledBiomass, HDF5IntStorageFeatures.INT_DEFLATE);
+       writer.writeIntArray("node_ids", nodeIDs);
+       writer.string().setAttr("/", "node_config", nodeConfig);
+       writer.close();
+   }
+
    /*
    Test run for integration using problem with known solution:
    equationSet 1:
@@ -460,7 +492,11 @@ public class ATNEngine {
        EcosystemTimesteps ecosysTimesteps = new EcosystemTimesteps();
        Map<Integer, NodeRelationships> ecosysRelationships = new HashMap<>();
        NodeTimesteps nodeTimesteps;
-       initOutputStreams();
+
+        if (useHDF5 == false) {
+            initOutputStreams();
+        }
+
        int[] nodeListArray = job.getSpeciesNodeList();
        List<SpeciesZoneType> speciesZoneList = job.getSpeciesZoneList();
        

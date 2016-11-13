@@ -26,27 +26,42 @@ import simulation.simjob.SimJobManager;
 public class ATNEngineBatchRunner {
 
     public static void printUsage() {
-        System.out.println("Args: <timesteps> <node config input file> [--use-webservices]");
+        System.out.println("Args: <timesteps> <node config input file> [--use-webservices] [--use-hdf5]");
     }
 
     public static void main(String[] args) {
-        if (args.length == 3 && args[2].equals("--use-webservices")) {
-            // Disable ATNEngine and enable Web Services simulation engine
-            System.out.println("Using Web Services instead of ATNEngine");
-            Constants.useAtnEngine = false;
-            Constants.useSimEngine = true;
-        } else if (args.length != 2) {
+
+        // Parse command-line arguments
+        if (args.length < 2) {
             printUsage();
             return;
         }
-
         int timesteps = Integer.parseInt(args[0]);
         File inputFile = new File(args[1]);
+        for (int i = 2; i < args.length; i++) {
+            switch (args[i]) {
+                case "--use-webservices":
+                    System.out.println("Using Web Services instead of ATNEngine");
+                    Constants.useAtnEngine = false;
+                    Constants.useSimEngine = true;
+                    break;
+                case "--use-hdf5":
+                    System.out.println("Disabling CSV output and outputting HDF5 files");
+                    ATNEngine.useHDF5 = true;
+                    break;
+            }
+        }
+
+        if (Constants.useSimEngine && ATNEngine.useHDF5) {
+            System.err.println("Sorry, Web Services output can't be saved in HDF5 format.");
+            return;
+        }
+
         Scanner input;
         try {
             input = new Scanner(inputFile);
         } catch (FileNotFoundException ex) {
-            System.out.println("Input file " + args[1] + " not found");
+            System.out.println("Input file " + inputFile + " not found");
             return;
         }
 
