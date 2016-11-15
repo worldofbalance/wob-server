@@ -363,11 +363,14 @@ public class ATNEngine {
      */
    private void saveHDF5OutputFile(double[][] biomass, int[] nodeIDs, String nodeConfig) {
 
-       // Scale biomass for consistency with CSV output, and cast to short to save disk space
-       short[][] scaledBiomass = new short[biomass.length][nodeIDs.length];
+       // Scale biomass for consistency with CSV output.
+       // Round and cast to 32-bit integers to facilitate deflate compression.
+       // Note: there is technically a risk of integer overflow,
+       // but it won't happen unless scaled biomass exceeds 2 billion.
+       int[][] scaledBiomass = new int[biomass.length][nodeIDs.length];
        for (int i = 0; i < biomass.length; i++) {
            for (int j = 0; j < nodeIDs.length; j++) {
-               scaledBiomass[i][j] = (short) Math.round((biomass[i][j] * Constants.BIOMASS_SCALE));
+               scaledBiomass[i][j] = (int) Math.round((biomass[i][j] * Constants.BIOMASS_SCALE));
            }
        }
 
@@ -377,7 +380,7 @@ public class ATNEngine {
 
        // Write the data to the output file
        IHDF5Writer writer = HDF5Factory.configure(file).writer();
-       writer.int16().writeMatrix("biomass", scaledBiomass, HDF5IntStorageFeatures.INT_DEFLATE);
+       writer.int32().writeMatrix("biomass", scaledBiomass, HDF5IntStorageFeatures.INT_DEFLATE);
        writer.writeIntArray("node_ids", nodeIDs);
        writer.string().setAttr("/", "node_config", nodeConfig);
        writer.close();
