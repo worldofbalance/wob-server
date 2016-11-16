@@ -195,7 +195,7 @@ public class ATNEngine {
            integrator.addStepHandler(stepHandler);
 
            // Run the integrator to compute the biomass time series
-           integrator.integrate(ode, 0.0, currBiomass, timeIntvl * (double) (timesteps - 1) , currBiomass);
+           integrator.integrate(ode, 0.0, currBiomass, timeIntvl * timesteps, currBiomass);
 
        } else {
 
