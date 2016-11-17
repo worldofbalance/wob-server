@@ -1,6 +1,7 @@
 package cow.core;
 
 // Java Imports
+import conf.Configuration;
 import cow.metadata.GameRequestTable;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -11,19 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-
-// Other Imports
-import shared.config.GameServerConf;
-
-import java.io.File;
-import java.security.CodeSource;
 import shared.metadata.Constants;
-
 import cow.model.Account;
 import cow.model.Player;
-
-import shared.util.ConfFileParser;
 import shared.util.ConfigureException;
 
 import shared.util.Log;
@@ -211,31 +202,12 @@ public class GameServer {
      */
     public static void main(String[] args) {
         Log.printf("Cards of the Wild Server v%s is starting...", Constants.CLIENT_VERSION);
-
         try {
-//            Log.console("Loading Configuration File...");
-//            //String serverConf = "conf/gameServer.conf";
-//            CodeSource codeSource = cow.core.GameServer.class.getProtectionDomain().getCodeSource();
-//            File jarFile = new File(codeSource.getLocation().toURI().getPath());
-//            String separator = System.getProperty("file.separator");
-//            String serverConf = jarFile.getParentFile().getPath() + separator + ".."+separator+"conf" + separator + "gameServer.conf";
-//
-//            File f = new File(serverConf);
-//            if (!f.exists()) {
-//                // get current absolute path
-//                System.out.println("Error loading config file for COW");
-//                serverConf = jarFile.getParentFile().getPath() + separator +"conf" + separator + "gameServer.conf";
-//            }
-//            System.out.println("config file path:"+serverConf);
-//            // GameServerConf config = new GameServerConf(new ConfFileParser(serverConf).parse());
-//            Log.println("Done!");
-
-            //server = new GameServer(config.getPortNumber(), Constants.MAX_CLIENT_THREADS);
-            server = new GameServer(20038, Constants.MAX_CLIENT_THREADS);
+            server = new GameServer(Configuration.cowportNumber, Constants.MAX_CLIENT_THREADS);
             server.configure();
             server.run();
         } catch (IOException ex) {
-            Log.console("Port %d is in use "+server.getPort());
+            Log.console("Port %d is in use "+ server.getPort());
         } catch (ConfigureException ex) {
             Log.console(ex.getMessage());
             ex.printStackTrace(System.out);
@@ -243,7 +215,6 @@ public class GameServer {
             Log.console("Server Crashed!");
             ex.printStackTrace(System.out);
         }
-
         System.exit(0);
     }
 }

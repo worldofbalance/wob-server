@@ -5,6 +5,7 @@ package conf;
  */
 public class Configuration {
     public static int lobbyPortNumber = 9255;
+    public static int cowportNumber = 9260;
     public static int COSPortNumber =  9254;
     public static int RRPortNumber = 9253;
     public static String DBURL = "thecity.sfsu.edu";

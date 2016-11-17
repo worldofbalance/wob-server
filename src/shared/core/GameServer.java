@@ -14,7 +14,6 @@ import java.util.UUID;
 // Other Imports
 import conf.Configuration;
 import jdk.nashorn.internal.runtime.regexp.joni.Config;
-import shared.config.GameServerConf;
 import lby.core.badge.BadgeController;
 import lby.core.world.WorldController;
 import java.nio.file.Paths;

@@ -3,6 +3,7 @@
 .idea/*
 /nbproject/private/
 /dist/
+/dist*
 /out
 /src/shared/log/
 *.class

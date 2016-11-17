@@ -9,8 +9,6 @@ import javax.sql.DataSource;
 
 // Other Imports
 import conf.Configuration;
-import shared.config.DBConf;
-import shared.util.ConfFileParser;
 import shared.util.Log;
 
 /**

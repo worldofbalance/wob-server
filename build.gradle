@@ -1,19 +1,42 @@
-apply plugin: 'java'
-apply plugin: 'application'
+project('dist-lobby') {
+    apply plugin: 'java'
+    apply plugin: 'application'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
-mainClassName = 'shared.core.GameServer'
-dependencies {
-    compile fileTree(dir: 'lib', include: ['*.jar'])
-    compile fileTree(dir: 'chartlib', include: ['*.jar'])
-}
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src']
+    mainClassName = 'shared.core.GameServer'
+    dependencies {
+        compile fileTree(dir: '../lib', include: ['*.jar'])
+        compile fileTree(dir: '../chartlib', include: ['*.jar'])
+    }
+    sourceSets {
+        main {
+            java {
+                srcDirs = ['../src']
+            }
         }
     }
 }
+
+//project('dist/cow') {
+//    apply plugin: 'java'
+//    apply plugin: 'application'
+//
+//    sourceCompatibility = 1.8
+//    targetCompatibility = 1.8
+//
+//    mainClassName = 'cos.core.GameServer'
+//    dependencies {
+//        compile fileTree(dir: '../../lib', include: ['*.jar'])
+//        compile fileTree(dir: '../../chartlib', include: ['*.jar'])
+//    }
+//    sourceSets {
+//        main {
+//            java {
+//                srcDirs = ['../../src']
+//            }
+//        }
+//    }
+//}
 
