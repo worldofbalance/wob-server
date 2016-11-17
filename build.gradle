@@ -19,24 +19,24 @@ project('dist-lobby') {
     }
 }
 
-//project('dist/cow') {
-//    apply plugin: 'java'
-//    apply plugin: 'application'
-//
-//    sourceCompatibility = 1.8
-//    targetCompatibility = 1.8
-//
-//    mainClassName = 'cos.core.GameServer'
-//    dependencies {
-//        compile fileTree(dir: '../../lib', include: ['*.jar'])
-//        compile fileTree(dir: '../../chartlib', include: ['*.jar'])
-//    }
-//    sourceSets {
-//        main {
-//            java {
-//                srcDirs = ['../../src']
-//            }
-//        }
-//    }
-//}
+project('dist-cow') {
+    apply plugin: 'java'
+    apply plugin: 'application'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    mainClassName = 'cow.core.GameServer'
+    dependencies {
+        compile fileTree(dir: '../lib', include: ['*.jar'])
+        compile fileTree(dir: '../chartlib', include: ['*.jar'])
+    }
+    sourceSets {
+        main {
+            java {
+                srcDirs = ['../src']
+            }
+        }
+    }
+}
 
