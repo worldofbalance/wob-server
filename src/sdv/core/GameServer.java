@@ -1,30 +1,19 @@
 package sdv.core;
 
+import conf.Configuration;
 import sdv.PlayTime.PreySpawning;
 import java.util.concurrent.Executors;
 import shared.metadata.Constants;
 import shared.util.Log;
-import sdv.conf.GameServerConf;
-import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URISyntaxException;
-import java.security.CodeSource;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SimpleTimeZone;
-import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import shared.util.ConfFileParser;
 import sdv.metadata.GameRequestTable;
 import sdv.model.Player;
 
@@ -37,11 +26,10 @@ public class GameServer {
     // Singleton Instance
     private static GameServer gameServer;
     //server variables
-     private GameServerConf configuration; // Stores server config. variables
-     private ExecutorService clientThreadPool;
-     private ServerSocket serverSocket;
-     private boolean isDone; // Server Loop Flag
-      // Reference Tables
+    private ExecutorService clientThreadPool;
+    private ServerSocket serverSocket;
+    private boolean isDone; // Server Loop Flag
+    // Reference Tables
     private Map<String, GameClient> activeThreads = new HashMap<String, GameClient>(); // Session ID -> Client
     private Map<Integer, Player> activePlayers = new HashMap<Integer, Player>(); // Player ID -> Player
      
@@ -87,31 +75,13 @@ public class GameServer {
      * Load values from a configuration file.
      */
     public final void configure() {
-        
-        String serverConf = "conf/gameServer.conf";
-        File f = new File(serverConf);
-        
-        if (!f.exists()) {
-            // get current absolute path
-            CodeSource codeSource = GameServer.class.getProtectionDomain().getCodeSource();
-            File jarFile;
-            try {
-                jarFile = new File(codeSource.getLocation().toURI().getPath());
-                serverConf = jarFile.getParentFile().getPath() + "/../conf/gameServer.conf";
-            } catch (URISyntaxException ex) {
-                Logger.getLogger(GameServer.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        
-        configuration = new GameServerConf();
-        configuration.setConfRecords(new ConfFileParser(serverConf).parse());
     }
     
     private void run() throws IOException {
          Log.printf("Sea Divided v%s is starting...\n", Constants.CLIENT_VERSION);
         try {
             // Open a connection using the given port to accept incoming connections
-            serverSocket = new ServerSocket(configuration.getPortNumber());
+            serverSocket = new ServerSocket(Configuration.SeaDividedPortNumber);
             Log.printf("Server has started on port: %d", serverSocket.getLocalPort());
             Log.println("Waiting for clients...");
             // Loop indefinitely to establish multiple connections

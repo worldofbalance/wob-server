@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 // Other Imports
+import conf.Configuration;
 import sdv.conf.DBConf;
 import shared.util.ConfFileParser;
 import shared.util.Log;
@@ -33,8 +34,8 @@ public class GameDB {
         // Create a connection to the database
         String connectURI = String.format(
                 "jdbc:mysql://%s/%s?user=%s&password=%s",
-                configuration.getDBURL(), configuration.getDBName(),
-                configuration.getDBUsername(), configuration.getDBPassword()
+                Configuration.DBURL, Configuration.DBName,
+                Configuration.DBUsername, Configuration.DBPassword
         );
 
         dataSource = ConnectionPool.setupDataSource(connectURI);
@@ -45,9 +46,8 @@ public class GameDB {
      * memory.
      */
     private void configure() {
-        // Parse the configuration file
-        ConfFileParser confFileParser = new ConfFileParser("conf/db.conf");
-        configuration.setConfRecords(confFileParser.parse());
+        // ConfFileParser confFileParser = new ConfFileParser("conf/db.conf");
+        // configuration.setConfRecords(confFileParser.parse());
     }
 
     /**

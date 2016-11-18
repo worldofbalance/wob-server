@@ -2,23 +2,19 @@ package cos.core;
 
 // Java Imports
 
-import cos.config.GameServerConf;
+import conf.Configuration;
 import cos.core.badge.BadgeController;
 import cos.core.world.WorldController;
 import cos.metadata.Constants;
 import cos.metadata.GameRequestTable;
 import cos.model.Account;
 import cos.model.Player;
-import cos.util.ConfFileParser;
 import cos.util.ConfigureException;
 import cos.util.ExpTable;
 import cos.util.Log;
-
-import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.security.CodeSource;
 import java.util.*;
 
 // Other Imports
@@ -206,27 +202,13 @@ public class GameServer {
      */
     public static void main(String[] args) {
         Log.printf("Clash of Species Server v%s is starting...", Constants.CLIENT_VERSION);
-
         try {
-            Log.console("Loading Configuration File...");
-            String serverConf = "conf/gameServer.conf";
-            File f = new File(serverConf);
-            if (!f.exists()) {
-                // get current absolute path
-                CodeSource codeSource = GameServer.class.getProtectionDomain().getCodeSource();
-                File jarFile = new File(codeSource.getLocation().toURI().getPath());
-                serverConf = jarFile.getParentFile().getPath() + "/../conf/gameServer.conf";
-            }
-        
-            GameServerConf config = new GameServerConf(new ConfFileParser(serverConf).parse());
-            Log.println("Done!");
-
             //server = new GameServer(16567, Constants.MAX_CLIENT_THREADS);
-            server = new GameServer(config.getPortNumber(), Constants.MAX_CLIENT_THREADS);
+            server = new GameServer(Configuration.COSPortNumber, Constants.MAX_CLIENT_THREADS);
             server.configure();
             server.run();
         } catch (IOException ex) {
-            Log.printf_e("Port %d is in use", server.getPort());
+            Log.printf_e("Port %d is in use", Configuration.COSPortNumber);
         } catch (ConfigureException ex) {
             Log.printf_e(ex.getMessage());
         } catch (Exception ex) {

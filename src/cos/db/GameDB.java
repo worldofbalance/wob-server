@@ -2,6 +2,7 @@ package cos.db;
 
 // Java Imports
 
+import conf.Configuration;
 import cos.config.DBConf;
 import cos.core.GameServer;
 import cos.util.ConfFileParser;
@@ -44,9 +45,9 @@ public class GameDB {
         }
         // Create a connection to the database
         String connectURI = String.format(
-                "jdbc:mysql://%s/%s?user=%s&password=%s",
-                configuration.getDBURL(), configuration.getDBName(),
-                configuration.getDBUsername(), configuration.getDBPassword()
+            "jdbc:mysql://%s/%s?user=%s&password=%s",
+            Configuration.DBURL, Configuration.DBName,
+            Configuration.DBUsername, Configuration.DBPassword
         );
 
         dataSource = ConnectionPool.setupDataSource(connectURI);
@@ -57,18 +58,18 @@ public class GameDB {
      * memory.
      */
     private void configure() throws URISyntaxException {
-        String serverConf = "conf/db.conf";
-        File f = new File(serverConf);
-        if (!f.exists()) {
-            // get current absolute path
-            CodeSource codeSource = GameServer.class.getProtectionDomain().getCodeSource();
-            File jarFile = new File(codeSource.getLocation().toURI().getPath());
-            serverConf = jarFile.getParentFile().getPath() + "/../conf/db.conf";
-        }
-
-        // Parse the configuration file
-        ConfFileParser confFileParser = new ConfFileParser(serverConf);
-        configuration.setConfRecords(confFileParser.parse());
+//        String serverConf = "conf/db.conf";
+//        File f = new File(serverConf);
+//        if (!f.exists()) {
+//            // get current absolute path
+//            CodeSource codeSource = GameServer.class.getProtectionDomain().getCodeSource();
+//            File jarFile = new File(codeSource.getLocation().toURI().getPath());
+//            serverConf = jarFile.getParentFile().getPath() + "/../conf/db.conf";
+//        }
+//
+//        // Parse the configuration file
+//        ConfFileParser confFileParser = new ConfFileParser(serverConf);
+//        configuration.setConfRecords(confFileParser.parse());
     }
 
     /**
