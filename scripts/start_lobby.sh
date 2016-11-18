@@ -1,3 +1,2 @@
 #!/usr/bin/env bash
-printf "\n" | ~/wob_server/lobby/bin/lobby & printf "\n"
-
+printf "\n" | /opt/java8/bin/java -jar ~/wob-server-binaries/lobby.jar & printf "\n"
