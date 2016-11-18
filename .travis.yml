@@ -19,4 +19,4 @@ deploy:
     skip_cleanup: true
     script: sh ./scripts/deploy.sh
     on:
-      branch: development
+      branch: dev-deployment-cleanup
