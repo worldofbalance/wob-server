@@ -1,9 +1,11 @@
 /build
 .gradle
 .idea/*
+/nbproject/
 /nbproject/private/
 /dist/
 /dist*
 /out
 /src/shared/log/
 *.class
+.tmp
