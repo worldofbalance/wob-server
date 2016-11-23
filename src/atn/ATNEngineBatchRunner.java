@@ -49,6 +49,9 @@ public class ATNEngineBatchRunner {
                     System.out.println("Disabling CSV output and outputting HDF5 files");
                     ATNEngine.useHDF5 = true;
                     break;
+                default:
+                    System.err.println("Error: unrecognized argument " + args[i]);
+                    return;
             }
         }
 

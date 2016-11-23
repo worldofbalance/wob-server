@@ -1690,7 +1690,11 @@ public class SimulationEngine{
                     double biomass = biomassList.get(i);
 
                     if (biomass > 0) {
-                        tempStr += biomass > extinction ? Math.ceil(biomass) : 0;
+                        if (Constants.ROUND_BIOMASS) {
+                            tempStr += biomass > extinction ? Math.ceil(biomass) : 0;
+                        } else {
+                            tempStr += biomass > extinction ? biomass : 0;
+                        }
                     }
                 }
 

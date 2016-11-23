@@ -363,24 +363,38 @@ public class ATNEngine {
      */
    private void saveHDF5OutputFile(double[][] biomass, int[] nodeIDs, String nodeConfig) {
 
-       // Scale biomass for consistency with CSV output.
-       // Round and cast to 32-bit integers to facilitate deflate compression.
-       // Note: there is technically a risk of integer overflow,
-       // but it won't happen unless scaled biomass exceeds 2 billion.
-       int[][] scaledBiomass = new int[biomass.length][nodeIDs.length];
-       for (int i = 0; i < biomass.length; i++) {
-           for (int j = 0; j < nodeIDs.length; j++) {
-               scaledBiomass[i][j] = (int) Math.round((biomass[i][j] * Constants.BIOMASS_SCALE));
-           }
-       }
-
        // Determine the filename
        File file = Functions.getNewOutputFile(new File(Constants.ATN_CSV_SAVE_PATH), "ATN", ".h5");
        System.out.println("Writing output to " + file.toString());
 
        // Write the data to the output file
        IHDF5Writer writer = HDF5Factory.configure(file).writer();
-       writer.int32().writeMatrix("biomass", scaledBiomass, HDF5IntStorageFeatures.INT_DEFLATE);
+
+       if (Constants.ROUND_BIOMASS) {
+           // Scale biomass for consistency with CSV output.
+           // Round and cast to 32-bit integers to facilitate deflate compression.
+           // Note: there is technically a risk of integer overflow,
+           // but it won't happen unless scaled biomass exceeds 2 billion.
+           int[][] scaledBiomass = new int[biomass.length][nodeIDs.length];
+           for (int i = 0; i < biomass.length; i++) {
+               for (int j = 0; j < nodeIDs.length; j++) {
+                   scaledBiomass[i][j] = (int) Math.round((biomass[i][j] * Constants.BIOMASS_SCALE));
+               }
+           }
+
+           writer.int32().writeMatrix("biomass", scaledBiomass, HDF5IntStorageFeatures.INT_DEFLATE);
+
+       } else {
+           // Scale biomass for consistency with CSV output, but do not round.
+           double[][] scaledBiomass = new double[biomass.length][nodeIDs.length];
+           for (int i = 0; i < biomass.length; i++) {
+               for (int j = 0; j < nodeIDs.length; j++) {
+                   scaledBiomass[i][j] = (biomass[i][j] * Constants.BIOMASS_SCALE);
+               }
+           }
+           writer.float64().writeMatrix("biomass", scaledBiomass);
+       }
+
        writer.writeIntArray("node_ids", nodeIDs);
        writer.string().setAttr("/", "node_config", nodeConfig);
        writer.close();
