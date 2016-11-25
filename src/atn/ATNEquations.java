@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class ATNEquations implements FirstOrderDifferentialEquations {
 
-    private final double EXTINCT = 1.0e-15;  // Extinction threshold
+    public static final double EXTINCT = 1.0e-15;  // Extinction threshold
 
     private int numSpecies;  // Number of species
     private int[] nodeID;    // Node ID of each species

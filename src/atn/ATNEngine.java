@@ -169,7 +169,7 @@ public class ATNEngine {
            FirstOrderIntegrator integrator = new GraggBulirschStoerIntegrator(
                    1.0e-8,    // minimal step
                    100.0,     // maximal step
-                   1.0e-10,   // allowed absolute error
+                   ATNEquations.EXTINCT,   // allowed absolute error
                    1.0e-10);  // allowed relative error
 
            // Set up the ATN equations based on the current food web and parameters
