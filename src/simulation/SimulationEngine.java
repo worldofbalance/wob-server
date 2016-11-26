@@ -60,6 +60,9 @@ import model.ZoneNodes;
 
 public class SimulationEngine{
 
+    // Where to put simulation output files
+    private String csvSavePath = Constants.CSV_SAVE_PATH;
+
     private IN3DService svc;
     private User user;
     private Properties propertiesConfig;
@@ -1525,7 +1528,7 @@ public class SimulationEngine{
         final String name = filename, extension = ".csv";
 
         // Determine filename
-        String[] files = new File(Constants.CSV_SAVE_PATH).list(new FilenameFilter() {
+        String[] files = new File(csvSavePath).list(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return name.startsWith(name) && name.endsWith(extension);
@@ -1560,16 +1563,16 @@ public class SimulationEngine{
             if (!biomassCSV.isEmpty()) {
                 biomassCSV = "Manipulation ID: " + manipulation_id + "\n\n" + biomassCSV;
 
-                PrintStream p = new PrintStream(new FileOutputStream(Constants.CSV_SAVE_PATH + csvFilename));
+                PrintStream p = new PrintStream(new FileOutputStream(csvSavePath + csvFilename));
                 p.println(biomassCSV);
                 p.close();
 
-                Log.println("Saved CSV to: " + Constants.CSV_SAVE_PATH + csvFilename);
+                Log.println("Saved CSV to: " + csvSavePath + csvFilename);
             } else {
                 Log.println_e("CSV Not Found!");
             }
         } catch (FileNotFoundException ex) {
-            Log.println_e("Failed to save CSV to: " + Constants.CSV_SAVE_PATH + csvFilename);
+            Log.println_e("Failed to save CSV to: " + csvSavePath + csvFilename);
         }
     }
 
@@ -1722,7 +1725,7 @@ public class SimulationEngine{
         final String name = "WoB_Data", extension = ".csv";
 
         // Determine filename
-        String[] files = new File(Constants.CSV_SAVE_PATH).list(new FilenameFilter() {
+        String[] files = new File(csvSavePath).list(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return name.startsWith(name) && name.endsWith(extension);
@@ -1763,17 +1766,17 @@ public class SimulationEngine{
 
                 PrintStream p = new PrintStream(
                         
-                        new FileOutputStream(Constants.CSV_SAVE_PATH + csvFilename));
+                        new FileOutputStream(csvSavePath + csvFilename));
                 p.println(biomassCSV);
                 p.close();
 
-                Log.println("Saved CSV to: " + Constants.CSV_SAVE_PATH + csvFilename);
+                Log.println("Saved CSV to: " + csvSavePath + csvFilename);
             } else {
                 Log.println_e("CSV Not Found!");
             }
         } catch (FileNotFoundException e) {
-            Log.println_e("Failed to save CSV to: " + 
-                    Constants.CSV_SAVE_PATH + csvFilename);
+            Log.println_e("Failed to save CSV to: " +
+                    csvSavePath + csvFilename);
         }
     }
 
@@ -1902,4 +1905,13 @@ public class SimulationEngine{
         SimulationIds simIds = new SimulationIds(mr.getManipulationId(), mr.getNetworksId());
         return simIds;
     }
+
+    public String getCsvSavePath() {
+        return csvSavePath;
+    }
+
+    public void setCsvSavePath(String csvSavePath) {
+        this.csvSavePath = csvSavePath;
+    }
+
 }

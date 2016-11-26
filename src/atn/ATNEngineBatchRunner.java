@@ -26,7 +26,7 @@ import simulation.simjob.SimJobManager;
 public class ATNEngineBatchRunner {
 
     public static void printUsage() {
-        System.out.println("Args: <timesteps> <node config input file> [--use-webservices] [--use-hdf5]");
+        System.out.println("Args: <timesteps> <node config input file> [--use-webservices] [--use-hdf5] [--output-dir <dir>]");
     }
 
     public static void main(String[] args) {
@@ -38,6 +38,8 @@ public class ATNEngineBatchRunner {
         }
         int timesteps = Integer.parseInt(args[0]);
         File inputFile = new File(args[1]);
+        String outputDir = null;
+
         for (int i = 2; i < args.length; i++) {
             switch (args[i]) {
                 case "--use-webservices":
@@ -48,6 +50,15 @@ public class ATNEngineBatchRunner {
                 case "--use-hdf5":
                     System.out.println("Disabling CSV output and outputting HDF5 files");
                     ATNEngine.useHDF5 = true;
+                    break;
+                case "--output-dir":
+                    i++;
+                    if (i >= args.length) {
+                        System.err.println("Error: no output directory specified");
+                        return;
+                    }
+                    outputDir = args[i];
+                    System.out.println("Saving output to " + outputDir);
                     break;
                 default:
                     System.err.println("Error: unrecognized argument " + args[i]);
@@ -74,8 +85,14 @@ public class ATNEngineBatchRunner {
         SimJobManager jobMgr = null;
         if (Constants.useSimEngine) {
             jobMgr = new SimJobManager();
+            if (outputDir != null) {
+                jobMgr.getSimEngine().setCsvSavePath(outputDir);
+            }
         }
         ATNEngine atn = new ATNEngine();
+        if (outputDir != null) {
+            atn.setOutputDir(outputDir);
+        }
 
         String nodeConfig;
         SimJob job;

@@ -71,6 +71,9 @@ public class ATNEngine {
     // If true, disable CSV output and produce HDF5 files instead
     public static boolean useHDF5 = false;
 
+    // Output directory for simulation data files
+    private String outputDir = Constants.ATN_CSV_SAVE_PATH;
+
    private PrintStream psATN = null;
    /*
     The first two timesteps values produced by WebServices do not
@@ -355,7 +358,7 @@ public class ATNEngine {
 
     /**
      * Save a generated biomass dataset to an HDF5 file in the output directory
-     * given by Constants.ATN_CSV_SAVE_PATH.
+     * given by the outputDir attribute.
      *
      * @param biomass The generated biomass as a (num_timesteps) x (num_nodes) array
      * @param nodeIDs The node IDs. The order must correspond to the columns of the biomass array
@@ -364,7 +367,7 @@ public class ATNEngine {
    private void saveHDF5OutputFile(double[][] biomass, int[] nodeIDs, String nodeConfig) {
 
        // Determine the filename
-       File file = Functions.getNewOutputFile(new File(Constants.ATN_CSV_SAVE_PATH), "ATN", ".h5");
+       File file = Functions.getNewOutputFile(new File(outputDir), "ATN", ".h5");
        System.out.println("Writing output to " + file.toString());
 
        // Write the data to the output file
@@ -499,7 +502,7 @@ public class ATNEngine {
        System.out.println("Ecosystem output will be written to:");
        System.out.println("Network output will be written to:");
        //psATN = Functions.getPrintStream("ATN", userInput.destDir);
-       psATN = Functions.getPrintStream("ATN", Constants.ATN_CSV_SAVE_PATH);
+       psATN = Functions.getPrintStream("ATN", outputDir);
    }
  	
 	public HashMap<Integer, SpeciesZoneType> processSimJob(SimJob job) throws SQLException, SimulationException {
@@ -1080,4 +1083,13 @@ public class ATNEngine {
 		          }
 				}
 		}
+
+    public String getOutputDir() {
+        return outputDir;
+    }
+
+    public void setOutputDir(String outputDir) {
+        this.outputDir = outputDir;
+    }
+
 }
