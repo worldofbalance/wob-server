@@ -1089,7 +1089,11 @@ public class ATNEngine {
     }
 
     public void setOutputDir(String outputDir) {
-        this.outputDir = outputDir;
+        if (outputDir.endsWith("/")) {
+            this.outputDir = outputDir;
+        } else {
+            this.outputDir = outputDir + "/";
+        }
     }
 
 }

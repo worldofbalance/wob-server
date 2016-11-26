@@ -1911,7 +1911,11 @@ public class SimulationEngine{
     }
 
     public void setCsvSavePath(String csvSavePath) {
-        this.csvSavePath = csvSavePath;
+        if (csvSavePath.endsWith("/")) {
+            this.csvSavePath = csvSavePath;
+        } else {
+            this.csvSavePath = csvSavePath + "/";
+        }
     }
 
 }
