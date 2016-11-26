@@ -26,7 +26,7 @@ import simulation.simjob.SimJobManager;
 public class ATNEngineBatchRunner {
 
     public static void printUsage() {
-        System.out.println("Args: <timesteps> <node config input file> [--use-webservices] [--use-hdf5] [--output-dir <dir>]");
+        System.out.println("Args: <timesteps> <node config input file> [--use-webservices] [--use-csv] [--output-dir <dir>]");
     }
 
     public static void main(String[] args) {
@@ -39,6 +39,7 @@ public class ATNEngineBatchRunner {
         int timesteps = Integer.parseInt(args[0]);
         File inputFile = new File(args[1]);
         String outputDir = null;
+        ATNEngine.useHDF5 = true;
 
         for (int i = 2; i < args.length; i++) {
             switch (args[i]) {
@@ -47,9 +48,9 @@ public class ATNEngineBatchRunner {
                     Constants.useAtnEngine = false;
                     Constants.useSimEngine = true;
                     break;
-                case "--use-hdf5":
-                    System.out.println("Disabling CSV output and outputting HDF5 files");
-                    ATNEngine.useHDF5 = true;
+                case "--use-csv":
+                    System.out.println("Disabling HDF5 output and saving CSV files");
+                    ATNEngine.useHDF5 = false;
                     break;
                 case "--output-dir":
                     i++;
@@ -64,11 +65,6 @@ public class ATNEngineBatchRunner {
                     System.err.println("Error: unrecognized argument " + args[i]);
                     return;
             }
-        }
-
-        if (Constants.useSimEngine && ATNEngine.useHDF5) {
-            System.err.println("Sorry, Web Services output can't be saved in HDF5 format.");
-            return;
         }
 
         Scanner input;
