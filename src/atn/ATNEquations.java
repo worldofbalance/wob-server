@@ -9,7 +9,10 @@ import java.util.Map;
 
 /**
  * Implements the ATN model differential equations in a form usable by the Apache Commons Math integrators.
- * The equations come from the Dynamics.bioenergetic.ModelDerivative class in the Network3D web services codebase.
+ * The equations come from the Dynamics.bioenergetic.ModelDerivative class in the Network3D web services codebase, with
+ * two differences:
+ * 1. e[j][i] is used in place of e[i][j] for consistency with the literature
+ * 2. the - x[i] * B[i] is excluded from the producer equation (Network3D automatically sets x[i] for producers to 0)
  *
  * @author Ben Saylor
  * @see <a href="https://commons.apache.org/proper/commons-math/userguide/ode.html">The Apache Commons Math ode package documentation</a>
@@ -179,7 +182,7 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
         // Compute derivatives for producers
         for (int i : producers) {
             double G = 1 - B[i] / k[i];
-            BDot[i] = r[i] * B[i] * G - x[i] * B[i];
+            BDot[i] = r[i] * B[i] * G;
             for (int j : predatorsOf.get(i)) {
                 BDot[i] -= x[j] * y[j][i] * a[j][i] * F[j][i] * B[j] / e[j][i];
             }
