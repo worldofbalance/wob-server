@@ -199,4 +199,12 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
             }
         }
     }
+
+    public ArrayList<Integer> getProducers() {
+        return producers;
+    }
+
+    public ArrayList<Integer> getConsumers() {
+        return consumers;
+    }
 }

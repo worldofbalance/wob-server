@@ -30,7 +30,10 @@ import ch.systemsx.cisd.hdf5.HDF5Factory;
 import ch.systemsx.cisd.hdf5.HDF5IntStorageFeatures;
 import ch.systemsx.cisd.hdf5.IHDF5Writer;
 
+import org.apache.commons.math3.analysis.solvers.BisectionSolver;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
+import org.apache.commons.math3.ode.events.EventFilter;
+import org.apache.commons.math3.ode.events.FilterType;
 import org.apache.commons.math3.ode.nonstiff.GraggBulirschStoerIntegrator;
 import org.apache.commons.math3.ode.sampling.StepHandler;
 import org.apache.commons.math3.ode.sampling.StepNormalizer;
@@ -128,6 +131,7 @@ public class ATNEngine {
        //calc information relevant to entire ecosystem
        int speciesCnt = ecosysTimesteps.getNodeList().size();
        int timesteps = ecosysTimesteps.getTimesteps();
+       int timestepsCompleted = 0;
 
        //read in link parameters; this was explicitly configured to allow
        //manipulation of link parameter values, but no manipulation is 
@@ -178,10 +182,19 @@ public class ATNEngine {
            // Set up the ATN equations based on the current food web and parameters
            ATNEquations ode = new ATNEquations(sztArray, ecosysRelationships, lPs);
 
+           ATNEventHandler eventHandler = new ATNEventHandler(ode);
+           // FIXME: Choose best parameter values
+           integrator.addEventHandler(new EventFilter(eventHandler, FilterType.TRIGGER_ONLY_DECREASING_EVENTS),
+                   1,  // maximal time interval between switching function checks (this interval prevents missing sign changes in case the integration steps becomes very large)
+                   0.0001,  // convergence threshold in the event time search
+                   1000,  // upper limit of the iteration count in the event time search
+                   new BisectionSolver()
+                   );
+
            // Set up the StepHandler, which is triggered at each time step by the integrator,
            // and copies the current biomass of each species into calcBiomass[timestep].
            // See the "Continuous Output" section of https://commons.apache.org/proper/commons-math/userguide/ode.html
-           StepHandler stepHandler = new StepNormalizer(timeIntvl, new FixedStepHandler() {
+           FixedStepHandler fixedStepHandler = new FixedStepHandler() {
                public void init(double t0, double[] y0, double t) {
                }
 
@@ -194,12 +207,13 @@ public class ATNEngine {
                    }
                    timestep++;
                }
-           });
+           };
+           StepHandler stepHandler = new StepNormalizer(timeIntvl, fixedStepHandler);
            integrator.addStepHandler(stepHandler);
 
            // Run the integrator to compute the biomass time series
            integrator.integrate(ode, 0.0, currBiomass, timeIntvl * timesteps, currBiomass);
-
+           timestepsCompleted = (int) (eventHandler.getTimeStopped() / timeIntvl);
        } else {
 
            // Use BulirschStoerIntegration
@@ -238,7 +252,7 @@ public class ATNEngine {
        }
 
        if (useHDF5) {
-           saveHDF5OutputFile(calcBiomass, speciesID, job.getNode_Config());
+           saveHDF5OutputFile(calcBiomass, speciesID, job.getNode_Config(), timestepsCompleted);
            return null;
        }
 
@@ -363,8 +377,9 @@ public class ATNEngine {
      * @param biomass The generated biomass as a (num_timesteps) x (num_nodes) array
      * @param nodeIDs The node IDs. The order must correspond to the columns of the biomass array
      * @param nodeConfig The node configuration string used to generate the data
+     * @param numTimesteps The number of time steps of biomass data to save
      */
-   private void saveHDF5OutputFile(double[][] biomass, int[] nodeIDs, String nodeConfig) {
+   private void saveHDF5OutputFile(double[][] biomass, int[] nodeIDs, String nodeConfig, int numTimesteps) {
 
        // Determine the filename
        File file = Functions.getNewOutputFile(new File(outputDir), "ATN", ".h5");
@@ -378,10 +393,10 @@ public class ATNEngine {
            // Round and cast to 32-bit integers to facilitate deflate compression.
            // Note: there is technically a risk of integer overflow,
            // but it won't happen unless scaled biomass exceeds 2 billion.
-           int[][] scaledBiomass = new int[biomass.length][nodeIDs.length];
-           for (int i = 0; i < biomass.length; i++) {
-               for (int j = 0; j < nodeIDs.length; j++) {
-                   scaledBiomass[i][j] = (int) Math.round((biomass[i][j] * Constants.BIOMASS_SCALE));
+           int[][] scaledBiomass = new int[numTimesteps][nodeIDs.length];
+           for (int t = 0; t < numTimesteps; t++) {
+               for (int i = 0; i < nodeIDs.length; i++) {
+                   scaledBiomass[t][i] = (int) Math.round((biomass[t][i] * Constants.BIOMASS_SCALE));
                }
            }
 
@@ -389,10 +404,10 @@ public class ATNEngine {
 
        } else {
            // Scale biomass for consistency with CSV output, but do not round.
-           double[][] scaledBiomass = new double[biomass.length][nodeIDs.length];
-           for (int i = 0; i < biomass.length; i++) {
-               for (int j = 0; j < nodeIDs.length; j++) {
-                   scaledBiomass[i][j] = (biomass[i][j] * Constants.BIOMASS_SCALE);
+           double[][] scaledBiomass = new double[numTimesteps][nodeIDs.length];
+           for (int t = 0; t < numTimesteps; t++) {
+               for (int i = 0; i < nodeIDs.length; i++) {
+                   scaledBiomass[t][i] = (biomass[t][i] * Constants.BIOMASS_SCALE);
                }
            }
            writer.float64().writeMatrix("biomass", scaledBiomass);
