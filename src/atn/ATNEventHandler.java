@@ -85,4 +85,12 @@ public class ATNEventHandler implements EventHandler {
     public double getTimeStopped() {
         return timeStopped;
     }
+
+    /**
+     * Check whether the integration was stopped due to an event.
+     * @return true if the integration was stopped
+     */
+    public boolean integrationWasStopped() {
+        return timeStopped != -1;
+    }
 }

@@ -213,7 +213,11 @@ public class ATNEngine {
 
            // Run the integrator to compute the biomass time series
            integrator.integrate(ode, 0.0, currBiomass, timeIntvl * timesteps, currBiomass);
-           timestepsCompleted = (int) (eventHandler.getTimeStopped() / timeIntvl);
+           if (eventHandler.integrationWasStopped()) {
+               timestepsCompleted = (int) (eventHandler.getTimeStopped() / timeIntvl);
+           } else {
+               timestepsCompleted = timesteps;
+           }
        } else {
 
            // Use BulirschStoerIntegration
