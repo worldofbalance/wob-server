@@ -13,13 +13,7 @@ species information.
 import java.io.*;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -129,9 +123,10 @@ public class ATNEngine {
            Map<Integer, NodeRelationships> ecosysRelationships
    ) {
        //calc information relevant to entire ecosystem
-       int speciesCnt = ecosysTimesteps.getNodeList().size();
-       int timesteps = ecosysTimesteps.getTimesteps();
-       int timestepsCompleted = 0;
+       int speciesCnt = ecosysTimesteps.getNodeList().size();  // Number of species
+       int timesteps = ecosysTimesteps.getTimesteps();         // Maximum number of timesteps to run simulation
+       int timestepsToSave = 0;         // Number of timesteps of data to save to output file
+       int[] matchingTimesteps = null;  // Array of matching timesteps returned by findMatchingTimesteps()
 
        //read in link parameters; this was explicitly configured to allow
        //manipulation of link parameter values, but no manipulation is 
@@ -214,10 +209,22 @@ public class ATNEngine {
            // Run the integrator to compute the biomass time series
            integrator.integrate(ode, 0.0, currBiomass, timeIntvl * timesteps, currBiomass);
            if (eventHandler.integrationWasStopped()) {
-               timestepsCompleted = (int) (eventHandler.getTimeStopped() / timeIntvl);
+               timestepsToSave = (int) (eventHandler.getTimeStopped() / timeIntvl);
            } else {
-               timestepsCompleted = timesteps;
+               // Check for an oscillating steady state,
+               // and only save the data through the first period of the oscillation
+               matchingTimesteps = findMatchingTimesteps(calcBiomass, timesteps - 1);
+               System.err.println("\nmatchingTimesteps =  " + Arrays.toString(matchingTimesteps));
+
+               // Save timesteps up through the second matching timestep,
+               // or all timesteps if there was no second matching timestep.
+               if (matchingTimesteps[1] != -1) {
+                   timestepsToSave = matchingTimesteps[1] + 1;
+               } else {
+                   timestepsToSave = timesteps;
+               }
            }
+
        } else {
 
            // Use BulirschStoerIntegration
@@ -256,7 +263,7 @@ public class ATNEngine {
        }
 
        if (useHDF5) {
-           saveHDF5OutputFile(calcBiomass, speciesID, job.getNode_Config(), timestepsCompleted);
+           saveHDF5OutputFile(calcBiomass, speciesID, matchingTimesteps, job.getNode_Config(), timestepsToSave);
            return null;
        }
 
@@ -375,15 +382,100 @@ public class ATNEngine {
    }
 
     /**
+     * Search for a timestep at which the values in the biomass matrix
+     * lie between the values in the two biomass vectors b1 and b2, inclusive.
+     * The range of timesteps to search is given by the start and stop arguments.
+     * Precondition: b1[i] <= b2[i] for all i.
+     *
+     * @param biomass Biomass data array (row = timestep, column = node)
+     * @param b1 Lower bound biomass vector
+     * @param b2 Upper bound biomass vector
+     * @param start Timestep to start searching (inclusive)
+     * @param stop Timestep to stop searching (exclusive)
+     *
+     * @return the matching timestep, or -1 if no match was found
+     */
+   private int findMatchingTimestep(double[][] biomass, double[] b1, double[] b2, int start, int stop) {
+       int increment = start < stop ? 1 : -1;
+       for (int t0 = start; t0 != stop; t0 += increment) {
+           double[] b0 = biomass[t0];
+           boolean matchFound = true;
+
+           // For each node i, check for a match
+           for (int i = 0; i < b0.length; i++) {
+               // If the biomass for this timestep and node is not between b1 and b2,
+               // there is no match at this timestep (t0).
+               if (b0[i] < b1[i] || b0[i] > b2[i]) {
+                   matchFound = false;
+                   break;
+               }
+           }
+
+           if (matchFound) {
+               return t0;
+           }
+       }
+       return -1;
+   }
+
+    /**
+     * Search for a set of timesteps at which the values in the biomass matrix
+     * match the values at the given timestep, within a tolerance dictated by the time interval
+     * and the rate of change of biomass.
+     * Return the first match (starting from timestep 0), second match,
+     * and last match (going backward from the given timestep).
+     *
+     * This is used for locating a periodic oscillating state in the data.
+     *
+     * @param biomass Biomass data array (row = timestep, column = node)
+     * @param timestep The timestep to match
+     * @return a 3-element ordered array of timesteps: {first-match, second-match, last-match}.
+     *         Each element may be -1 if there was no such match.
+     */
+   private int[] findMatchingTimesteps(double[][] biomass, int timestep) {
+       int t1 = timestep - 1;
+       int t2 = timestep;
+       double[] b1 = new double[biomass[0].length];  // The biomass data at timestep-1
+       double[] b2 = new double[biomass[0].length];  // The biomass data at timestep
+       System.arraycopy(biomass[t1], 0, b1, 0, biomass[0].length);
+       System.arraycopy(biomass[t2], 0, b2, 0, biomass[0].length);
+
+       // Swap elements of b1 and b2 to ensure b1[i] <= b2[i]
+       double tmp;
+       for (int i = 0; i < b1.length; i++) {
+           if (b1[i] > b2[i]) {
+               tmp = b1[i];
+               b1[i] = b2[i];
+               b2[i] = tmp;
+           }
+       }
+
+       int[] matchingTimesteps = {-1, -1, -1};
+
+       // Find first matching timestep
+       matchingTimesteps[0] = findMatchingTimestep(biomass, b1, b2, 0, t1);
+
+       // Find second and last matching timesteps
+       if (matchingTimesteps[0] != -1) {
+           matchingTimesteps[1] = findMatchingTimestep(biomass, b1, b2, matchingTimesteps[0] + 1, t1);
+           matchingTimesteps[2] = findMatchingTimestep(biomass, b1, b2, t1 - 1, -1);
+       }
+
+       return matchingTimesteps;
+   }
+
+    /**
      * Save a generated biomass dataset to an HDF5 file in the output directory
      * given by the outputDir attribute.
      *
      * @param biomass The generated biomass as a (num_timesteps) x (num_nodes) array
      * @param nodeIDs The node IDs. The order must correspond to the columns of the biomass array
+     * @param matchingTimesteps The matching timesteps returned by getMatchingTimesteps()
      * @param nodeConfig The node configuration string used to generate the data
      * @param numTimesteps The number of time steps of biomass data to save
      */
-   private void saveHDF5OutputFile(double[][] biomass, int[] nodeIDs, String nodeConfig, int numTimesteps) {
+   private void saveHDF5OutputFile(double[][] biomass, int[] nodeIDs, int[] matchingTimesteps,
+                                   String nodeConfig, int numTimesteps) {
 
        // Determine the filename
        File file = Functions.getNewOutputFile(new File(outputDir), "ATN", ".h5");
@@ -418,6 +510,10 @@ public class ATNEngine {
        }
 
        writer.writeIntArray("node_ids", nodeIDs);
+
+       if (matchingTimesteps != null)
+           writer.writeIntArray("matching_timesteps", matchingTimesteps);
+
        writer.string().setAttr("/", "node_config", nodeConfig);
        writer.close();
    }
