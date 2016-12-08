@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-echo "deploying to thecity.sfsu.edu"
+echo "deploying to smurf.sfsu.edu"
 
-# log into thecity everything under this is executed under the WOB_WOB user
-ssh wob_wob@thecity.sfsu.edu <<WOB_WOB
+# log into smurf everything under this is executed under the wob_server user
+ssh wob_server@smurf.sfsu.edu <<WOB_SERVER
     # kill the already running servers
     # Lobby
     fuser -k 9255/tcp
@@ -14,17 +14,16 @@ ssh wob_wob@thecity.sfsu.edu <<WOB_WOB
     fuser -k 9253/tcp
     # A Sea Divided
     fuser -k 9258/tcp
-WOB_WOB
+WOB_SERVER
 
 # now we are back in Travis.
 
-# Deploy lobby server
-rsync -avr --delete ./dist/ wob_wob@thecity.sfsu.edu:~/wob-server-binaries
-rsync -avr --delete ./scripts/ wob_wob@thecity.sfsu.edu:~/scripts
-# Deploy other servers
+# Copy the JAR files and the scripts to SMURF.
+rsync -avr --delete ./dist/ wob_server@smurf.sfsu.edu:~/wob-server-binaries
+rsync -avr --delete ./scripts/ wob_server@smurf.sfsu.edu:~/scripts
 
 ## log into thecity again, this time to start the JAR Files, everything under this is executed under the WOB_WOB user
-ssh wob_wob@thecity.sfsu.edu <<WOB_WOB
+ssh wob_server@smurf.sfsu.edu <<WOB_SERVER
     # Restart all the JAR servers
 
     # Lobby
@@ -51,7 +50,7 @@ ssh wob_wob@thecity.sfsu.edu <<WOB_WOB
     chmod u+x ~/scripts/start_sdv.sh
     nohup ~/scripts/start_sdv.sh > ~/logs/sdv.log
     echo "A sea divided started"
-WOB_WOB
+WOB_SERVER
 
 
 
