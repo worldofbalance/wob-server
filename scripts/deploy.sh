@@ -24,6 +24,8 @@ rsync -avr --delete ./scripts/ wob_server@smurf.sfsu.edu:~/scripts
 
 ## log into thecity again, this time to start the JAR Files, everything under this is executed under the WOB_WOB user
 ssh wob_server@smurf.sfsu.edu <<WOB_SERVER
+    # make sure a logs directory exists
+    mkdir logs
     # Restart all the JAR servers
 
     # Lobby
