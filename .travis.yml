@@ -4,8 +4,12 @@ jdk:
 - oraclejdk8
 notifications:
   email:
-    - jvanderh@mail.sfsu.edu
-    - dhoff@mail.sfsu.edu
+    recipients:
+      - jvanderh@mail.sfsu.edu
+      - dhoff@mail.sfsu.edu
+    on_success: always # default: change
+    on_failure: always # default: always
+ 
 addons:
   ssh_known_hosts:
   - 130.212.3.10
