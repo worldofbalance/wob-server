@@ -228,6 +228,37 @@ public final class EcoSpeciesDAO {
         return status;
     }
 
+        public static boolean updateBiomass(int ecosystem_id, int group_id, int species_id, int biomass) {
+        boolean status = false;
+
+        String query = "UPDATE `eco_species` SET `biomass` = ? WHERE `eco_id` = ? AND `group_id` = ? AND `species_id` = ?";
+        
+        Log.println("World.updateBiomass: g/s/b = " + group_id + " " + species_id + " " + biomass);
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = GameDB.getConnection();
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, biomass);
+            pstmt.setInt(2, ecosystem_id);
+            pstmt.setInt(3, group_id);
+            pstmt.setInt(4, species_id);
+
+            status = pstmt.executeUpdate() > 0;
+            Log.println("World.updateBiomass: status = " + status);
+        } catch (SQLException ex) {
+            Log.println_e(ex.getMessage());
+        } finally {
+            GameDB.closeConnection(con, pstmt);
+        }
+
+        return status;
+    }
+    
+    
+    
     public static boolean updatePosition(int group_id, Vector3<Float> position) {
         boolean status = false;
 

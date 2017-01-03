@@ -160,10 +160,7 @@ public class World {
         // Determine the total cost of purchase
         for (int item_id : itemList.keySet()) {
             SpeciesType species = ServerResources.getSpeciesTable().getSpecies(item_id);
-
-            List<SpeciesType> speciesArray = ServerResources.getSpeciesTable().getSpecies();
-            
-            
+            // List<SpeciesType> speciesArray = ServerResources.getSpeciesTable().getSpecies();  // DH commented out. Why here?                      
             Log.println("item_id = " + item_id);
             if (species != null) {
                 int biomass = itemList.get(item_id);
@@ -172,8 +169,7 @@ public class World {
             } else {
                 return -1;
             }
-        }
-       
+        }       
   
         Log.println("total cost before: " + totalCost);
         Log.println("player credits: " + player.getCredits());
@@ -200,14 +196,12 @@ public class World {
                 shopList.put(item_id, amount);
             }
             
-           
-                
             // Create a new timer, if none exist.
             if (shopTimer.getTask() == null || shopTimer.getTimeRemaining() <= 0) {
                 // Timer Declaration Start
                 final World world_f = this;
-                Log.consoleln("world " +world_f);
-                Log.consoleln("timer " +shopTimer.getTimeElapsed());
+                Log.consoleln("world " + world_f);
+                Log.consoleln("timer " + shopTimer.getTimeElapsed());
                 final Player player_f = player;
                 world_f.processShopOrder(player_f);
 //                shopTimer.schedule(new TimerTask() {
@@ -236,7 +230,7 @@ public class World {
         // Retrieve starting Zone
         Log.println("player:\t" + player);
         Ecosystem ecosystem = player.getEcosystem();
-         Log.println("eco: " +ecosystem);
+         Log.println("eco: " + ecosystem);
         if(ecosystem == null)
         {
             short type = 1;
@@ -245,7 +239,7 @@ public class World {
      
         }
         Log.println("eco after: " +ecosystem);
-        Log.println("shoplist: " +shopList);
+        Log.println("shoplist: " + shopList);
         
         World world = this;
         //Lobby lobby = ;
@@ -289,32 +283,28 @@ public class World {
 
             if (ecosystem.containsSpecies(species_id)) {
                 species = ecosystem.getSpecies(species_id);
-
+                // DH - biomass was not being updated, so divided by number of groups & added
+                int size = species.getGroups().size();
                 for (SpeciesGroup group : species.getGroups().values()) {
-
-                    EcoSpeciesDAO.updateBiomass(group.getID(), group.getBiomass());
-//                    group.setBiomass(group.getBiomass() + biomass / species.getGroups().size());
+                    EcoSpeciesDAO.updateBiomass(ecosystem.getID(), group.getID(), species_id, group.getBiomass() + biomass/size);
+                    group.setBiomass(group.getBiomass() + biomass/size);
 //                    if(!Constants.DEBUG_MODE){
 //	                    ResponseSpeciesCreate response = new ResponseSpeciesCreate(Constants.CREATE_STATUS_DEFAULT, ecosystem.getID(), group);
 //	                    NetworkFunctions.sendToLobby(response, lobby.getID());
 //                    }
-                }
-                
+                }                
             } else {
                     int group_id = EcoSpeciesDAO.createSpecies(ecosystem.getID(), species_id, biomass);
 
                     species = new Species(species_id, speciesType);
-//                    SpeciesGroup group = new SpeciesGroup(species, group_id, biomass, Vector3.zero);
-//                    species.add(group);
+                    SpeciesGroup group = new SpeciesGroup(species, group_id, biomass, Vector3.zero);
+                    species.add(group);
 //                    if(!Constants.DEBUG_MODE){
 //	                    ResponseSpeciesCreate response = new ResponseSpeciesCreate(Constants.CREATE_STATUS_DEFAULT, ecosystem.getID(), group);
 //	                    NetworkFunctions.sendToLobby(response, lobby.getID());
 //                    }
             }
-
             ecosystem.addSpecies(species);
-
-
         }
     }
      /**
