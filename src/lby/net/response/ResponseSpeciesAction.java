@@ -3,14 +3,19 @@ package lby.net.response;
 // Other Imports
 import shared.metadata.NetworkCode;
 import shared.util.GamePacket;
+import java.util.Map;
+import java.util.HashMap;
+import shared.util.Log;
 
 public class ResponseSpeciesAction extends GameResponse {
 
     private short action;
     private short status;
     private short type;
+    private short count;
     private String[] settings;
     private String selectionList;
+    private Map<Integer, Integer> speciesList = new HashMap<Integer, Integer>();
 
     public ResponseSpeciesAction() {
         response_id = NetworkCode.SPECIES_ACTION;
@@ -38,8 +43,14 @@ public class ResponseSpeciesAction extends GameResponse {
             }
         } else if (action == 1) {
             packet.addString(selectionList);
+        } else if (action == 2) {
+            packet.addShort16(count);
+            for (Integer key : speciesList.keySet()) {
+                packet.addInt32(key);
+                packet.addInt32(speciesList.get(key));    
+            }
         }
-
+        
         return packet.getBytes();
     }
 
@@ -61,5 +72,13 @@ public class ResponseSpeciesAction extends GameResponse {
 
     public void setSelectionList(String selectionList) {
         this.selectionList = selectionList;
+    }
+    
+    public void setCount(int count) {
+        this.count = (short) count;
+    }
+    
+    public void addSpeciesList(int species_id, int biomass) {
+        speciesList.put(species_id, biomass);
     }
 }

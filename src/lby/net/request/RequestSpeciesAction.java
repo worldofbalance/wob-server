@@ -14,13 +14,16 @@ import shared.db.ShopDAO;
 import shared.model.Ecosystem;
 import shared.model.ShopItem;
 import lby.net.response.ResponseSpeciesAction;
+import shared.model.Species;
 import shared.util.DataReader;
+import shared.util.Log;
 
 public class RequestSpeciesAction extends GameRequest {
 
     private short action;
     private short type;
     private Map<Integer, Integer> speciesList;
+    private Map<Integer, Species> speciesListFull;
 
     @Override
     public void parse(DataInputStream dataInput) throws IOException {
@@ -112,6 +115,18 @@ public class RequestSpeciesAction extends GameRequest {
                 response.setSelectionList(selectionList);
                 client.add(response);
             }
+        } else if (action == 2) { // Return species_id, biomass pairs for Ecosystem
+            speciesListFull = EcosystemController.getInstance().getEcosystem().getSpeciesList();
+            int count = speciesListFull.size();
+            response.setCount(count);
+            // for (String key : selects.keySet())
+            for (Integer key : speciesListFull.keySet()) {
+                Species species = speciesListFull.get(key);
+                int species_id = species.getID();
+                int biomass = species.getTotalBiomass();
+                response.addSpeciesList(species_id, biomass);
+            }
+            client.add(response);
         }
     }
 }
