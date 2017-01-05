@@ -25,6 +25,7 @@ import lby.net.response.shop.ResponseShopAction;
 import shared.core.GameEngine;
 import shared.db.EcoSpeciesDAO;
 import shared.db.StatsDAO;
+import shared.db.EcosystemDAO;
 import shared.model.Ecosystem;
 import shared.model.Species;
 import shared.model.SpeciesGroup;
@@ -153,9 +154,10 @@ public class World {
      * @param player
      * @return
      */
-    public int createShopOrder(Map<Integer, Integer> itemList, Player player) {
+    public int createShopOrder(Map<Integer, Integer> itemList, Player player, int totalCost) {
         Log.println("Player [" + player.getName() + "] is requesting for a shop order.");
-        int totalCost = 0;
+        // int totalCost = 0;
+        int newCredits;
 
         // Determine the total cost of purchase
         for (int item_id : itemList.keySet()) {
@@ -164,15 +166,19 @@ public class World {
             Log.println("item_id = " + item_id);
             if (species != null) {
                 int biomass = itemList.get(item_id);
-                totalCost += species.getCost() * Math.ceil(biomass / species.getBiomass()); //if species has a low biomass per unit, the price will be very high
-                  Log.println("biomass: " + biomass);
+                // totalCost += species.getCost() * Math.ceil(biomass / species.getBiomass()); //if species has a low biomass per unit, the price will be very high
+                Log.println("biomass: " + biomass);
             } else {
+                Log.println("Error: Could not find item_id");
                 return -1;
             }
         }       
   
         Log.println("total cost before: " + totalCost);
         Log.println("player credits: " + player.getCredits());
+        if (totalCost > player.getCredits()) {
+            totalCost = player.getCredits();
+        }
         if (GameResources.useCredits(player, totalCost)) {
              //LobbyController.getInstance().getLobby(this).getEventHandler().execute(EventTypes.SPECIES_BOUGHT, itemList.size());
 
@@ -202,6 +208,7 @@ public class World {
                 final World world_f = this;
                 Log.consoleln("world " + world_f);
                 Log.consoleln("timer " + shopTimer.getTimeElapsed());
+                Log.println("player_id: " + player.getID());
                 final Player player_f = player;
                 world_f.processShopOrder(player_f);
 //                shopTimer.schedule(new TimerTask() {
@@ -212,14 +219,13 @@ public class World {
 //                }, Date.from(Instant.now()));
                 // End
             }
-            
-
+            newCredits = player.getCredits();
         } else {
-            totalCost = -1;
+            newCredits = -1;
         }
         
-        Log.println("Order has been placed! Total cost = " + totalCost);
-        return totalCost;
+        Log.println("Order has been placed! new credits balance = " + newCredits);
+        return newCredits;
     }
 
     /**
@@ -230,15 +236,22 @@ public class World {
         // Retrieve starting Zone
         Log.println("player:\t" + player);
         Ecosystem ecosystem = player.getEcosystem();
-         Log.println("eco: " + ecosystem);
+        Log.println("eco: " + ecosystem);
+        if (ecosystem == null) {
+            ecosystem = EcosystemDAO.getEcosystem(getID(), player.getID());
+            player.setEcosystem(ecosystem);
+            Log.println("eco from EcosystemDAO: " + ecosystem);            
+        }        
+        
         if(ecosystem == null)
         {
             short type = 1;
-            ecosystem = new Ecosystem(player.getAccountID(),player.getAccountID(),player.getID(),player.getName(),type);
+            ecosystem = new Ecosystem(player.getAccountID(),getID(),player.getID(),player.getName(),type);
             player.setEcosystem(ecosystem);
      
         }
-        Log.println("eco after: " +ecosystem);
+        Log.println("eco after: " + ecosystem);
+        Log.println("eco id: " + ecosystem.getID());
         Log.println("shoplist: " + shopList);
         
         World world = this;
@@ -262,10 +275,10 @@ public class World {
         }
         
 
-        ResponseShopAction response = new ResponseShopAction();
-        response.setStatus(2);
-        response.setItems(tempList);
-        NetworkFunctions.sendToPlayer(response, player.getID());
+//        ResponseShopAction response = new ResponseShopAction();
+//        response.setStatus(2);
+//        response.setItems(tempList);
+//        NetworkFunctions.sendToPlayer(response, player.getID());
 
         shopList.clear();
     }
@@ -304,6 +317,8 @@ public class World {
 //	                    NetworkFunctions.sendToLobby(response, lobby.getID());
 //                    }
             }
+            Log.println("Added to ecosystem, id: " + species.getID());
+            Log.println("biomass: " + species.getTotalBiomass());
             ecosystem.addSpecies(species);
         }
     }

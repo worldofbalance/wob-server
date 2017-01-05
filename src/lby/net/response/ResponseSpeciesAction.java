@@ -13,6 +13,10 @@ public class ResponseSpeciesAction extends GameResponse {
     private short status;
     private short type;
     private short count;
+    private int species_id;
+    private short index;
+    private float biomass;
+    private int cost;
     private String[] settings;
     private String selectionList;
     private Map<Integer, Integer> speciesList = new HashMap<Integer, Integer>();
@@ -49,6 +53,11 @@ public class ResponseSpeciesAction extends GameResponse {
                 packet.addInt32(key);
                 packet.addInt32(speciesList.get(key));    
             }
+        } else if (action == 3) {
+            packet.addInt32(species_id);
+            packet.addInt32(cost);
+            packet.addFloat(biomass);
+            packet.addShort16(index);
         }
         
         return packet.getBytes();
@@ -81,4 +90,20 @@ public class ResponseSpeciesAction extends GameResponse {
     public void addSpeciesList(int species_id, int biomass) {
         speciesList.put(species_id, biomass);
     }
+    
+    public void setSpeciesId(int species_id) {
+        this.species_id = species_id;
+    }
+    
+    public void setIndex(short index) {
+        this.index = index;
+    }
+    
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
+    
+    public void setBiomass(float biomass) {
+        this.biomass = biomass;
+    }    
 }

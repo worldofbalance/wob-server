@@ -16,12 +16,14 @@ import shared.util.Log;
 public class RequestShopAction extends GameRequest {
 
     private short action;
+    private int totalCost;
     private Map<Integer, Integer> itemList = new HashMap<Integer, Integer>();
 
     @Override
     public void parse(DataInputStream dataInput) throws IOException {
         action = DataReader.readShort(dataInput);
         int size = DataReader.readShort(dataInput);
+        totalCost = DataReader.readInt(dataInput);
         Log.println("RequestShopAction: action/size = " + action + " " + size);
 
         for (int i = 0; i < size; i++) {
@@ -39,12 +41,13 @@ public class RequestShopAction extends GameRequest {
 
         if (world != null) {
             ResponseShopAction response = new ResponseShopAction();
-            int totalSpent = world.createShopOrder(itemList, client.getPlayer());
-            Log.println("RequestShopAction: totalSpent = " + totalSpent);
+            response.setAction((short) 0);
+            int newCredits = world.createShopOrder(itemList, client.getPlayer(), totalCost);
+            Log.println("RequestShopAction: newCredits = " + newCredits);
 
-            if (totalSpent > -1) {
+            if (newCredits > -1) {
                 response.setStatus(0);
-                response.setTotalSpent(totalSpent);
+                response.setNewCredits(newCredits);
             } else {
                 response.setStatus(1);
             }

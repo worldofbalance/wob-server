@@ -233,7 +233,7 @@ public final class EcoSpeciesDAO {
 
         String query = "UPDATE `eco_species` SET `biomass` = ? WHERE `eco_id` = ? AND `group_id` = ? AND `species_id` = ?";
         
-        Log.println("World.updateBiomass: g/s/b = " + group_id + " " + species_id + " " + biomass);
+        Log.println("World.updateBiomass: e/g/s/b = " + ecosystem_id + " " + group_id + " " + species_id + " " + biomass);
 
         Connection con = null;
         PreparedStatement pstmt = null;

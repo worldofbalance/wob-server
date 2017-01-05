@@ -230,6 +230,7 @@ public class EcosystemController {
     public static void startEcosystem(Player player) {
         // Get Player Ecosystem
         Ecosystem ecosystem = EcosystemDAO.getEcosystem(player.getWorld().getID(), player.getID());
+        Log.println("EcosystemController:startEcosystem, ecosystem = " + ecosystem);
         if (ecosystem == null) {
             return;
         }else{
@@ -237,8 +238,10 @@ public class EcosystemController {
         }
         // Get Ecosystem Zones
         List<Zone> zones = WorldZoneDAO.getZoneList(player.getWorld().getID(), player.getID());
+        Log.println("EcosystemController:startEcosystem, zones.isEmpty() = " + zones.isEmpty());
+        Log.println("EcosystemController:startEcosystem, zones.size() = " + zones.size());
         if (zones.isEmpty()) {
-            return;
+            // return;   // For now we are letting you have an ecosystem & species with zones
         }else{
         	setZones(zones);
         }
@@ -248,6 +251,7 @@ public class EcosystemController {
         player.setEcosystem(ecosystem);
         // Create Lobby to Contain Ecosystem
         EcosystemLobby lobby = LobbyController.getInstance().createEcosystemLobby(player, ecosystem);
+        Log.println("EcosystemController:startEcosystem, lobby = " + lobby);
         if (lobby == null) {
             return;
         }else{
@@ -262,6 +266,7 @@ public class EcosystemController {
 	        NetworkFunctions.sendToPlayer(response, player.getID());
         }
         // Load Existing Species
+        Log.println("EcosystemController:startEcosystem");
         for (Species species : EcoSpeciesDAO.getSpecies(ecosystem.getID())) {
             lobby.getGameEngine().initializeSpecies(species, ecosystem);
         }
