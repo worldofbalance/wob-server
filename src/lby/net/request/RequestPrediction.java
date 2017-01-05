@@ -6,6 +6,7 @@ import java.io.IOException;
 
 // Other Imports
 import shared.model.Ecosystem;
+import shared.util.Log;
 
 public class RequestPrediction extends GameRequest {
 

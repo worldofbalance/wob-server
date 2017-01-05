@@ -293,6 +293,7 @@ public class GameEngine {
             
             if(!Constants.DEBUG_MODE){
 	            ResponsePrediction response = new ResponsePrediction();
+                    response.setStatus((short) 0);
 	            response.setResults(speciesChangeList);
 	            NetworkFunctions.sendToLobby(response, lobby.getID());
             }
@@ -552,6 +553,7 @@ public class GameEngine {
             
             if(!Constants.DEBUG_MODE){
 	            ResponsePrediction response = new ResponsePrediction();
+                    response.setStatus((short) 0);
 	            response.setResults(speciesChangeList);
 	            NetworkFunctions.sendToLobby(response, lobby.getID());
             }

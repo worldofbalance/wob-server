@@ -14,7 +14,10 @@ import shared.db.ShopDAO;
 import shared.model.Ecosystem;
 import shared.model.ShopItem;
 import lby.net.response.ResponseSpeciesAction;
+import shared.core.ServerResources;
+import shared.db.EcoSpeciesDAO;
 import shared.model.Species;
+import shared.model.SpeciesType;
 import shared.util.DataReader;
 import shared.util.Log;
 
@@ -22,6 +25,8 @@ public class RequestSpeciesAction extends GameRequest {
 
     private short action;
     private short type;
+    private int species_id;
+    private short index;
     private Map<Integer, Integer> speciesList;
     private Map<Integer, Species> speciesListFull;
 
@@ -43,6 +48,9 @@ public class RequestSpeciesAction extends GameRequest {
 
                 speciesList.put(species_id, biomass);
             }
+        } else if (action == 3) {
+            species_id = DataReader.readInt(dataInput);
+            index = DataReader.readShort(dataInput);
         }
     }
 
@@ -111,13 +119,13 @@ public class RequestSpeciesAction extends GameRequest {
                         selectionList += ",";
                     }
                 }
-
                 response.setSelectionList(selectionList);
                 client.add(response);
             }
         } else if (action == 2) { // Return species_id, biomass pairs for Ecosystem
             speciesListFull = EcosystemController.getInstance().getEcosystem().getSpeciesList();
             int count = speciesListFull.size();
+            int count1 = EcoSpeciesDAO.getSpecies(EcosystemController.getInstance().getEcosystem().getID()).size();
             response.setCount(count);
             // for (String key : selects.keySet())
             for (Integer key : speciesListFull.keySet()) {
@@ -127,6 +135,13 @@ public class RequestSpeciesAction extends GameRequest {
                 response.addSpeciesList(species_id, biomass);
             }
             client.add(response);
-        }
+        } else if (action == 3) { // Return biomass & cost from species DB for given species_id
+            SpeciesType species = ServerResources.getSpeciesTable().getSpecies(species_id);
+            response.setSpeciesId(species_id);
+            response.setCost(species.getCost());
+            response.setBiomass(species.getBiomass());   
+            response.setIndex(index);
+            client.add(response);
+        } 
     }
 }

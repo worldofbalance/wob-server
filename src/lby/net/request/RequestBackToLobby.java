@@ -22,7 +22,7 @@ public class RequestBackToLobby extends GameRequest {
 
     @Override
     public void process() throws Exception {
-        Log.println("The client is requesting for quiting...");
+        Log.println("The client is going to the World scene. First login or exiting games...");
         GameRoomManager.getInstance().onClientQuit(client);
     }   
 }
