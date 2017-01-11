@@ -27,6 +27,7 @@ public class UserLogDAO {
      * @return 
      */
     public static boolean updateTimeLog(int player_id, int delta_time) {
+        Log.println("UserLogDAO, updateTimeLog: p/t = " + player_id + " " + delta_time);
         boolean status = false;
 
         Connection con = null;

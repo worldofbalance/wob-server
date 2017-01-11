@@ -1,6 +1,7 @@
 package shared.util;
 
 // Java Imports
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,10 +39,10 @@ public class NetworkFunctions {
     public static void sendToPlayer(GameResponse response, int player_id) {
         Player player = GameServer.getInstance().getActivePlayer(player_id);
 
-        if (player != null) {
+        if ((player != null) && (player.getClient() != null)) {
             player.getClient().add(response);
         } else {
-            Log.printf_e("Failed to create response for player, %d.", player_id);
+            // Log.printf_e("Failed to create response for player, %d.", player_id);
         }
     }
 
@@ -54,8 +55,8 @@ public class NetworkFunctions {
     public static void sendToGlobal(GameResponse response, Integer... exclude_id) {
         List<Integer> exclude = Arrays.asList(exclude_id);
 
-        for (Player player : GameServer.getInstance().getActivePlayers()) {
-            if (player != null && !exclude.contains(player.getID())) {
+        for (Player player : new ArrayList<Player>(GameServer.getInstance().getActivePlayers())) {
+            if ((player != null) && (player.getClient() != null) && !exclude.contains(player.getID())) {
                 player.getClient().add(response);
             }
         }
@@ -74,8 +75,8 @@ public class NetworkFunctions {
         if (world != null) {
             List<Integer> exclude = Arrays.asList(exclude_id);
 
-            for (Player player : world.getPlayers().values()) {
-                if (!exclude.contains(player.getID())) {
+            for (Player player : new ArrayList<Player>(world.getPlayers().values())) {
+                if ((player != null) && (player.getClient() != null) && !exclude.contains(player.getID())) {
                     player.getClient().add(response);
                 }
             }
@@ -95,8 +96,8 @@ public class NetworkFunctions {
         if (lobby != null) {
             List<Integer> exclude = Arrays.asList(exclude_id);
 
-            for (Player player : lobby.getPlayers()) {
-                if (!exclude.contains(player.getID())) {
+            for (Player player : new ArrayList<Player>(lobby.getPlayers())) {
+                if ((player.getClient() != null) && !exclude.contains(player.getID())) {
                     player.getClient().add(response);
                 }
             }

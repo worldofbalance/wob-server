@@ -37,6 +37,7 @@ import shared.db.EcosystemDAO;
 import shared.db.LogDAO;
 import shared.db.ScoreDAO;
 import lby.db.world.WorldZoneDAO;
+import shared.db.SpeciesChangeListDAO;
 
 public class EcosystemController {
 
@@ -153,6 +154,7 @@ public class EcosystemController {
             int species_id = ServerResources.getSpeciesTable().getSpeciesTypeByNodeID(szt.getNodeIndex()).getID();
             //Will write the values into 'eco_species' table
             EcoSpeciesDAO.createSpecies(ecosystem.getID(), species_id, (int) szt.getCurrentBiomass());
+            SpeciesChangeListDAO.createEntry(ecosystem.getID(), species_id, (int) szt.getCurrentBiomass()); 
         }
     }
     /**
@@ -197,6 +199,7 @@ public class EcosystemController {
         for (SpeciesZoneType szt : mSpecies) {
             int species_id = ServerResources.getSpeciesTable().getSpeciesTypeByNodeID(szt.getNodeIndex()).getID();
             EcoSpeciesDAO.createSpecies(ecosystem.getID(), species_id, (int) szt.getCurrentBiomass());
+            SpeciesChangeListDAO.createEntry(ecosystem.getID(), species_id, (int) szt.getCurrentBiomass()); 
         }
     }
 
@@ -205,7 +208,7 @@ public class EcosystemController {
      *
      * @param zone
      */
-    private static void createCSVs(final Ecosystem ecosystem) {
+    public static void createCSVs(final Ecosystem ecosystem) {
         new GameTimer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -230,7 +233,7 @@ public class EcosystemController {
     public static void startEcosystem(Player player) {
         // Get Player Ecosystem
         Ecosystem ecosystem = EcosystemDAO.getEcosystem(player.getWorld().getID(), player.getID());
-        Log.println("EcosystemController:startEcosystem, ecosystem = " + ecosystem);
+
         if (ecosystem == null) {
             return;
         }else{
@@ -238,27 +241,27 @@ public class EcosystemController {
         }
         // Get Ecosystem Zones
         List<Zone> zones = WorldZoneDAO.getZoneList(player.getWorld().getID(), player.getID());
-        Log.println("EcosystemController:startEcosystem, zones.isEmpty() = " + zones.isEmpty());
-        Log.println("EcosystemController:startEcosystem, zones.size() = " + zones.size());
         if (zones.isEmpty()) {
-            // return;   // For now we are letting you have an ecosystem & species with zones
+            // return;   // DH 1-5-2017 For now we are letting you have an ecosystem & species without zones
         }else{
         	setZones(zones);
         }
-        // Load Ecosystem Score History
-        ecosystem.setScoreCSV(CSVParser.convertCSVtoArrayList(CSVDAO.getScoreCSV(ecosystem.getID())));
+        // Load Ecosystem Score History - Does not seem to be supported by ATNEngine   DH
+        // ecosystem.setScoreCSV(CSVParser.convertCSVtoArrayList(CSVDAO.getScoreCSV(ecosystem.getID())));
         // Ecosystem Reference
         player.setEcosystem(ecosystem);
         // Create Lobby to Contain Ecosystem
+ 
         EcosystemLobby lobby = LobbyController.getInstance().createEcosystemLobby(player, ecosystem);
-        Log.println("EcosystemController:startEcosystem, lobby = " + lobby);
         if (lobby == null) {
             return;
         }else{
         	setLobby(lobby);
         }
-        // Send Ecosystem to Player
-        if(!Constants.DEBUG_MODE){
+
+        // if player.getClient() == null -> player not logged in. This is for periodic ecosystem update
+        if((player.getClient() != null) && !Constants.DEBUG_MODE){
+                // Send Ecosystem to Player
 	        ResponseEcosystem response = new ResponseEcosystem();
 	        response.setEcosystem(ecosystem.getID(), ecosystem.getType(), ecosystem.getScore());
 	        response.setPlayer(player);
@@ -266,11 +269,11 @@ public class EcosystemController {
 	        NetworkFunctions.sendToPlayer(response, player.getID());
         }
         // Load Existing Species
-        Log.println("EcosystemController:startEcosystem");
         for (Species species : EcoSpeciesDAO.getSpecies(ecosystem.getID())) {
             lobby.getGameEngine().initializeSpecies(species, ecosystem);
         }
         // Recalculate Ecosystem Score
+        
         ecosystem.updateEcosystemScore();
 
 //        zone.setSpeciesChangeList(SpeciesChangeListDAO.getList(zone.getID()));
@@ -279,28 +282,27 @@ public class EcosystemController {
         EcosystemDAO.updateTime(ecosystem.getID());
     }
 
-	private static void setLobby(EcosystemLobby l) {
-		lobby = l;
-	}
-
-	private static void setZones(List<Zone> z) {
-		zones = z;
-	}
-	private static void setEcosystem(Ecosystem e) {
-		ecosystem = e;
-	}
+    private static void setLobby(EcosystemLobby l) {
+	lobby = l;
+    }
+    
+    private static void setZones(List<Zone> z) {
+	zones = z;
+    }
+    
+    private static void setEcosystem(Ecosystem e) {
+	ecosystem = e;
+    }
 	
-	public static Ecosystem getEcosystem() {
-		return ecosystem;
-	}
+    public static Ecosystem getEcosystem() {
+	return ecosystem;
+    }
 	
-	public static EcosystemLobby getLobby() {
-		return lobby;
-	}
+    public static EcosystemLobby getLobby() {
+	return lobby;
+    }
 
-	public static List<Zone> getZones() {
-		return zones;
-	}
-
-
+    public static List<Zone> getZones() {
+	return zones;
+    }
 }

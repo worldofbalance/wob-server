@@ -26,6 +26,7 @@ import shared.core.GameEngine;
 import shared.db.EcoSpeciesDAO;
 import shared.db.StatsDAO;
 import shared.db.EcosystemDAO;
+import shared.db.SpeciesChangeListDAO;
 import shared.model.Ecosystem;
 import shared.model.Species;
 import shared.model.SpeciesGroup;
@@ -296,11 +297,12 @@ public class World {
 
             if (ecosystem.containsSpecies(species_id)) {
                 species = ecosystem.getSpecies(species_id);
+                int biomassPrev = EcoSpeciesDAO.getSpeciesBiomass(ecosystem.getID(), species_id);
                 // DH - biomass was not being updated, so divided by number of groups & added
                 int size = species.getGroups().size();
                 for (SpeciesGroup group : species.getGroups().values()) {
-                    EcoSpeciesDAO.updateBiomass(ecosystem.getID(), group.getID(), species_id, group.getBiomass() + biomass/size);
-                    group.setBiomass(group.getBiomass() + biomass/size);
+                    EcoSpeciesDAO.updateBiomass(ecosystem.getID(), group.getID(), species_id, (biomassPrev + biomass)/size);
+                    group.setBiomass((biomassPrev + biomass)/size);
 //                    if(!Constants.DEBUG_MODE){
 //	                    ResponseSpeciesCreate response = new ResponseSpeciesCreate(Constants.CREATE_STATUS_DEFAULT, ecosystem.getID(), group);
 //	                    NetworkFunctions.sendToLobby(response, lobby.getID());
@@ -308,7 +310,6 @@ public class World {
                 }                
             } else {
                     int group_id = EcoSpeciesDAO.createSpecies(ecosystem.getID(), species_id, biomass);
-
                     species = new Species(species_id, speciesType);
                     SpeciesGroup group = new SpeciesGroup(species, group_id, biomass, Vector3.zero);
                     species.add(group);
@@ -317,8 +318,9 @@ public class World {
 //	                    NetworkFunctions.sendToLobby(response, lobby.getID());
 //                    }
             }
-            Log.println("Added to ecosystem, id: " + species.getID());
-            Log.println("biomass: " + species.getTotalBiomass());
+            SpeciesChangeListDAO.createEntry(ecosystem.getID(), species_id, biomass); 
+            // Log.println("Added to ecosystem, id: " + species.getID());
+            // Log.println("biomass: " + species.getTotalBiomass());
             ecosystem.addSpecies(species);
         }
     }

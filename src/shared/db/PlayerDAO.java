@@ -360,6 +360,7 @@ public final class PlayerDAO {
             status = pstmt.executeUpdate() > 0;
         } catch (SQLException ex) {
             Log.println_e(ex.getMessage());
+            Log.println_e("PlayerDAO.updateLastPlayer() exception");
         } finally {
             GameDB.closeConnection(con, pstmt);
         }

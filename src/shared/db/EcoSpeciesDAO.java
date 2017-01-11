@@ -170,7 +170,7 @@ public final class EcoSpeciesDAO {
                 }
 
                 int group_id = rs.getInt("group_id"), biomass = rs.getInt("biomass");
-                species.add(new SpeciesGroup(species, group_id, biomass, new Vector3<Integer>(rs.getInt("pos_x"), rs.getInt("pos_y"), rs.getInt("pos_z"))));
+                species.add(new SpeciesGroup(species, group_id, biomass, new Vector3<Integer>(rs.getInt("pos_x"), rs.getInt("pos_y"), rs.getInt("pos_z"))));           
             }
         } catch (SQLException ex) {
             Log.println_e(ex.getMessage());
@@ -179,6 +179,34 @@ public final class EcoSpeciesDAO {
         }
 
         return speciesList;
+    }
+    
+    public static int getSpeciesBiomass(int eco_id, int species_id) {
+        String query = "SELECT * FROM `eco_species` WHERE `eco_id` = ? AND `species_id` = ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        int biomass = 0;
+        ResultSet rs = null;
+
+        try {
+            con = GameDB.getConnection();
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, eco_id);
+            pstmt.setInt(2, species_id);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                biomass = rs.getInt("biomass");                
+            }
+        } catch (SQLException ex) {
+            Log.println_e(ex.getMessage());
+        } finally {
+            GameDB.closeConnection(con, pstmt, rs);
+        }
+
+        Log.println("EcoSpeciesDAO, getSpeciesBiomas: e/s/b = " + eco_id + " " + species_id + " " + biomass);
+        return biomass;
     }
 
     public static boolean removeSpecies(int group_id) {
@@ -233,7 +261,7 @@ public final class EcoSpeciesDAO {
 
         String query = "UPDATE `eco_species` SET `biomass` = ? WHERE `eco_id` = ? AND `group_id` = ? AND `species_id` = ?";
         
-        Log.println("World.updateBiomass: e/g/s/b = " + ecosystem_id + " " + group_id + " " + species_id + " " + biomass);
+        Log.println("EcoSpeciesDAO, updateBiomass: e/g/s/b = " + ecosystem_id + " " + group_id + " " + species_id + " " + biomass);
 
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -247,7 +275,6 @@ public final class EcoSpeciesDAO {
             pstmt.setInt(4, species_id);
 
             status = pstmt.executeUpdate() > 0;
-            Log.println("World.updateBiomass: status = " + status);
         } catch (SQLException ex) {
             Log.println_e(ex.getMessage());
         } finally {

@@ -128,8 +128,8 @@ public class GameEngine {
      */
     private void runSimulation(Ecosystem ecosystem, int currentTimeStep) {
         ecosystem.updateScore();
-
-        Map<Integer, Species> speciesList = ecosystem.getSpeciesList();
+        
+        Map<Integer, Species> speciesList = ecosystem.getSpeciesList();        
         Map<Integer, Integer> newSpeciesNodeList = ecosystem.getAddSpeciesList();
 
         if(Constants.useSimEngine){
@@ -144,26 +144,28 @@ public class GameEngine {
         }
         
         if(Constants.useAtnEngine){
-	        ATNPredictionRunnable atnRunnable = new ATNPredictionRunnable(this, ecosystem, atnEngine, ecosystem.getManipulationID(), currentTimeStep,
-	                speciesList, newSpeciesNodeList, ecosystem.getZoneNodes()); 
-	        atnWaitList.add(atnRunnable);
+	    ATNPredictionRunnable atnRunnable = new ATNPredictionRunnable(this, ecosystem, atnEngine, ecosystem.getATNManipulationID(), currentTimeStep,
+	            speciesList, newSpeciesNodeList, ecosystem.getZoneNodes()); 
+	    atnWaitList.add(atnRunnable);
 	    	
-	        if (atnWaitList.size() == 1) {
-	            lastSimulationTime = atnRunnable.initialize();
-	            predictionThreadPool.submit(atnRunnable);
-	        }
+	    if (atnWaitList.size() == 1) {
+	        lastSimulationTime = atnRunnable.initialize();
+	        predictionThreadPool.submit(atnRunnable);
+	    }
         }
     }
 
     /**
-     * Run a simulation at the same timestep.
+     * Run a simulation at the same time step.
      */
     public void forceSimulation() {
-        runSimulation(ecosystem, getCurrentMonth());
+        // getCurrentMonth() is designed to do 1 time step
+        int timeStepsDefault = 1;
+        runSimulation(ecosystem, timeStepsDefault);
     }
     
     /**
-     * Run a simulation at the same timestep.
+     * Run a simulation at the same time step.
      */
     public void forceSimulation(int timestep) {
         runSimulation(ecosystem, timestep);
@@ -292,14 +294,14 @@ public class GameEngine {
             zone.setSpeciesChangeList(speciesChangeList);
             
             if(!Constants.DEBUG_MODE){
-	            ResponsePrediction response = new ResponsePrediction();
-                    response.setStatus((short) 0);
-	            response.setResults(speciesChangeList);
-	            NetworkFunctions.sendToLobby(response, lobby.getID());
+	        ResponsePrediction response = new ResponsePrediction();
+                response.setStatus((short) 0);
+	        response.setResults(speciesChangeList);
+	        NetworkFunctions.sendToLobby(response, lobby.getID());
             }
 
             zone.updateEcosystemScore();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             Log.println_e(ex.getMessage());
             ex.printStackTrace();
         }
@@ -361,20 +363,22 @@ public class GameEngine {
 
             if (ecosystem.containsSpecies(species_id)) {
                 species = ecosystem.getSpecies(species_id);
+                int eco_id = ecosystem.getID();
+                int biomassPrev = EcoSpeciesDAO.getSpeciesBiomass(eco_id, species_id);
 
+                // (biomassPrev + biomass)/size
                 for (SpeciesGroup group : species.getGroups().values()) {
-
-                    EcoSpeciesDAO.updateBiomass(group.getID(), group.getBiomass());
-                    group.setBiomass(group.getBiomass() + biomass / species.getGroups().size());
+                    group.setBiomass((biomassPrev + biomass) / species.getGroups().size());
+                    EcoSpeciesDAO.updateBiomass(eco_id, group.getID(), species_id, (biomassPrev + biomass) / species.getGroups().size()); 
                     if(!Constants.DEBUG_MODE){
 	                    ResponseSpeciesCreate response = new ResponseSpeciesCreate(Constants.CREATE_STATUS_DEFAULT, ecosystem.getID(), group);
 	                    NetworkFunctions.sendToLobby(response, lobby.getID());
                     }
                 }
-                
+                SpeciesChangeListDAO.createEntry(eco_id, species_id, biomass);                
             } else {
                     int group_id = EcoSpeciesDAO.createSpecies(ecosystem.getID(), species_id, biomass);
-
+                    SpeciesChangeListDAO.createEntry(ecosystem.getID(), species_id, biomass); 
                     species = new Species(species_id, speciesType);
                     SpeciesGroup group = new SpeciesGroup(species, group_id, biomass, Vector3.zero);
                     species.add(group);
@@ -441,9 +445,12 @@ public class GameEngine {
      * @param runnable 
      */
     public void updateATNPrediction(ATNPredictionRunnable runnable) {
+        int group_id = 0;
         long milliseconds = System.currentTimeMillis();
 
         Ecosystem zone = runnable.getZone();
+        Map<Integer, Species> ecoSpeciesList = zone.getSpeciesList();
+        
         // Remove species nodes that were just used
         for (Entry<Integer, Integer> entry : runnable.getNewSpeciesNodeList().entrySet()) {
             int node_id = entry.getKey(), biomass = entry.getValue();
@@ -480,7 +487,6 @@ public class GameEngine {
 
                 if (currentSpeciesNodeList.containsKey(node_id)) {
                     int currentBiomass = currentSpeciesNodeList.get(node_id);
-                    System.out.println("node_id " + node_id + " currentBiomass " + currentBiomass + " nextBiomass " + nextBiomass);
                     nodeDifference.put(node_id, nextBiomass - currentBiomass);
                 } else {
                     nodeDifference.put(node_id, nextBiomass);
@@ -545,10 +551,19 @@ public class GameEngine {
 
                 if (gDiff + rDiff != 0) {
                     speciesChangeList.put(species_id, gDiff + rDiff);
+                    int biomassOld = zone.getSpeciesList().get(species_id).getTotalBiomass();
+                    if (biomassOld <= 0) {
+                        biomassOld = EcoSpeciesDAO.getSpeciesBiomass(group_id, species_id);
+                        Log.println("GameEngine, updateATNPrediction: biomassOld <= 0, DB has: " + biomassOld);
+                    }
+                    EcoSpeciesDAO.updateBiomass(zone.getID(), group_id, species_id, biomassOld + gDiff + rDiff);
                     SpeciesChangeListDAO.createEntry(zone.getID(), species_id, gDiff + rDiff);
+                    // Update the in memory biomass
+                    SpeciesGroup speciesGroup = ecoSpeciesList.get(species_id).getGroups().get(group_id);
+                    speciesGroup.setBiomass(speciesGroup.getBiomass() + gDiff + rDiff); 
                 }
             }
-
+ 
             zone.setSpeciesChangeList(speciesChangeList);
             
             if(!Constants.DEBUG_MODE){
@@ -562,8 +577,7 @@ public class GameEngine {
             if(updatePredictionListener != null){
             	updatePredictionListener.updatePredictionComplete();
             }
-            System.out.println("updatePredictionComplete true");
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             Log.println_e(ex.getMessage());
             ex.printStackTrace();
         }
@@ -583,7 +597,6 @@ public class GameEngine {
 	}
 	
 	public HashMap<Integer, Integer> getBiomassOfSpeciesInEcosystem(){	
-		System.out.println("Reading biomass from DB");
 		HashMap<Integer, Integer> map = EcoSpeciesDAO.getSpeciesWithNodeIdAndBiomass(ecosystem.getID());	
 		return map;
 	}

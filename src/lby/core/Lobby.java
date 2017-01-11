@@ -14,7 +14,8 @@ public class Lobby {
 
     // Variables
     protected int lobby_id;
-    protected int capacity = 10;
+    // DH 1-9-2017 Changed from 10 because this is necessary ecosystem periodic update
+    protected int capacity = 300;
     // Other
     protected final List<Player> playerList = new ArrayList<Player>();
     protected final Map<Integer, Boolean> readyList = new HashMap<Integer, Boolean>();
