@@ -10,6 +10,7 @@ import java.util.Random;
 import shared.core.GameEngine;
 import shared.model.Ecosystem;
 import shared.model.Player;
+import shared.util.Log;
 
 public class LobbyController {
 
@@ -64,6 +65,9 @@ public class LobbyController {
                 lobby.add(player);
                 player.setLobby(lobby);
             }
+        } else {
+            Log.println("LobbyController: insufficient lobby capacity, id/lobby.getPlayers().size(): " 
+                    + player.getID() + " " + lobby.getPlayers().size());            
         }
     }
 

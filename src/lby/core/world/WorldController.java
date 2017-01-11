@@ -66,26 +66,31 @@ public class WorldController {
         }
         
         // Enter World
-        if (!world.hasPlayer(player.getID())) {
+        // if (!world.hasPlayer(player.getID())) {
+        // DH 1-9-2017 - I think this is always needed since enterWorld() is called by 
+        // periodic ecosystem update and those player objects don't have a client
+        // Then, next time player signs it, it should assign player object that has a client
             world.add(player);
-        }
+        // }
         player.setWorld(world);
         
-        // Send World Information to User
-        ResponseWorld response = new ResponseWorld();
-        response.setStatus(ResponseWorld.SUCCESS);
-        response.setWorld(world.getID(), world.getName(), world.getType(), 
-                world.getTimeRate(), world.getDay());
-        NetworkFunctions.sendToPlayer(response, player.getID());
+        // if player.getClient() == null -> player not logged in. This is periodic ecosystem update
+        if (player.getClient() != null) {
+            // Send World Information to User
+            ResponseWorld response = new ResponseWorld();
+            response.setStatus(ResponseWorld.SUCCESS);
+            response.setWorld(world.getID(), world.getName(), world.getType(), 
+                    world.getTimeRate(), world.getDay());
+            NetworkFunctions.sendToPlayer(response, player.getID());
         
-        // Send Server Announcement, if any
-        getServerAnnouncement(player.getID());
+            // Send Server Announcement, if any
+            getServerAnnouncement(player.getID());
+        }        
 
         // Retrieve Ecosystem, if haven't already
         if (player.getEcosystem() == null) {
             EcosystemController.startEcosystem(player);
         }
-
         return true;
     }
 

@@ -13,18 +13,32 @@ import java.util.UUID;
 
 // Other Imports
 import conf.Configuration;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import jdk.nashorn.internal.runtime.regexp.joni.Config;
 import lby.core.badge.BadgeController;
 import lby.core.world.WorldController;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Properties;
+import java.util.TimerTask;
 import lby.MiniGameServers;
+import shared.db.PlayerDAO;
+import shared.db.EcosystemDAO;
 import shared.metadata.Constants;
 import shared.metadata.GameRequestTable;
 import shared.model.Account;
+import shared.model.Ecosystem;
 import shared.model.Player;
 import shared.util.ConfFileParser;
 import shared.util.ConfigureException;
 import shared.util.ExpTable;
+import shared.util.GameTimer;
 import shared.util.Log;
 
 /**
@@ -48,7 +62,12 @@ public class GameServer {
     private final Map<Integer, Account> activeAccounts = new HashMap<Integer, Account>(); // Account ID -> Account
     private final Map<Integer, Player> activePlayers = new HashMap<Integer, Player>(); // Player ID -> Player
     // Other
-    private boolean isActive = true; // Server Loop Flag
+    private boolean isActive = true; // Server Loop Flag    
+    private int mCount;
+    private final GameTimer ecoUpdateTimer = new GameTimer();
+    private static int world_id;
+    private final static int ECC_UPDATE_CYCLE_DEFAULT = 60 * 24;   // Default update all ecosystems once per day
+    private final static int ECC_UPDATE_STAGGER = 1000 * 10;   // Stagger ecosystem updates by 10 seconds
 
     /**
      * Create the GameServer by setting up the request types and creating a
@@ -200,6 +219,72 @@ public class GameServer {
     public boolean hasPlayer(int player_id) {
         return activePlayers.containsKey(player_id);
     }
+    
+    void startEcosystemUpdate() {     
+        mCount = 1;
+        ecoUpdateTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                mCount--;
+                if ((mCount % 10) == 0) {
+                    System.out.println("GameServer,startEcosystemUpdate: mCount = " + mCount);
+                }                
+                if (mCount < 0) {
+                    mCount = getCycle();
+                    ecosystemUpdate();                  
+                } 
+           }
+        }, 1000, 1000 * 60);
+    }
+   
+    void ecosystemUpdate() {
+        Log.println("GameServer, ecosystemUpdate()");
+        ArrayList<Integer> playerIds = EcosystemDAO.getPlayerIds(world_id);
+        for (int i = 0; i < playerIds.size(); i++) {
+            int player_id = playerIds.get(i);
+            (new GameTimer()).schedule(createEcosystemUpdateTask(player_id), ECC_UPDATE_STAGGER * i);
+        }
+    }
+
+    TimerTask createEcosystemUpdateTask(int player_id) {
+        TimerTask ecosystemUpdateTask = new TimerTask() {
+            @Override
+            public void run() {
+                Log.println("GameServer: calling createEcosystemUpdateTask for player_id = " + player_id);
+                Player player = PlayerDAO.getPlayer(player_id);
+                WorldController.enterWorld(player, world_id);
+                Ecosystem ecosystem = player.getEcosystem();
+                if (ecosystem != null) {                    
+                    ecosystem.getGameEngine().forceSimulation();
+                } else {
+                    Log.println("GameServer, createEcosystemUpdateTask: null ecosystem for player_id = " + player_id);                    
+                }
+           }
+        };
+        return ecosystemUpdateTask;
+    }
+    
+    int getCycle() {        
+        int count = ECC_UPDATE_CYCLE_DEFAULT;
+        Properties prop = new Properties();
+	InputStream input = null;
+        String sep = System.getProperty("file.separator"); 
+        String filePath = "src" + sep + "conf" + sep + "simulation" + sep + "timer.properties";
+        try {            
+            input = new FileInputStream(filePath);
+            // load a properties file
+            prop.load(input);            
+            String cycle = prop.getProperty("cycle"); 
+
+            // Value is in minutes
+            System.out.println("eccUpdateCycle value read from timer.properties = " + cycle);            
+            count = Integer.parseInt(cycle);
+        } catch (Exception e) {
+            Log.println_e("Failed to read eccUpdateCycle from properties: " + e.toString());
+        }
+        return count; 
+    }
+    
 
     /**
      * Initiates the Game Server by configuring and running it. Restarts
@@ -211,10 +296,12 @@ public class GameServer {
         Log.printf("World of Balance Lobby Server is starting on port: %d", Configuration.lobbyPortNumber);
         try {
             server = new GameServer(Configuration.lobbyPortNumber, Constants.MAX_CLIENT_THREADS);
-            server.configure();
-            
+            server.configure();            
             MiniGameServers.getInstance().runServers();
-            
+            world_id = WorldController.getInstance().first().getID();
+            server.startEcosystemUpdate();
+            Log.println("Start Ecosystem periodic update");
+
             server.run();
         } catch (IOException ex) {
             Log.printf_e("Failed to start server. Port %d is already in use", Configuration.lobbyPortNumber);
@@ -226,5 +313,5 @@ public class GameServer {
         }
 
         System.exit(0);
-    }
+    }    
 }

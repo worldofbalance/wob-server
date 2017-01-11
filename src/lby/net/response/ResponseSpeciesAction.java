@@ -20,6 +20,7 @@ public class ResponseSpeciesAction extends GameResponse {
     private String[] settings;
     private String selectionList;
     private Map<Integer, Integer> speciesList = new HashMap<Integer, Integer>();
+    public Map<Integer, Integer> speciesHistoryList = new HashMap<Integer, Integer>();
 
     public ResponseSpeciesAction() {
         response_id = NetworkCode.SPECIES_ACTION;
@@ -58,6 +59,15 @@ public class ResponseSpeciesAction extends GameResponse {
             packet.addInt32(cost);
             packet.addFloat(biomass);
             packet.addShort16(index);
+        } else if (action == 4) {
+            Log.println("ResponseSpeciesAction, action = 4, species, size = " + species_id + " " + speciesHistoryList.size());
+            packet.addInt32(species_id);
+            packet.addShort16((short) speciesHistoryList.size());
+            for (Integer key : speciesHistoryList.keySet()) {
+                packet.addInt32(key);
+                packet.addInt32(speciesHistoryList.get(key));    
+                Log.println("day, biomass change = " + key + " " + speciesHistoryList.get(key));
+            }
         }
         
         return packet.getBytes();
@@ -89,6 +99,10 @@ public class ResponseSpeciesAction extends GameResponse {
     
     public void addSpeciesList(int species_id, int biomass) {
         speciesList.put(species_id, biomass);
+    }
+    
+    public void setSpeciesHistoryList(Map<Integer, Integer> speciesHistoryList) {
+        this.speciesHistoryList = speciesHistoryList;
     }
     
     public void setSpeciesId(int species_id) {

@@ -61,6 +61,7 @@ import shared.util.Log;
 import shared.core.GameServer;
 //WOB_Server imports
 import shared.db.EcoSpeciesDAO;
+import shared.db.SpeciesChangeListDAO;
 
 /**
 *
@@ -80,12 +81,13 @@ public class ATNEngine {
    private double maxBSIErr = 1.0E-3;
    private double timeIntvl = 0.1;
    private static final int biomassScale = 1000;
-   public static boolean LOAD_SIM_TEST_PARAMS = false;
+   // DH 1-6-2017 reqd for periodic ecosystem simulation and update
+   public static boolean LOAD_SIM_TEST_PARAMS = true;   
    private static int equationSet = 0;  //0=ATN; 1=ODE 1; 2=ODE 2
    private double initTime = 0.0;
    private double initVal = 0.0;  //for non-ATN test
-	private SimJob currentSimJob;
-	private int status = Constants.STATUS_FAILURE;
+   private SimJob currentSimJob;
+   private int status = Constants.STATUS_FAILURE;
 
    public ATNEngine() {
        //load properties file containing ATN model parameter values
@@ -105,12 +107,13 @@ public class ATNEngine {
        /* 
         Read in non-std variables used for running sim jobs
         */
+       // DH 1/6/2015 - This is used for ecosystem interpolation
        if(LOAD_SIM_TEST_PARAMS){	//False by default, set to true only in main of this class
 	       GameServer.getInstance();
 	       SpeciesType.loadSimTestNodeParams(Constants.ECOSYSTEM_TYPE);
 	       SpeciesType.loadSimTestLinkParams(Constants.ECOSYSTEM_TYPE);
        }
-       //Above is not needed SimJobManager does this
+       //Above is not needed SimJobManager does this       
    }
    
 	public void setSimJob(SimJob job) {
@@ -401,7 +404,7 @@ public class ATNEngine {
    private void initOutputStreams() {
        System.out.println("Ecosystem output will be written to:");
        System.out.println("Network output will be written to:");
-       //psATN = Functions.getPrintStream("ATN", userInput.destDir);
+       // psATN = Functions.getPrintStream("ATN", userInput.destDir);
        psATN = Functions.getPrintStream("ATN", Constants.ATN_CSV_SAVE_PATH);
    }
  	
@@ -417,6 +420,7 @@ public class ATNEngine {
        List<SpeciesZoneType> speciesZoneList = job.getSpeciesZoneList();
        
        int timesteps = job.getTimesteps();
+       System.out.println("ATNEngine, processSimJob: timesteps = " + timesteps);
        for(int i = 0; i < nodeListArray.length; i++){
 	       	int nodeId = nodeListArray[i];
 	       	nodeTimesteps = new NodeTimesteps(nodeId, timesteps);
@@ -426,13 +430,12 @@ public class ATNEngine {
 	       	}
 	       	ecosysTimesteps.putNodeTimesteps(nodeId, nodeTimesteps);
        }
-       
+              
        ConsumeMap consumeMap = new ConsumeMap(job.getSpeciesNodeList(),
                Constants.ECOSYSTEM_TYPE);
        PathTable pathTable = new PathTable(consumeMap, 
                job.getSpeciesNodeList(), !PathTable.PP_ONLY);
-//       Log.consoleln("consumeMap " + consumeMap.toString());
-//       Log.consoleln("pathTable " + pathTable.toString());
+       // Log.consoleln("consumeMap " + consumeMap.toString());
        status = Constants.STATUS_SUCCESS;
        job.setConsumeMap(consumeMap);
        job.setPathTable(pathTable);
@@ -568,7 +571,7 @@ public class ATNEngine {
       //JTC, use new HashMap containing all current settings from zoneNodes, masterSpeciesList
       //HJR changing to make a deep copy here , I am getting a null while iterating
       HashMap<Integer, SpeciesZoneType> masterSpeciesList = new HashMap<Integer, SpeciesZoneType>(zoneNodes.getNodes());     
-
+      
       HashMap<Integer, SpeciesZoneType> mNewSpecies = new HashMap<Integer, SpeciesZoneType>();
       //JTC, mUpdateBiomass renamed from mUpdateSpecies
       HashMap<Integer, SpeciesZoneType> mUpdateBiomass = new HashMap<Integer, SpeciesZoneType>();
@@ -578,7 +581,7 @@ public class ATNEngine {
       SpeciesZoneType szt;
       String nodeConfig = null;
 
-      for (int node_id : addSpeciesNodeList.keySet()) {
+      for (int node_id : addSpeciesNodeList.keySet()) {          
           int addedBiomass = addSpeciesNodeList.get(node_id);
 
           if (!masterSpeciesList.containsKey(node_id)) {
@@ -616,7 +619,7 @@ public class ATNEngine {
     	  nodeConfig = addMultipleSpeciesType(
                   mNewSpecies,
                   masterSpeciesList,
-                  startTimestep,
+                  runTimestep,  // startTimestep, - 1-10-2017 DH does not seem to be used 
                   false,
                   networkOrManipulationId
           );
@@ -657,10 +660,12 @@ public class ATNEngine {
 
 //      run(startTimestep, runTimestep, networkOrManipulationId);
 
-      // get new predicted biomass
+      // get new predicted biomass      
       try {
     	  if(!masterSpeciesList.isEmpty() || !mNewSpecies.isEmpty()){
-    		  mUpdateBiomass = submitManipRequest("ATN", nodeConfig, startTimestep + runTimestep, false, null);
+    		  mUpdateBiomass = submitManipRequest("ATN", nodeConfig, 
+                          runTimestep + 1,  // startTimestep + runTimestep,  DH 1-10-2017, needs to be +1
+                          false, networkOrManipulationId);
     	  }
       } catch (Exception ex) {
           Log.println_e(ex.getMessage());
@@ -734,17 +739,18 @@ public class ATNEngine {
 //				  In addMultipleSpeciesType: node [14], biomass 1752, K = -1, R = -1.0000, X = 0.0010
 	        StringBuilder builder = new StringBuilder();
 	        builder.append(fullSpeciesMap.size()).append(",");
+                System.out.println("ATNEngine: builder = " + builder);
 	        Object[] keys = fullSpeciesMap.keySet().toArray();
 	        Arrays.sort(keys);
 	        for (Object nodeIndex : keys) {
 	        	SpeciesZoneType species = fullSpeciesMap.get(nodeIndex);
 	        	Map<Integer, SimTestNode> simTestNodeParams = species.getSpeciesType().getSimTestNodeParams();
 	        	SimTestNode nodeParams = simTestNodeParams.get(species.getNodeIndex());
-//	            System.out.printf("In addMultipleSpeciesType: node [%d], "
-//	                    + "biomass %d, perbiomass = %6.4f, K = %d, R = %6.4f, X = %6.4f\n", species.getNodeIndex(),
-//	                    +(int) species.getCurrentBiomass(), roundToThreeDigits(nodeParams.getPerUnitBiomass()), (int) species.getParamK(),
-//	                    species.getParamR(), species.getParamX());
-	            //System.out.printf("K = %6.4f, R = %6.4f, X = %6.4f\n", nodeParams.getParamK(), nodeParams.getParamR(), nodeParams.getParamX());
+	            // System.out.printf("In addMultipleSpeciesType: node [%d], "
+	            //         + "biomass %d, perbiomass = %6.4f, K = %d, R = %6.4f, X = %6.4f\n", species.getNodeIndex(),
+	            //         +(int) species.getCurrentBiomass(), roundToThreeDigits(nodeParams.getPerUnitBiomass()), (int) species.getParamK(),
+	            //         species.getParamR(), species.getParamX());
+	            // System.out.printf("K = %6.4f, R = %6.4f, X = %6.4f\n", nodeParams.getParamK(), nodeParams.getParamR(), nodeParams.getParamX());
 	            
 	        	builder.append("[").append(species.getNodeIndex()).append("]").append(",");
 	        	builder.append((int) species.getCurrentBiomass()).append(",");
@@ -758,7 +764,6 @@ public class ATNEngine {
 	        	//System.out.println(builder);
 	        }
 	        String node_config = builder.substring(0, builder.length()-1);
-	        System.out.println("NodeConfig : "+ node_config);
 	        //call processsim job here
 	        return node_config;
 	  }
@@ -778,7 +783,7 @@ public class ATNEngine {
 	     * @throws SimulationException
 	     */
 	    public HashMap<Integer, SpeciesZoneType> submitManipRequest(
-	    		String job_descript,
+	    	    String job_descript,
 	            String node_config,
 	            int timestep, 
 	            boolean isFirstManipulation,
@@ -966,17 +971,18 @@ public class ATNEngine {
 	        return val;
 	    }
 
-		public void updateBiomass(Ecosystem ecosystem, Map<Integer, SpeciesZoneType> nextSpeciesNodeList) {
+            public void updateBiomass(Ecosystem ecosystem, Map<Integer, SpeciesZoneType> nextSpeciesNodeList) {
+                int eco_id = ecosystem.getID();
 	        for (Entry<Integer, SpeciesZoneType> entry : nextSpeciesNodeList.entrySet()) {
 	            int species_id = entry.getKey();
 	            SpeciesZoneType szt = entry.getValue();
-				int biomassValue = (int) entry.getValue().getCurrentBiomass();
-				Species species = ecosystem.getSpecies(szt.getSpeciesType().getID());
-		          for (SpeciesGroup group : species.getGroups().values()) {
-		              group.setBiomass(biomassValue);
-	
-		              EcoSpeciesDAO.updateBiomass(group.getID(), group.getBiomass());
-		          }
-				}
-		}
+                    int biomassValue = (int) entry.getValue().getCurrentBiomass();
+                    Species species = ecosystem.getSpecies(szt.getSpeciesType().getID());
+		    for (SpeciesGroup group : species.getGroups().values()) {
+                                group.setBiomass(biomassValue);	
+		        EcoSpeciesDAO.updateBiomass(eco_id, group.getID(), species_id, group.getBiomass());
+		    }
+                    SpeciesChangeListDAO.createEntry(eco_id, species_id, biomassValue); 
+                }
+            }
 }

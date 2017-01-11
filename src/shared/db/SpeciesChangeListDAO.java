@@ -5,16 +5,24 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import shared.util.Log;
 
 public final class SpeciesChangeListDAO {
+    public final static long scale = 1000 * 60 * 60 * 24;
+    public final static SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+    
 
     private SpeciesChangeListDAO() {
     }
 
-    public static void createEntry(int eco_id, int species_id, int biomass) throws SQLException {
-        String query_1 = "SELECT * FROM `eco_species_change` WHERE `eco_id` = ? AND `species_id` = ?";
+    public static void createEntry(int eco_id, int species_id, int biomass) {
+        int day = getCurrentDay();
+        
+        String query_1 = "SELECT * FROM `eco_species_change` WHERE `eco_id` = ? AND `species_id` = ? AND `day` = ?";
 
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -24,32 +32,42 @@ public final class SpeciesChangeListDAO {
             pstmt = con.prepareStatement(query_1);
             pstmt.setInt(1, eco_id);
             pstmt.setInt(2, species_id);
+            pstmt.setInt(3, day);
 
             ResultSet rs = pstmt.executeQuery();
 
             if (!rs.next()) {
                 pstmt.close();
 
-                String query_2 = "INSERT INTO `eco_species_change` (`eco_id`, `species_id`, `biomass`) VALUES (?, ?, ?)";
+                String query_2 = 
+                        "INSERT INTO `eco_species_change` (`eco_id`, `species_id`, `biomass`, `day`) VALUES (?, ?, ?, ?)";
                 pstmt = con.prepareStatement(query_2);
                 pstmt.setInt(1, eco_id);
                 pstmt.setInt(2, species_id);
                 pstmt.setInt(3, biomass);
+                pstmt.setInt(4, day);
+                Log.println("SpeciesChangeListDAO, createEntry (insert): e/s/b = " + eco_id + " " + species_id + " " + biomass);
             } else {
+                int biomassPresent = rs.getInt("biomass");
                 pstmt.close();
 
-                String query_3 = "UPDATE `eco_species_change` SET `biomass` = ? WHERE `eco_id` = ? AND `species_id` = ?";
+                String query_3 = "UPDATE `eco_species_change` SET `biomass` = ? "
+                        + "WHERE `eco_id` = ? AND `species_id` = ? AND `day` = ?";
                 pstmt = con.prepareStatement(query_3);
-                pstmt.setInt(1, biomass);
+                pstmt.setInt(1, biomass + biomassPresent);
                 pstmt.setInt(2, eco_id);
                 pstmt.setInt(3, species_id);
+                pstmt.setInt(4, day);
+                Log.println("SpeciesChangeListDAO, createEntry (update): e/s/nb/ob = " + eco_id + " " + species_id + " " + biomass + " " + biomassPresent);
             }
 
             pstmt.execute();
             pstmt.close();
+        } catch (SQLException ex) {
+            Log.println_e("SpeciesChangeListDAO, createEntry: " + ex.getMessage());
         } finally {
             if (con != null) {
-                con.close();
+                GameDB.closeConnection(con, pstmt);
             }
         }
     }
@@ -88,6 +106,45 @@ public final class SpeciesChangeListDAO {
         }
     }
 
+    public static Map<Integer, Integer> getSpeciesHistory(int eco_id, int species_id) {
+        Map<Integer, Integer> speciesHistoryList = new HashMap<Integer, Integer>();
+        Log.println("SpeciesChangeListDAO, getSpeciesHistory: e/s = " + eco_id + " " + species_id);
+
+        String query = "SELECT * FROM `eco_species_change` WHERE `eco_id` = ? AND `species_id` = ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = GameDB.getConnection();
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, eco_id);
+            pstmt.setInt(2, species_id);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                speciesHistoryList.put(rs.getInt("day"), rs.getInt("biomass"));
+                Log.println("SpeciesChangeListDAO, getSpeciesHistory: d/b = " + rs.getInt("day") + " " + rs.getInt("biomass"));
+            }
+
+            rs.close();
+            pstmt.close();
+        } catch (SQLException ex) {
+            Log.println_e("SpeciesChangeListDAO, createEntry: " + ex.getMessage());
+        } finally {
+            if (con != null) {
+                GameDB.closeConnection(con, pstmt);
+            }
+        }
+
+        return speciesHistoryList;
+    }
+    
+    
+    
+    /* DH 2017-1-11 - This function needs work to be used.
+    // (eco_id, species_id) is no longer a unique key
     public static Map<Integer, Integer> getList(int eco_id) throws SQLException {
         Map<Integer, Integer> speciesChangeList = new HashMap<Integer, Integer>();
 
@@ -117,4 +174,19 @@ public final class SpeciesChangeListDAO {
 
         return speciesChangeList;
     }
+    */
+    
+    public static int getCurrentDay() {
+        int result = 0;
+        try {
+            Date dateRef = sdf.parse("01-01-2015");
+            Date today = new Date();
+            result = (int) ((today.getTime() - dateRef.getTime()) / scale);
+        } catch (Exception e) {
+            Log.println_e("getCurrentDay Exception: " + e.toString());            
+        } 
+        return result;
+    }
+
+    
 }
