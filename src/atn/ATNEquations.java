@@ -24,6 +24,7 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
     private int numSpecies;  // Number of species
     private int[] nodeID;    // Node ID of each species
     private double[] B;      // Current biomass of each species
+    private double[] currentDerivatives;   // Current biomass derivatives
 
     // Organism type of each species (Constants.ORGANISM_TYPE_PLANT or Constants.ORGANISM_TYPE_ANIMAL)
     private int[] organismType;
@@ -198,6 +199,9 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
                 BDot[i] -= x[j] * y[j][i] * a[j][i] * F[j][i] * B[j] / e[j][i];
             }
         }
+
+        // Save derivatives for use by event handlers
+        this.currentDerivatives = BDot;
     }
 
     public ArrayList<Integer> getProducers() {
@@ -206,5 +210,12 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
 
     public ArrayList<Integer> getConsumers() {
         return consumers;
+    }
+
+    /**
+     * @return the most recently computed derivatives
+     */
+    public double[] getCurrentDerivatives() {
+        return currentDerivatives;
     }
 }

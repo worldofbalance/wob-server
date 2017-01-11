@@ -26,6 +26,14 @@ public class ATNEventHandler implements EventHandler {
     private double maxAbsDerivative;       // Maximum absolute value of a derivative at time t
 
     private double timeStopped = -1;       // Time at which the integration was stopped
+    private EventType stopEvent;
+
+    public enum EventType {
+        UNKNOWN_EVENT,
+        TOTAL_EXTINCTION,
+        DERIVATIVES_ZERO,
+        SNAPSHOT_MATCHED
+    }
 
     public ATNEventHandler(ATNEquations ode) {
         this.ode = ode;
@@ -35,7 +43,9 @@ public class ATNEventHandler implements EventHandler {
     }
 
     @Override
-    public void init(double t0, double[] y0, double t) { }
+    public void init(double t0, double[] y0, double t) {
+        timeStopped = -1;
+    }
 
     /**
      * Compute the switching function.
@@ -72,6 +82,13 @@ public class ATNEventHandler implements EventHandler {
     @Override
     public EventHandler.Action eventOccurred(double t, double[] Bt, boolean increasing) {
         timeStopped = t;
+        if (maxBiomass <= ATNEquations.EXTINCT) {
+            stopEvent = EventType.TOTAL_EXTINCTION;
+        } else if (maxAbsDerivative <= MAX_ABS_DERIVATIVE_THRESHOLD) {
+            stopEvent = EventType.DERIVATIVES_ZERO;
+        } else {
+            stopEvent = EventType.UNKNOWN_EVENT;
+        }
         return Action.STOP;
     }
 
@@ -92,5 +109,9 @@ public class ATNEventHandler implements EventHandler {
      */
     public boolean integrationWasStopped() {
         return timeStopped != -1;
+    }
+
+    public EventType getStopEvent() {
+        return stopEvent;
     }
 }
