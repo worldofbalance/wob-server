@@ -29,9 +29,7 @@ import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.events.EventFilter;
 import org.apache.commons.math3.ode.events.FilterType;
 import org.apache.commons.math3.ode.nonstiff.GraggBulirschStoerIntegrator;
-import org.apache.commons.math3.ode.sampling.StepHandler;
-import org.apache.commons.math3.ode.sampling.StepNormalizer;
-import org.apache.commons.math3.ode.sampling.FixedStepHandler;
+import org.apache.commons.math3.ode.sampling.*;
 
 import metadata.Constants;
 import model.Ecosystem;
@@ -191,32 +189,28 @@ public class ATNEngine {
            // Set up the StepHandler, which is triggered at each time step by the integrator,
            // and copies the current biomass of each species into calcBiomass[timestep].
            // See the "Continuous Output" section of https://commons.apache.org/proper/commons-math/userguide/ode.html
-           FixedStepHandler fixedStepHandler = new FixedStepHandler() {
-               public void init(double t0, double[] y0, double t) {
-               }
-
-               public void handleStep (double t, double[] y, double[] yDot, boolean isLast) {
-                   int timestep = (int) Math.round(t / timeIntvl);
-                   // Ensure we don't go past the last time step due to rounding error
-                   if (timestep < calcBiomass.length) {
-                       System.arraycopy(y, 0, calcBiomass[timestep], 0, speciesCnt);
-                   }
-               }
-           };
-           StepHandler stepHandler = new StepNormalizer(timeIntvl, fixedStepHandler);
+           ATNStepHandler fixedStepHandler = new ATNStepHandler(calcBiomass, timeIntvl);
+           StepHandler stepHandler = new StepNormalizer(timeIntvl, fixedStepHandler,
+                   StepNormalizerMode.MULTIPLES,  // step at multiples of timeIntvl
+                   StepNormalizerBounds.FIRST);   // ensure the first time step is handled
            integrator.addStepHandler(stepHandler);
 
            // Run the integrator to compute the biomass time series.
            // The integration is run in chunks to facilitate the use of the oscillation detection event handler.
            // Because the period of an oscillating state could be of any length,
            // we double the chunk length each time.
-           final int firstIntegrationTimesteps = 1000;
-           for (int startTimestep = 0, endTimestep = firstIntegrationTimesteps;
-                startTimestep < timesteps;
-                startTimestep = endTimestep, endTimestep = Math.min(timesteps, endTimestep * 2)) {
+           int prevStartTimestep = -1;
+           for (int i = 0, startTimestep = 0, endTimestep = 1000;
+
+                    startTimestep < timesteps && startTimestep > prevStartTimestep;
+
+                    prevStartTimestep = startTimestep,
+                    startTimestep = fixedStepHandler.getLastHandledTimestep(),
+                    endTimestep = Math.min(timesteps, endTimestep * 2),
+                    i++) {
 
                // Only start checking for oscillations starting with the second integration
-               if (startTimestep == firstIntegrationTimesteps) {
+               if (i == 1) {
                    integrator.addEventHandler(oscEventHandler, timeIntvl, 0.0001, 1000, new BisectionSolver());
                }
 
@@ -225,11 +219,6 @@ public class ATNEngine {
                        calcBiomass[startTimestep],
                        endTimestep * timeIntvl,
                        currBiomass);
-
-               // Copy the final timestep
-               if (endTimestep < calcBiomass.length) {
-                   System.arraycopy(currBiomass, 0, calcBiomass[endTimestep], 0, speciesCnt);
-               }
 
                if (eventHandler.integrationWasStopped() || oscEventHandler.integrationWasStopped()) {
                    break;
