@@ -9,12 +9,13 @@ import java.util.ArrayList;
  * It stops the integration when the system reaches a steady state, such as:
  * - All species are extinct
  * - Consumers are extinct and producers have reached carrying capacity
+ * - All derivatives are effectively 0
  *
  * @author Ben Saylor
  */
 public class ATNEventHandler implements EventHandler {
 
-    public final double MAX_ABS_DERIVATIVE_THRESHOLD = 1e-20;
+    public final double ABS_RELATIVE_DERIVATIVE_THRESHOLD = 1e-10;
 
     private ATNEquations ode;              // The equations being integrated
     private int numSpecies;                // Number of species
@@ -23,7 +24,7 @@ public class ATNEventHandler implements EventHandler {
 
     private double[] BDot;                 // Derivative of biomass of each species at time t
     private double maxBiomass;             // Maximum biomass of a species at time t
-    private double maxAbsDerivative;       // Maximum absolute value of a derivative at time t
+    private double maxAbsRelDerivative;    // Maximum absolute value of a derivative relative to biomass at time t
 
     private double timeStopped = -1;       // Time at which the integration was stopped
     private EventType stopEvent;
@@ -60,16 +61,17 @@ public class ATNEventHandler implements EventHandler {
     public double g(double t, double[] Bt) {
 
         // When maxBiomass goes below extinction threshold, all species are extinct
-        // When the maximum absolute value of the derivative goes below a threshold, the system is in a steady state
+        // When the derivatives are effectively 0, the system is in a steady state
         maxBiomass = 0;
-        maxAbsDerivative = 0;
+        maxAbsRelDerivative = 0;
         ode.computeDerivatives(t, Bt, BDot);  // FIXME: This must be a recomputation - how to avoid?
         for (int i = 0; i < Bt.length; i++) {
             maxBiomass = Math.max(maxBiomass, Bt[i]);
-            maxAbsDerivative = Math.max(maxAbsDerivative, Math.abs(BDot[i]));
+            double absRelDerivative = Bt[i] == 0 ? 0 : Math.abs(BDot[i] / Bt[i]);
+            maxAbsRelDerivative = Math.max(maxAbsRelDerivative, Math.abs(absRelDerivative));
         }
 
-        return Math.min(maxBiomass - ATNEquations.EXTINCT, maxAbsDerivative - MAX_ABS_DERIVATIVE_THRESHOLD);
+        return Math.min(maxBiomass - ATNEquations.EXTINCT, maxAbsRelDerivative - ABS_RELATIVE_DERIVATIVE_THRESHOLD);
     }
 
     /**
@@ -84,7 +86,7 @@ public class ATNEventHandler implements EventHandler {
         timeStopped = t;
         if (maxBiomass <= ATNEquations.EXTINCT) {
             stopEvent = EventType.TOTAL_EXTINCTION;
-        } else if (maxAbsDerivative <= MAX_ABS_DERIVATIVE_THRESHOLD) {
+        } else if (maxAbsRelDerivative <= ABS_RELATIVE_DERIVATIVE_THRESHOLD) {
             stopEvent = EventType.DERIVATIVES_ZERO;
         } else {
             stopEvent = EventType.UNKNOWN_EVENT;
