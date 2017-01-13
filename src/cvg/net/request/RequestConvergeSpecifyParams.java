@@ -46,10 +46,10 @@ public class RequestConvergeSpecifyParams extends GameRequest{
         int matchID = match.getMatchID();
         match.setEcoNumber(ecoNumber);
         match.setSliders(allowSliders);
-        match.setNumRounds(numRounds);
         match.setTimeWindow(timeWindow);
         match.setBetAmount(betAmount);    
         match.setCurRound((short) 1);
+        match.setNumRounds(numRounds);
         System.out.println("2nd: eco#, allowSliders, #Rounds, timeWindow, bet");
         System.out.println("" + ecoNumber + " " + allowSliders + " " + numRounds + " " + timeWindow + " " + betAmount);
         short status = 0;     //0 indicates success
