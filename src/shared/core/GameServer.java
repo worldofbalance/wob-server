@@ -66,7 +66,7 @@ public class GameServer {
     private int mCount;
     private final GameTimer ecoUpdateTimer = new GameTimer();
     private static int world_id;
-    private final static int ECC_UPDATE_CYCLE_DEFAULT = 60 * 24;   // Default update all ecosystems once per day
+    private final static int ECC_UPDATE_CYCLE_DEFAULT = 24;   // Default update all ecosystems once per day, every 24 hours
     private final static int ECC_UPDATE_STAGGER = 1000 * 10;   // Stagger ecosystem updates by 10 seconds
 
     /**
@@ -220,21 +220,20 @@ public class GameServer {
         return activePlayers.containsKey(player_id);
     }
     
-    void startEcosystemUpdate() {     
-        mCount = 1;
+    void startEcosystemUpdate() {    
+        mCount = 0;
         ecoUpdateTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 mCount--;
-                if ((mCount % 10) == 0) {
-                    System.out.println("GameServer,startEcosystemUpdate: mCount = " + mCount);
-                }                
+                System.out.println("GameServer,startEcosystemUpdate: mCount = " + mCount);             
                 if (mCount < 0) {
                     mCount = getCycle();
-                    ecosystemUpdate();                  
+                    ecosystemUpdate();    
+                    System.out.println("GameServer,startEcosystemUpdate: mCount = " + mCount);
                 } 
            }
-        }, 1000, 1000 * 60);
+        }, 1000 * 60, 1000 * 60 * 60);
     }
    
     void ecosystemUpdate() {
