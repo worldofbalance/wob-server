@@ -86,6 +86,7 @@ public class ATNEngineBatchRunner {
             }
         }
         ATNEngine atn = new ATNEngine();
+        atn.setRoundBiomass(false);  // Save full-precision output
         if (outputDir != null) {
             atn.setOutputDir(outputDir);
         }

@@ -79,6 +79,7 @@ public class ATNEngine {
    private double maxBSIErr = 1.0E-3;
    private double timeIntvl = 0.1;
    private static final int biomassScale = 1000;
+   private boolean roundBiomass = Constants.ROUND_BIOMASS;
    public static boolean LOAD_SIM_TEST_PARAMS = false;
    private static int equationSet = 0;  //0=ATN; 1=ODE 1; 2=ODE 2
    private double initTime = 0.0;
@@ -407,7 +408,7 @@ public class ATNEngine {
        // Write the data to the output file
        IHDF5Writer writer = HDF5Factory.configure(file).writer();
 
-       if (Constants.ROUND_BIOMASS) {
+       if (roundBiomass) {
            // Scale biomass for consistency with CSV output.
            // Round and cast to 32-bit integers to facilitate deflate compression.
            // Note: there is technically a risk of integer overflow,
@@ -1129,6 +1130,20 @@ public class ATNEngine {
         } else {
             this.outputDir = outputDir + "/";
         }
+    }
+
+    /**
+     * @return true if biomass will be rounded to integer values; false otherwise
+     */
+    public boolean getRoundBiomass() {
+        return roundBiomass;
+    }
+
+    /**
+     * @param roundBiomass true if biomass should be rounded to integer values
+     */
+    public void setRoundBiomass(boolean roundBiomass) {
+        this.roundBiomass = roundBiomass;
     }
 
 }
