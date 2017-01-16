@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import lby.net.request.GameRequest;
 import cvg.net.response.ResponseConvergeGetTime;
+import shared.util.DataReader;
 import shared.util.Log;
 
 /**
@@ -21,11 +22,13 @@ import shared.util.Log;
 public class RequestConvergeGetTime extends GameRequest {
     
     private short betTime;
+    private int round;
     private HashMap<Integer, Integer> betStatusList = new HashMap<Integer, Integer>();
     
     @Override
     public void parse(DataInputStream dataInput) throws IOException {
     	Log.consoleln("Parsing RequestConvergeGetTime");
+        round = (int) DataReader.readShort(dataInput);
     }
 
     @Override
@@ -51,7 +54,7 @@ public class RequestConvergeGetTime extends GameRequest {
             Integer key = entry.getKey();
             if (key != player_id) {
                 MCMatchPlayer value = getValue(entry);
-                Integer betStatus = value.getBetStatus();
+                Integer betStatus = value.getBetStatus(round);
                 Log.println("Original id/ Bet status: " + key + " " + betStatus);
                 // MCMatchPlayer betStatus is:
                 //      0->no response; 1->no bet; 2->bet

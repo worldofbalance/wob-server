@@ -13,6 +13,9 @@ import shared.util.GamePacket;
  * 
  * @author David Hoff
  */
+
+// 2017-1-16 DH Not used anymore. If used in future, it must be updated
+
 public class ResponseConvergeCheckPlayers extends GameResponse {
 
     // status; 0 => no one removed; 1 => some player(s) removed

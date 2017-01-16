@@ -15,7 +15,9 @@ import shared.util.GamePacket;
  */
 public class ResponseConvergeBetUpdate extends GameResponse {
 
-    private short won = 0;
+    private short roundComplete = 0;     // 1 = all players bet, round complete
+    private short won = 0;               // 1 = player won round
+    private short round;
     private int wonAmount = 0;
     private int bestPlayer_id;
     
@@ -23,8 +25,16 @@ public class ResponseConvergeBetUpdate extends GameResponse {
         response_id = NetworkCode.MC_BET_UPDATE;
     }
 
+    public void setRoundComplete (short roundComplete) {
+        this.roundComplete = roundComplete;
+    }
+    
     public void setWon (short won) {
         this.won = won;
+    }
+    
+    public void setRound (short round) {
+        this.round = round;
     }
     
     public void setWonAmount (int wonAmount) {
@@ -34,13 +44,14 @@ public class ResponseConvergeBetUpdate extends GameResponse {
     public void setWinner(int bestPlayer_id) {
         this.bestPlayer_id = bestPlayer_id;
     }
-            
 
     @Override
     public byte[] getBytes() {
         GamePacket packet = new GamePacket(response_id);
 
+        packet.addShort16(roundComplete);
         packet.addShort16(won);
+        packet.addShort16(round);
         packet.addInt32(wonAmount);
         packet.addInt32(bestPlayer_id);
 

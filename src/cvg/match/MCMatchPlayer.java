@@ -18,7 +18,9 @@ import cvg.net.response.ResponseConvergeBetUpdate;
 
 public class MCMatchPlayer{
 	
+        private final int MAX_NUM_ROUNDS = 100;
 	private Player player;
+        private boolean leftGame = false;
 	// TODO: which status variables are needed?
 	private boolean isActive = false;
 
@@ -42,9 +44,9 @@ public class MCMatchPlayer{
         // 0 = no response 
         // 1 = not betting
         // 2 = betting
-        private int betStatus = 0;
+        private int[] betStatus = new int[MAX_NUM_ROUNDS];
+        private int[] improveAmount = new int [MAX_NUM_ROUNDS];   // amount of improvement	
         private int winnings = 0;
-        private int improveAmount = 0;   // amount of improvement	
         private int[] scores = new int[5];  // stores the 5 most recent score values
         private ResponseConvergeBetUpdate response;
         private GameClient client;
@@ -140,6 +142,10 @@ public class MCMatchPlayer{
 	public void setPlayer(Player player) {
 		this.player = player;
 	}
+        
+        public void setLeftGame(boolean leftGame) {
+            this.leftGame = leftGame;
+        }
 	
 	public static void  main(){
 		MCMatchPlayer player = new MCMatchPlayer(10, 20);
@@ -155,17 +161,17 @@ public class MCMatchPlayer{
 	}
 	
         // DH change
-        public int getBetStatus() {
-            return betStatus;
+        public int getBetStatus(int round) {
+            return betStatus[round];
         }
-        public void setBetStatus(int betStatus) {
-            this.betStatus = betStatus;
+        public void setBetStatus(int round, int status) {
+            betStatus[round] = status;
         }
-        public int getImproveAmount() {
-            return improveAmount;
+        public int getImproveAmount(int round) {
+            return improveAmount[round];
         }
-        public void setImproveAmount(int improveAmount) {
-            this.improveAmount = improveAmount;
+        public void setImproveAmount(int round, int amount) {
+            improveAmount[round] = amount;
         }
         public void setPlayerName(String playerName) {
             this.playerName = playerName;
@@ -199,4 +205,7 @@ public class MCMatchPlayer{
             return scores;
         }
         
+        public boolean getLeftGame() {
+            return leftGame;
+        }        
 }

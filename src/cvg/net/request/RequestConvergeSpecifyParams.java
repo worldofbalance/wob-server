@@ -48,7 +48,7 @@ public class RequestConvergeSpecifyParams extends GameRequest{
         match.setSliders(allowSliders);
         match.setTimeWindow(timeWindow);
         match.setBetAmount(betAmount);    
-        match.setCurRound((short) 1);
+        // match.setCurRound((short) 1);
         match.setNumRounds(numRounds);
         System.out.println("2nd: eco#, allowSliders, #Rounds, timeWindow, bet");
         System.out.println("" + ecoNumber + " " + allowSliders + " " + numRounds + " " + timeWindow + " " + betAmount);

@@ -36,7 +36,7 @@ public class MCMatch {
         private short ecoNumber;
         private short sliders;
         private short curRound;   // The current round in play
-        private boolean checking;    // false: check players not running, ok to run
+        // private boolean checking;    // false: check players not running, ok to run
         
 	
 	public MCMatch (List<Player> players, int matchID){
@@ -88,6 +88,7 @@ public class MCMatch {
 	 * Returns inactive playerID
 	 * @return
 	 */
+        /*
 	public int getInactivePlayerID(){
 		int playerID;
 		if(player1.isActive()){
@@ -97,15 +98,18 @@ public class MCMatch {
 		}
 		return playerID;
 	}
+        */
 	
 	
 	/*
 	 * Set player quit and disable adding Actions
 	 */
+        /*
 	public void setPlayerHasDisconnected(int playerID){
 		MCMatchPlayer player = getPlayer(playerID);
 		player.setHasDisconnected(true);
 	}
+        */
 	
 	
 	
@@ -115,6 +119,7 @@ public class MCMatch {
 	 * @param playerID
 	 * @return
 	 */
+        /*
 	public Boolean isOpponentReady(int playerID){
 		Boolean isReady;
 		if(playerID == player1.getID()){
@@ -124,6 +129,7 @@ public class MCMatch {
 		}
 		return isReady;
 	}
+        */
 	
 	
 	
@@ -134,6 +140,7 @@ public class MCMatch {
 	 * @param playerID
 	 * @return
 	 */
+        /*
 	public Boolean isOpponentActive(int playerID){
 		Boolean isActive;
 		if(playerID == player1.getID()){
@@ -142,17 +149,20 @@ public class MCMatch {
 			isActive = player1.isActive();
 		}
 		return isActive;
-	}	
+	}
+        */
 
 	/**
 	 * Returns MatchPlayer of inactive player
 	 * @return
 	 */
+        /*
 	private MCMatchPlayer getInactiveMatchPlayer(){
 		int playerID = getInactivePlayerID();
 		MCMatchPlayer player = getPlayer(playerID);
 		return player;
 	}
+        */
 	
 	/**
 	 * @return the matchID
@@ -169,7 +179,6 @@ public class MCMatch {
 		return turnCount;
 	}
 
-
 	/**
 	 * @param matchID the matchID to set
 	 */
@@ -177,15 +186,13 @@ public class MCMatch {
 		this.matchID = matchID;
 	}
 
-
 	/**
 	 * @param turnCount the turnCount to set
 	 */
 	public void setTurnCount(int turnCount) {
 		this.turnCount = turnCount;
 	}
-	
-	
+		
 	public MCMatchPlayer getPlayer(int playerID){
 		return playerList.get(playerID);
 	}
@@ -198,8 +205,7 @@ public class MCMatch {
             return playerList.entrySet();
         }
 	*/
-	
-	
+		
 	/**
 	 * @return the sessionId
 	 */
@@ -226,9 +232,7 @@ public class MCMatch {
 				player1.addMatchAction(action);
 			}		
 		}
-	}
-	
-	
+        }		
 	
 	public boolean actionWaiting(int playerID){
 		if(getPlayer(playerID).actionQueue.isEmpty()){
@@ -236,8 +240,6 @@ public class MCMatch {
 		}
 		return true;
 	}
-	
-	
 	
 	public MCMatchAction getMatchAction(int playerID){
 		
@@ -252,6 +254,7 @@ public class MCMatch {
      * added by howard
      * switches active player to inactive, and vice-versa
     */	
+        /*
     public void switchActive() {
         if (player1.isActive()) {
             player1.setActive(false);
@@ -261,6 +264,7 @@ public class MCMatch {
             player2.setActive(false);
         }
     }
+        */
     
     public MCMatchPlayer getOpponent(MCMatchPlayer player) {
         return (player == player1) ? player2 : player1;
@@ -284,13 +288,17 @@ public class MCMatch {
     public void setSliders(short sliders){
         this.sliders = sliders;
     }
+    /*
     public void setCurRound(short curRound) {
         this.curRound = curRound;
     }
+    */
     
+    /*
     public void setChecking(boolean checking) {
         this.checking = checking;
     }
+    */
     
     // DH change
     public long getStartTime() {
@@ -311,11 +319,16 @@ public class MCMatch {
     public short getSliders(){
         return sliders;
     }
+    
+    /*
     public short getCurRound() {
         return curRound;
-    }    
+    } 
+    */
+    /*
     public boolean getChecking() {
         return checking;
-    }    
+    } 
+    */
 }
 
