@@ -47,21 +47,27 @@ public class RequestConvergeBetUpdate extends GameRequest {
         scores[2] = DataReader.readInt(dataInput);
         scores[3] = DataReader.readInt(dataInput);
         scores[4] = DataReader.readInt(dataInput);
-        Log.println("RCBU, parse: bs,r,ia,s0: " + betStatus + " " + round + " " + improveAmount + " " + scores[0]);
+        Log.println("RCBU, parse: bs,r,ia,s0-4: " + betStatus + " " + round + " " + improveAmount + " " + scores[0]);
+        Log.println(scores[1] + " " + scores[2] + " " + scores[3] + " " + scores[4] + " ");
     }
 
     @Override
     public void process() throws Exception {
+        Log.println("Inside RCBU process");
         response = new ResponseConvergeBetUpdate();
         response.setRound((short) round); 
         MCMatchManager manager = MCMatchManager.getInstance();
         player_id = client.getPlayerID();
-        match_id = client.getMatchID();
+        Log.println("RCBU player_id: " + player_id);
+        match_id = client.getMatchID(); 
         
         long startTime = match.getStartTime();
         long presentTime = System.currentTimeMillis();
         betTime = (int) (match.getTimeWindow() - (presentTime - startTime) / 1000);
+        Log.println("RCBU player_id: sT,pT,gTW, bT: " + startTime + " " + presentTime + " " + 
+                match.getTimeWindow() + " " + betTime);
         overTime = (betTime < MAX_OVERTIME);
+        Log.println("RCBU: overTime, gBS: " + overTime + " " + player.getBetStatus(round));
         
         // Put this player's information in playerList
         match = manager.getMatch(match_id);
