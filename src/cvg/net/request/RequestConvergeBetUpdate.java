@@ -152,7 +152,10 @@ public class RequestConvergeBetUpdate extends GameRequest {
                     Log.println("He won");
                     response.setWon(yes);
                     response.setWonAmount(dividedBet);
-                    player.setWinnings(player.getWinnings() + dividedBet);
+                    if (!player.getWinUpdate(round)) {
+                        player.setWinUpdate(round, true);
+                        player.setWinnings(player.getWinnings() + dividedBet);
+                    }                    
                 } else {
                     Log.println("He lost"); 
                     response.setWon(no);
