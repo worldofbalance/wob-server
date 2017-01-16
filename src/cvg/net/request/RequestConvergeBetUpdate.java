@@ -68,18 +68,17 @@ public class RequestConvergeBetUpdate extends GameRequest {
         Log.println("RCBU player_id: sT,pT,gTW, bT: " + startTime + " " + presentTime + " " + 
                 match.getTimeWindow() + " " + betTime);
         overTime = (betTime < MAX_OVERTIME);
+        bet = match.getBetAmount();
+        playerList = match.playerList;
+        player = playerList.get(player_id);
         Log.println("RCBU: overTime, gBS: " + overTime + " " + player.getBetStatus(round));
         
         // Put this player's information in playerList
         
         // match.setChecking(false);
         
-        // if your bet status > 0 then skip loading data and substracting bet
-        // we need array of bet status values. Round is index to array. This array must be initialized        
+        // if your bet status > 0 then skip loading data and substracting bet     
         if (player.getBetStatus(round) == 0) {
-            bet = match.getBetAmount();
-            playerList = match.playerList;
-            player = playerList.get(player_id);
             // I think the next two items have to be indexed by round
             player.setImproveAmount(round, improveAmount);
             player.setScores(scores);
