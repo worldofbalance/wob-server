@@ -44,9 +44,12 @@ public class RequestConvergeGetFinalScores extends GameRequest {
         for (Map.Entry<Integer, MCMatchPlayer> entry : playersList.entrySet()) {
             Integer key = entry.getKey();
             MCPlayer = entry.getValue();
+            if (MCPlayer.getLeftGame()) {
+                continue;
+            }
             playerId[index] = key;
             playerWinnings[index] = MCPlayer.getWinnings();
-            playerLastImprove[index] = MCPlayer.getImproveAmount();
+            playerLastImprove[index] = MCPlayer.getImproveAmount(match.getNumRounds());
             Log.println(key + " " + playerWinnings[index] + " " + playerLastImprove[index]);
             index++;
         }           

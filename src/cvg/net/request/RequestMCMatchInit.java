@@ -62,7 +62,7 @@ public class RequestMCMatchInit extends GameRequest {
 
         response.setStatus(status);
         response.setMatchID(matchID);
-        playerList.get(playerID).setBetStatus(0);
+        // playerList.get(playerID).setBetStatus(0);
         playerList.get(playerID).setWinnings(0);
         playerList.get(playerID).setPlayerName(playerName);
         // Initialize past scores to all -1 (no play yet) 
