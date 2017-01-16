@@ -152,6 +152,7 @@ public class ATNOscillationEventHandler implements EventHandler {
                 // We've seen enough repeated matching states to be sure a steady state has been reached,
                 // so stop the integration
                 timeStopped = t;
+                //System.err.println("\nATNOscillationEventHandler: stopping integration at t = " + t);
                 return Action.STOP;
             } else {
                 // We need to keep watching for more matching states

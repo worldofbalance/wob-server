@@ -21,6 +21,8 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
 
     public static final double EXTINCT = 1.0e-15;  // Extinction threshold
 
+    private static final boolean DEBUG = false;
+
     private int numSpecies;  // Number of species
     private int[] nodeID;    // Node ID of each species
     private double[] B;      // Current biomass of each species
@@ -118,6 +120,17 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
         a = new double[numSpecies][numSpecies];
         b0 = new double[numSpecies][numSpecies];
         e = new double[numSpecies][numSpecies];
+
+        if (DEBUG) {
+            System.err.println("\nLink parameters:");
+            System.err.println("y = " + linkParams.getParamY());
+            System.err.println("d = " + linkParams.getParamD());
+            System.err.println("q = " + linkParams.getParamQ());
+            System.err.println("a = " + linkParams.getParamA());
+            System.err.println("b0 = " + linkParams.getParamB0());
+            System.err.println("e (plant) = " + linkParams.getParamEPlant());
+            System.err.println("e (animal) = " + linkParams.getParamEAnimal());
+        }
 
         // Read ATN parameters from speciesZoneTypes and linkParams
         for (int i = 0; i < numSpecies; i++) {
