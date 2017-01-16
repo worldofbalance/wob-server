@@ -60,6 +60,7 @@ public class RequestConvergeBetUpdate extends GameRequest {
         player_id = client.getPlayerID();
         Log.println("RCBU player_id: " + player_id);
         match_id = client.getMatchID(); 
+        match = manager.getMatch(match_id);
         
         long startTime = match.getStartTime();
         long presentTime = System.currentTimeMillis();
@@ -70,7 +71,7 @@ public class RequestConvergeBetUpdate extends GameRequest {
         Log.println("RCBU: overTime, gBS: " + overTime + " " + player.getBetStatus(round));
         
         // Put this player's information in playerList
-        match = manager.getMatch(match_id);
+        
         // match.setChecking(false);
         
         // if your bet status > 0 then skip loading data and substracting bet
