@@ -113,7 +113,8 @@ public class RequestConvergeBetUpdate extends GameRequest {
                 continue;
             }
             int improve1 = player1.getImproveAmount(round);
-            Log.println("RCBU: improve/betStatus: " + improve1 + " " + player1.getBetStatus(round));
+            Log.println("RCBU: id/improve/betStatus: " + player1.getID() + " " 
+                    + improve1 + " " + player1.getBetStatus(round));
             if (player1.getBetStatus(round) == 2) {  // only consider if he is betting
                 totalBet += bet;
                 if (improve1 > bestImprove) {
