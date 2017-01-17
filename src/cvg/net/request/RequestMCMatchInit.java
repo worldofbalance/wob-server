@@ -10,7 +10,7 @@ import cvg.net.response.ResponseMCMatchInit;
 import cvg.match.*;
 import java.util.Map;
 
-// DH change - copied + modified from CW
+// DH change - copied + modified from CWNew
 
 public class RequestMCMatchInit extends GameRequest {
 
@@ -73,13 +73,13 @@ public class RequestMCMatchInit extends GameRequest {
         client.add(response);
         client.setPlayerID(playerID);
         client.setMatchID(matchID);
-        client.setHost(host);
+        // client.setHost(host);   // Not used
         Log.println("This client's host value is: " + host);
         long timeValue = System.currentTimeMillis();
         Log.println("Current time is: " + timeValue);
         
-        if (host == 1) {
+        // if (host == 1) {
             manager.getMatch(matchID).setStartTime(timeValue);
-        }
+        // }
     }
 }

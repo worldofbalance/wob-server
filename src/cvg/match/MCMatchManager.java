@@ -42,7 +42,7 @@ public class MCMatchManager {
         if (match == null) {
             Log.printf("Manager creating new match");
             matchID = makeMatchID();
-            System.out.println("Creating match" + matchID);
+            System.out.println("MCMatch Manager: Creating match: " + matchID);
             // get players
             players.add(GameServer.getInstance().getActivePlayer(playerID1));
             players.add(GameServer.getInstance().getActivePlayer(playerID2));
@@ -61,7 +61,7 @@ public class MCMatchManager {
         Log.printf("got match object..");
         if (match == null) {
             Log.printf("Manager creating new match");
-            System.out.println("Creating match" + matchID);
+            System.out.println("Creating match: " + matchID);
             
             match = new MCMatch(null, matchID);
             matchList.put(matchID, match);
@@ -70,7 +70,7 @@ public class MCMatchManager {
         return match;
     }
     
-    public MCMatch matchPlayerTo(int matchID, int playerID) {
+    public synchronized MCMatch matchPlayerTo(int matchID, int playerID) {
         Log.printf("Matching player[%d] to match[%d]", playerID, matchID);
         
         Log.printf("active player num %d", GameServer.getInstance().getActivePlayers().size());

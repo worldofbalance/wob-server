@@ -18,9 +18,10 @@ public class GameRoomManager {
     
     private static GameRoomManager sInstance = null;
     
+    // key is room id
     private final Map<Integer, GameRoom> mRooms = new HashMap<Integer, GameRoom>();
     
-    // key is session_id
+    // key is session_id (or client id)
     private final Map<String, GameRoom> mRoomTable = new HashMap<String, GameRoom>();
     
     private int mRoomIDCount = 100;
@@ -50,8 +51,8 @@ public class GameRoomManager {
         mRooms.put(room.getID(), room);
         mRoomTable.put(client.getID(), room);
         
-        Log.println("New room created with ID: " + Integer.toString(room.getID()));
-        Log.println("Number of rooms: " + Integer.toString(mRooms.size()));
+        Log.println("GameRoomManager: New room created with ID: " + Integer.toString(room.getID()));
+        Log.println("Player id, Number of rooms: " + client.getPlayerID() + " " + Integer.toString(mRooms.size()));
         return room;
     }
     
