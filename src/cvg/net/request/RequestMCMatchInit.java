@@ -39,7 +39,7 @@ public class RequestMCMatchInit extends GameRequest {
 
 	// Assume player is in DB otherwise 
         //Match match = manager.createMatch(playerID1, playerID2);
-        MCMatch match = manager.matchPlayerTo(this.matchID, playerID);
+        MCMatch match = manager.matchPlayerTo(matchID, playerID);
         playerList = match.playerList;
         if (match != null) {
             // TODO: add response success constant

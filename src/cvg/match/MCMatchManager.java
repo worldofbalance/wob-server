@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayDeque;
 import java.util.Map;
+import lby.GameRoom;
+import lby.GameRoomManager;
 import shared.util.Log;
 import shared.core.GameServer;
 import shared.model.Player;
@@ -56,7 +58,7 @@ public class MCMatchManager {
     }
     
     public MCMatch getOrCreateMatch(int matchID) {
-        Log.printf("getOrCreateMatch..");
+        Log.printf("MCMatchManager: getOrCreateMatch..");
         MCMatch match = matchList.get(matchID);
         Log.printf("got match object..");
         if (match == null) {
@@ -65,6 +67,17 @@ public class MCMatchManager {
             
             match = new MCMatch(null, matchID);
             matchList.put(matchID, match);
+            // MCMatch Id is the same as the room Id
+            GameRoom room = GameRoomManager.getInstance().getRoomByRoomId(matchID);
+            match.setEcoNumber(room.getEcoNum());
+            match.setSliders(room.getHelps());
+            match.setTimeWindow(room.getSecPerRound());
+            match.setBetAmount(room.getBetAmt());    
+            // match.setCurRound((short) 1);
+            match.setNumRounds(room.getNumRounds());
+            System.out.println("MCMatch Manager: eco#, allowSliders, #Rounds, timeWindow, bet");
+            System.out.println("" + room.getEcoNum() + " " + room.getHelps() + " " + room.getNumRounds() 
+                    + " " + room.getSecPerRound() + " " + room.getBetAmt());
         }
         
         return match;

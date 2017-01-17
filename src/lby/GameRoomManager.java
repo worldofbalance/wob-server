@@ -21,7 +21,7 @@ public class GameRoomManager {
     // key is room id
     private final Map<Integer, GameRoom> mRooms = new HashMap<Integer, GameRoom>();
     
-    // key is session_id (or client id)
+    // key is session_id 
     private final Map<String, GameRoom> mRoomTable = new HashMap<String, GameRoom>();
     
     private int mRoomIDCount = 100;
@@ -88,7 +88,11 @@ public class GameRoomManager {
     public GameRoom getRoom(String id) {
         return mRoomTable.get(id);
     }
-
+    
+    public GameRoom getRoomByRoomId(int id) {
+        return mRooms.get(id);
+    }
+    
     public void onClientQuit(GameClient client) {
         if (!mRoomTable.containsKey(client.getID())) {
             return;
