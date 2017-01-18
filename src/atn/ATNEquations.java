@@ -34,6 +34,15 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
     private ArrayList<Integer> producers;  // i/j indices of producers in parameter arrays
     private ArrayList<Integer> consumers;  // i/j indices of consumers in parameter arrays
 
+    // Adjacency matrix representing the links in the food web
+    // links[i][j] = 1 if i feeds on j
+    // otherwise 0
+    // Note: Although the edges in directed graphs representing food webs are usually
+    // in the prey -> predator direction,
+    // they are represented in the opposite direction here
+    // for consistency with the link parameter indexing.
+    private int[][] links;
+
     private ArrayList<ArrayList<Integer>> predatorsOf;  // predatorsOf[i] is the list of i/j indices of predators of species i
     private ArrayList<ArrayList<Integer>> preyOf;       // preyOf[i] is the list of i/j indices of prey of species i
 
@@ -43,12 +52,12 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
     private double[] k;  // Carrying capacity
 
     // ATN model parameters: link-level
-    private double[][] y;  // Maximum ingestion rate
-    private double[][] d;  // Predator interference
-    private double[][] q;  // Functional response control parameter
-    private double[][] a;  // Relative half saturation density
-    private double[][] b0; // Half saturation density
-    private double[][] e;  // Assimilation efficiency
+    private double[][] y;      // Maximum ingestion rate
+    private double[][] d;      // Predator interference
+    private double[][] q;      // Functional response control parameter
+    private double[][] alpha;  // Relative half saturation density
+    private double[][] b0;     // Half saturation density
+    private double[][] e;      // Assimilation efficiency
 
     // ATN model intermediate calculations
     private double[][] F;  // Functional response
@@ -80,6 +89,8 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
         }
 
         // Build lists of predators and prey for each species
+        // and food web adjacency matrix
+        links = new int[numSpecies][numSpecies];  // [predator][prey] = 1
         predatorsOf = new ArrayList<>(numSpecies);
         preyOf = new ArrayList<>(numSpecies);
         for (int i = 0; i < numSpecies; i++) {
@@ -97,14 +108,18 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
                 switch (relationshipToJ) {
                     case "d":  // i predator of j
                         preyOfI.add(j);
+                        links[i][j] = 1;
                         break;
                     case "b":  // i and j predate on each other
                     case "c":  // i==j (cannibal)
                         predatorsOfI.add(j);
                         preyOfI.add(j);
+                        links[i][j] = 1;
+                        links[j][i] = 1;
                         break;
                     case "y":  // i prey of j
                         predatorsOfI.add(j);
+                        links[j][i] = 1;
                         break;
                 }
             }
@@ -117,7 +132,7 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
         y = new double[numSpecies][numSpecies];
         d = new double[numSpecies][numSpecies];
         q = new double[numSpecies][numSpecies];
-        a = new double[numSpecies][numSpecies];
+        alpha = new double[numSpecies][numSpecies];
         b0 = new double[numSpecies][numSpecies];
         e = new double[numSpecies][numSpecies];
 
@@ -126,7 +141,7 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
             System.err.println("y = " + linkParams.getParamY());
             System.err.println("d = " + linkParams.getParamD());
             System.err.println("q = " + linkParams.getParamQ());
-            System.err.println("a = " + linkParams.getParamA());
+            System.err.println("alpha = " + linkParams.getParamA());
             System.err.println("b0 = " + linkParams.getParamB0());
             System.err.println("e (plant) = " + linkParams.getParamEPlant());
             System.err.println("e (animal) = " + linkParams.getParamEAnimal());
@@ -146,10 +161,10 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
                 y[i][j] = linkParams.getParamY();
                 d[i][j] = linkParams.getParamD();
                 q[i][j] = linkParams.getParamQ();
-                a[i][j] = linkParams.getParamA();
+                alpha[i][j] = linkParams.getParamA();
                 b0[i][j] = linkParams.getParamB0();
 
-                // Assimilation efficiency of predator j depends on whether prey i is a plant or animal
+                // Assimilation efficiency of predator j depends on whether prey i is alpha plant or animal
                 e[j][i] = (organismType[i] == Constants.ORGANISM_TYPE_PLANT)
                         ? linkParams.getParamEPlant()
                         : linkParams.getParamEAnimal();
@@ -187,7 +202,7 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
                 double numerator = Math.pow(B[j], 1 + q[i][j]);
                 double denominator = Math.pow(b0[i][j], 1 + q[i][j]);
                 for (int m : preyOf.get(i)) {
-                    denominator += a[i][m] * Math.pow(B[m], 1 + q[i][m]);
+                    denominator += alpha[i][m] * Math.pow(B[m], 1 + q[i][m]);
                 }
                 F[i][j] = numerator / denominator;
             }
@@ -198,7 +213,7 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
             double G = 1 - B[i] / k[i];
             BDot[i] = r[i] * B[i] * G;
             for (int j : predatorsOf.get(i)) {
-                BDot[i] -= x[j] * y[j][i] * a[j][i] * F[j][i] * B[j] / e[j][i];
+                BDot[i] -= x[j] * y[j][i] * alpha[j][i] * F[j][i] * B[j] / e[j][i];
             }
         }
 
@@ -206,10 +221,10 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
         for (int i : consumers) {
             BDot[i] = -x[i] * B[i];
             for (int j : preyOf.get(i)) {
-                BDot[i] += x[i] * y[i][j] * a[i][j] * F[i][j] * B[i];
+                BDot[i] += x[i] * y[i][j] * alpha[i][j] * F[i][j] * B[i];
             }
             for (int j : predatorsOf.get(i)) {
-                BDot[i] -= x[j] * y[j][i] * a[j][i] * F[j][i] * B[j] / e[j][i];
+                BDot[i] -= x[j] * y[j][i] * alpha[j][i] * F[j][i] * B[j] / e[j][i];
             }
         }
 
@@ -223,6 +238,46 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
 
     public ArrayList<Integer> getConsumers() {
         return consumers;
+    }
+
+    public int[][] getLinks() {
+        return links;
+    }
+
+    public double[] getX() {
+        return x;
+    }
+
+    public double[] getR() {
+        return r;
+    }
+
+    public double[] getK() {
+        return k;
+    }
+
+    public double[][] getY() {
+        return y;
+    }
+
+    public double[][] getD() {
+        return d;
+    }
+
+    public double[][] getQ() {
+        return q;
+    }
+
+    public double[][] getAlpha() {
+        return alpha;
+    }
+
+    public double[][] getB0() {
+        return b0;
+    }
+
+    public double[][] getE() {
+        return e;
     }
 
     /**

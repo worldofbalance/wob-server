@@ -163,6 +163,8 @@ public class ATNEngine {
     	   calcBiomass[0][i] =  currBiomass[i];
        }
 
+       ATNEquations equations = null;
+
        if (Constants.useCommonsMathIntegrator) {
 
            // Use Apache Commons Math GraggBulirschStoerIntegrator
@@ -174,9 +176,9 @@ public class ATNEngine {
                    1.0e-10);  // allowed relative error
 
            // Set up the ATN equations based on the current food web and parameters
-           ATNEquations ode = new ATNEquations(sztArray, ecosysRelationships, lPs);
+           equations = new ATNEquations(sztArray, ecosysRelationships, lPs);
 
-           ATNEventHandler eventHandler = new ATNEventHandler(ode);
+           ATNEventHandler eventHandler = new ATNEventHandler(equations);
            // FIXME: Choose best parameter values
            integrator.addEventHandler(new EventFilter(eventHandler, FilterType.TRIGGER_ONLY_DECREASING_EVENTS),
                    1,  // maximal time interval between switching function checks (this interval prevents missing sign changes in case the integration steps becomes very large)
@@ -185,7 +187,7 @@ public class ATNEngine {
                    new BisectionSolver()
                    );
 
-           ATNOscillationEventHandler oscEventHandler = new ATNOscillationEventHandler(ode);
+           ATNOscillationEventHandler oscEventHandler = new ATNOscillationEventHandler(equations);
 
            // Set up the StepHandler, which is triggered at each time step by the integrator,
            // and copies the current biomass of each species into calcBiomass[timestep].
@@ -215,7 +217,7 @@ public class ATNEngine {
                    integrator.addEventHandler(oscEventHandler, timeIntvl, 0.0001, 1000, new BisectionSolver());
                }
 
-               integrator.integrate(ode,
+               integrator.integrate(equations,
                        startTimestep * timeIntvl,
                        calcBiomass[startTimestep],
                        endTimestep * timeIntvl,
@@ -272,7 +274,7 @@ public class ATNEngine {
        }
 
        if (useHDF5) {
-           saveHDF5OutputFile(calcBiomass, speciesID, job.getNode_Config(), timestepsToSave);
+           saveHDF5OutputFile(calcBiomass, speciesID, job.getNode_Config(), equations, timestepsToSave);
            return null;
        }
 
@@ -396,10 +398,11 @@ public class ATNEngine {
      * @param biomass The generated biomass as a (num_timesteps) x (num_nodes) array
      * @param nodeIDs The node IDs. The order must correspond to the columns of the biomass array
      * @param nodeConfig The node configuration string used to generate the data
+     * @param equations The ATN equations used for the simulation
      * @param numTimesteps The number of time steps of biomass data to save
      */
    private void saveHDF5OutputFile(double[][] biomass, int[] nodeIDs,
-                                   String nodeConfig, int numTimesteps) {
+                                   String nodeConfig, ATNEquations equations, int numTimesteps) {
 
        // Determine the filename
        File file = Functions.getNewOutputFile(new File(outputDir), "ATN", ".h5");
@@ -434,6 +437,42 @@ public class ATNEngine {
        }
 
        writer.writeIntArray("node_ids", nodeIDs);
+
+       // Save parameter values and food web information
+       if (equations != null) {
+
+           // Producers
+           int[] producersArray = new int[equations.getProducers().size()];
+           ArrayList<Integer> producers = equations.getProducers();
+           for (int i = 0; i < producers.size(); i++) {
+               producersArray[i] = producers.get(i);
+           }
+           writer.writeIntArray("/producers", producersArray);
+
+           // Consumers
+           int[] consumersArray = new int[equations.getConsumers().size()];
+           ArrayList<Integer> consumers = equations.getConsumers();
+           for (int i = 0; i < consumers.size(); i++) {
+               consumersArray[i] = consumers.get(i);
+           }
+           writer.writeIntArray("/consumers", consumersArray);
+
+           // Links
+           writer.writeIntMatrix("/links", equations.getLinks());
+
+           // Node parameters
+           writer.writeDoubleArray("/parameters/node/x", equations.getX());
+           writer.writeDoubleArray("/parameters/node/r", equations.getR());
+           writer.writeDoubleArray("/parameters/node/k", equations.getK());
+
+           // Link parameters
+           writer.writeDoubleMatrix("/parameters/link/y", equations.getY());
+           writer.writeDoubleMatrix("/parameters/link/d", equations.getD());
+           writer.writeDoubleMatrix("/parameters/link/q", equations.getQ());
+           writer.writeDoubleMatrix("/parameters/link/alpha", equations.getAlpha());
+           writer.writeDoubleMatrix("/parameters/link/b0", equations.getB0());
+           writer.writeDoubleMatrix("/parameters/link/e", equations.getE());
+       }
 
        writer.string().setAttr("/", "node_config", nodeConfig);
        writer.close();
