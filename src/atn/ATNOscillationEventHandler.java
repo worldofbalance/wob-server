@@ -40,6 +40,8 @@ public class ATNOscillationEventHandler implements EventHandler {
 
     private double timeStopped = -1;  // Time at which the integration was stopped
 
+    private ATNEventHandler.EventType stopEvent = ATNEventHandler.EventType.NONE;
+
     public ATNOscillationEventHandler(ATNEquations ode) {
         this.ode = ode;
     }
@@ -152,6 +154,7 @@ public class ATNOscillationEventHandler implements EventHandler {
                 // We've seen enough repeated matching states to be sure a steady state has been reached,
                 // so stop the integration
                 timeStopped = t;
+                stopEvent = ATNEventHandler.EventType.OSCILLATING_STEADY_STATE;
                 //System.err.println("\nATNOscillationEventHandler: stopping integration at t = " + t);
                 return Action.STOP;
             } else {
@@ -184,6 +187,10 @@ public class ATNOscillationEventHandler implements EventHandler {
      */
     public boolean integrationWasStopped() {
         return timeStopped != -1;
+    }
+
+    public ATNEventHandler.EventType getStopEvent() {
+        return stopEvent;
     }
 
     /**

@@ -164,6 +164,7 @@ public class ATNEngine {
        }
 
        ATNEquations equations = null;
+       ATNEventHandler.EventType stopEvent = ATNEventHandler.EventType.NONE;
 
        if (Constants.useCommonsMathIntegrator) {
 
@@ -230,10 +231,13 @@ public class ATNEngine {
 
            if (eventHandler.integrationWasStopped()) {
                timestepsToSave = (int) (eventHandler.getTimeStopped() / timeIntvl);
+               stopEvent = eventHandler.getStopEvent();
            } else if (oscEventHandler.integrationWasStopped()) {
                timestepsToSave = (int) (oscEventHandler.getTimeStopped() / timeIntvl);
+               stopEvent = oscEventHandler.getStopEvent();
            } else {
                timestepsToSave = timesteps;
+               stopEvent = ATNEventHandler.EventType.NONE;
            }
 
        } else {
@@ -274,7 +278,7 @@ public class ATNEngine {
        }
 
        if (useHDF5) {
-           saveHDF5OutputFile(calcBiomass, speciesID, job.getNode_Config(), equations, timestepsToSave);
+           saveHDF5OutputFile(calcBiomass, speciesID, job.getNode_Config(), equations, timestepsToSave, stopEvent);
            return null;
        }
 
@@ -400,9 +404,11 @@ public class ATNEngine {
      * @param nodeConfig The node configuration string used to generate the data
      * @param equations The ATN equations used for the simulation
      * @param numTimesteps The number of time steps of biomass data to save
+     * @param stopEvent Event that caused the simulation to be stopped (if any)
      */
    private void saveHDF5OutputFile(double[][] biomass, int[] nodeIDs,
-                                   String nodeConfig, ATNEquations equations, int numTimesteps) {
+                                   String nodeConfig, ATNEquations equations, int numTimesteps,
+                                   ATNEventHandler.EventType stopEvent) {
 
        // Determine the filename
        File file = Functions.getNewOutputFile(new File(outputDir), "ATN", ".h5");
@@ -475,6 +481,7 @@ public class ATNEngine {
        }
 
        writer.string().setAttr("/", "node_config", nodeConfig);
+       writer.string().setAttr("/", "stop_event", stopEvent.toString());
        writer.close();
    }
 

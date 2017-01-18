@@ -27,14 +27,14 @@ public class ATNEventHandler implements EventHandler {
     private double maxAbsRelDerivative;    // Maximum absolute value of a derivative relative to biomass at time t
 
     private double timeStopped = -1;       // Time at which the integration was stopped
-    private EventType stopEvent;
-
     public enum EventType {
+        NONE,
         UNKNOWN_EVENT,
         TOTAL_EXTINCTION,
-        DERIVATIVES_ZERO,
-        SNAPSHOT_MATCHED
+        CONSTANT_BIOMASS,
+        OSCILLATING_STEADY_STATE
     }
+    private EventType stopEvent = EventType.NONE;
 
     public ATNEventHandler(ATNEquations ode) {
         this.ode = ode;
@@ -87,7 +87,7 @@ public class ATNEventHandler implements EventHandler {
         if (maxBiomass <= ATNEquations.EXTINCT) {
             stopEvent = EventType.TOTAL_EXTINCTION;
         } else if (maxAbsRelDerivative <= ABS_RELATIVE_DERIVATIVE_THRESHOLD) {
-            stopEvent = EventType.DERIVATIVES_ZERO;
+            stopEvent = EventType.CONSTANT_BIOMASS;
         } else {
             stopEvent = EventType.UNKNOWN_EVENT;
         }
