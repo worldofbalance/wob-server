@@ -40,6 +40,7 @@ public class ATNEngineBatchRunner {
         File inputFile = new File(args[1]);
         String outputDir = null;
         ATNEngine.useHDF5 = true;
+        ATNEngine.stopOnSteadyState = true;
 
         for (int i = 2; i < args.length; i++) {
             switch (args[i]) {

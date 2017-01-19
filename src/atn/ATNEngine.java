@@ -66,6 +66,9 @@ public class ATNEngine {
     // If true, disable CSV output and produce HDF5 files instead
     public static boolean useHDF5 = false;
 
+    // If true, detect steady states in the simulation and stop simulating
+    public static boolean stopOnSteadyState = false;
+
     // Output directory for simulation data files
     private String outputDir = Constants.ATN_CSV_SAVE_PATH;
 
@@ -179,16 +182,20 @@ public class ATNEngine {
            // Set up the ATN equations based on the current food web and parameters
            equations = new ATNEquations(sztArray, ecosysRelationships, lPs);
 
-           ATNEventHandler eventHandler = new ATNEventHandler(equations);
-           // FIXME: Choose best parameter values
-           integrator.addEventHandler(new EventFilter(eventHandler, FilterType.TRIGGER_ONLY_DECREASING_EVENTS),
-                   1,  // maximal time interval between switching function checks (this interval prevents missing sign changes in case the integration steps becomes very large)
-                   0.0001,  // convergence threshold in the event time search
-                   1000,  // upper limit of the iteration count in the event time search
-                   new BisectionSolver()
-                   );
+           ATNEventHandler eventHandler = null;
+           ATNOscillationEventHandler oscEventHandler = null;
+           if (stopOnSteadyState) {
+               eventHandler = new ATNEventHandler(equations);
+               // FIXME: Choose best parameter values
+               integrator.addEventHandler(new EventFilter(eventHandler, FilterType.TRIGGER_ONLY_DECREASING_EVENTS),
+                       1,  // maximal time interval between switching function checks (this interval prevents missing sign changes in case the integration steps becomes very large)
+                       0.0001,  // convergence threshold in the event time search
+                       1000,  // upper limit of the iteration count in the event time search
+                       new BisectionSolver()
+               );
 
-           ATNOscillationEventHandler oscEventHandler = new ATNOscillationEventHandler(equations);
+               oscEventHandler = new ATNOscillationEventHandler(equations);
+           }
 
            // Set up the StepHandler, which is triggered at each time step by the integrator,
            // and copies the current biomass of each species into calcBiomass[timestep].
@@ -214,7 +221,7 @@ public class ATNEngine {
                     i++) {
 
                // Only start checking for oscillations starting with the second integration
-               if (i == 1) {
+               if (stopOnSteadyState && i == 1) {
                    integrator.addEventHandler(oscEventHandler, timeIntvl, 0.0001, 1000, new BisectionSolver());
                }
 
@@ -224,15 +231,16 @@ public class ATNEngine {
                        endTimestep * timeIntvl,
                        currBiomass);
 
-               if (eventHandler.integrationWasStopped() || oscEventHandler.integrationWasStopped()) {
+               if (stopOnSteadyState
+                       && (eventHandler.integrationWasStopped() || oscEventHandler.integrationWasStopped())) {
                    break;
                }
            }
 
-           if (eventHandler.integrationWasStopped()) {
+           if (stopOnSteadyState && eventHandler.integrationWasStopped()) {
                timestepsToSave = (int) (eventHandler.getTimeStopped() / timeIntvl);
                stopEvent = eventHandler.getStopEvent();
-           } else if (oscEventHandler.integrationWasStopped()) {
+           } else if (stopOnSteadyState && oscEventHandler.integrationWasStopped()) {
                timestepsToSave = (int) (oscEventHandler.getTimeStopped() / timeIntvl);
                stopEvent = oscEventHandler.getStopEvent();
            } else {
