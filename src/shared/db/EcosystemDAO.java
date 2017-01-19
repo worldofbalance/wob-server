@@ -6,6 +6,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ArrayList;
 
 // Other Imports
 import shared.model.Ecosystem;
@@ -88,6 +91,37 @@ public final class EcosystemDAO {
         return ecosystem;
     }
 
+    public static ArrayList<Integer> getPlayerIds(int world_id) {
+        ArrayList<Integer> playerIds = new ArrayList<Integer>();
+
+        String query = "SELECT * FROM `ecosystem` WHERE `world_id` = ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = GameDB.getConnection();
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, world_id);
+
+            rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                playerIds.add(rs.getInt("player_id"));
+            }
+        } catch (SQLException ex) {
+            Log.println_e(ex.getMessage());
+        } finally {
+            GameDB.closeConnection(con, pstmt, rs);
+        }
+
+        return playerIds;
+    }
+    
+    
+    
+    
     public static boolean updateManipulationID(int eco_id, String manipulation_id) {
         boolean status = false;
 

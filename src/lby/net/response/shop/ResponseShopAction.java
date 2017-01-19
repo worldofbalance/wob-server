@@ -4,12 +4,14 @@ package lby.net.response.shop;
 import shared.metadata.NetworkCode;
 import lby.net.response.GameResponse;
 import shared.util.GamePacket;
+import shared.util.Log;
 
 public class ResponseShopAction extends GameResponse {
 
     private short action;
     private short status;
-    private int amount;
+    private int newCredits = -1;
+    private int totalSpent;
     private String itemList;
 
     public ResponseShopAction() {
@@ -21,12 +23,14 @@ public class ResponseShopAction extends GameResponse {
         GamePacket packet = new GamePacket(response_id);
         packet.addShort16(action);
         packet.addShort16(status);
-
-        if (status == 0) {
-            packet.addInt32(amount);
-        } else if (status == 2) {
-            packet.addString(itemList);
-        }
+        packet.addInt32(newCredits);
+        Log.println("ResponseShopAction.getBytes: a/c/newCredits: " + action + " " + status + " " + newCredits);
+        
+//        if (status == 0) {
+//            packet.addInt32(newCredits);
+//        } else if (status == 2) {
+//           packet.addString(itemList);
+//        }
 
         return packet.getBytes();
     }
@@ -39,8 +43,12 @@ public class ResponseShopAction extends GameResponse {
         this.status = (short) status;
     }
 
-    public void setTotalSpent(int amount) {
-        this.amount = amount;
+    public void setNewCredits(int newCredits) {
+        this.newCredits = newCredits;
+    }
+    
+    public void setTotalSpent(int totalSpent) {
+        this.totalSpent = totalSpent;
     }
 
     public void setItems(String itemList) {

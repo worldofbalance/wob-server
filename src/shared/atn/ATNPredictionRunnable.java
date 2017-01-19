@@ -56,17 +56,18 @@ public class ATNPredictionRunnable implements Runnable {
      this.speciesList = speciesList;
      this.newSpeciesNodeList = newSpeciesNodeList;
      this.zoneNodes = zoneNodes;
+     ATNEngine.LOAD_SIM_TEST_PARAMS = true;
  }
 
  public long initialize() {
      // Adjust for delays
-//     runTimestep = gameEngine.getCurrentMonth() - startTimestep + 1;
-     // Adjust for delays
+     // runTimestep = gameEngine.getCurrentMonth() - startTimestep + 1;
+     // DH 2017-1-10 - pass number of time steps 
+     runTimestep = startTimestep;
  	if(Constants.useAtnEngine){
- 		runTimestep = 1;
-// 		System.out.println("startTimestep"+startTimestep);
-// 		System.out.println("currentMonth (runTimestep)"+runTimestep);
-// 		System.out.println("gameEngine.getCurrentMonth() " + gameEngine.getCurrentMonth());
+ 		System.out.println("ATNPredictionRunnable, initialize, startTimestep = " + startTimestep);
+                System.out.println("gameEngine.getCurrentMonth() = " + gameEngine.getCurrentMonth());
+ 		System.out.println("runTimestep = " + runTimestep);
  	}
      // Store the most recent data
      newSpeciesNodeList = new HashMap<Integer, Integer>(newSpeciesNodeList);
@@ -98,7 +99,8 @@ public class ATNPredictionRunnable implements Runnable {
              //JTC, zoneNodes passed as parameter to getPrediction
              nextSpeciesNodeList = atnEngine.getPrediction(manipulation_id, 
                      startTimestep, runTimestep, newSpeciesNodeList, zoneNodes);
-             atnEngine.updateBiomass(zone, nextSpeciesNodeList);
+             // DH moved eco_species update to updateATNPrediction. Need species_id which is available there
+             // atnEngine.updateBiomass(zone, nextSpeciesNodeList);  
              gameEngine.updateATNPrediction(this);
 
              Log.printf("Total Time (Simulation): %.2f seconds", 

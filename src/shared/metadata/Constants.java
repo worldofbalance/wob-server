@@ -147,7 +147,7 @@ public class Constants {
     public static final int ADDITIONAL_TIMESTEPS = 2;	//Needed so that it aligns with Simulationengine, otherwise client will be in processing state
 	public static boolean useSimEngine = false;		//To run both the simulation engine and the atn engine set useSimEngine =true && useAtnEngine == true
 	public static boolean useAtnEngine = true;
-	public static final boolean DEBUG_MODE = true;
+	public static final boolean DEBUG_MODE = false;
 
     // DH change
     // Multiplayer Convergence

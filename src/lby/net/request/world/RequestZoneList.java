@@ -1,6 +1,7 @@
 package lby.net.request.world;
 
 // Java Imports
+import cos.util.Log;
 import java.io.DataInputStream;
 import java.io.IOException;
 
@@ -29,7 +30,6 @@ public class RequestZoneList extends GameRequest {
         } else {
             response.setStatus(ResponseZoneList.FAILED);
         }
-
         client.add(response);
     }
 }

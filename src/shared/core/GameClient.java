@@ -8,7 +8,9 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimerTask;
 
 // Other Imports
@@ -32,6 +34,7 @@ import shared.util.DataReader;
 import shared.util.GameTimer;
 import shared.util.Log;
 import shared.util.NetworkFunctions;
+import shared.model.Ecosystem;
 
 /**
  * The GameClient class is an extension of the Thread class that represents an
@@ -206,7 +209,15 @@ public class GameClient {
 
         if (player.getLastPlayed() == null) {
             int world_id = WorldController.getInstance().first().getID();
-            EcosystemController.createEcosystem(world_id, player.getID(), player.getName() + "'s Ecosystem", (short) type);
+            Ecosystem ecosystem = EcosystemController.createEcosystem(world_id, player.getID(), player.getName() + "'s Ecosystem", (short) type);
+            
+            Map<Integer, Integer> speciesListI;
+            speciesListI = new HashMap<Integer, Integer>();
+            speciesListI.put(13, 100);
+            speciesListI.put(20, 100);
+            speciesListI.put(31, 100);
+            
+            EcosystemController.createEcosystem(ecosystem, speciesListI);
         }
 
         {
@@ -350,7 +361,7 @@ public class GameClient {
                 lastSave = current;
 
                 AccountDAO.updatePlayTime(account.getID(), account.getPlayTime(), account.getActiveTime());
-                UserLogDAO.updateTimeLog(account.getID(), (int) seconds);
+                UserLogDAO.updateTimeLog(player.getID(), (int) seconds);
             }
         }, Constants.SAVE_INTERVAL, Constants.SAVE_INTERVAL);
     }

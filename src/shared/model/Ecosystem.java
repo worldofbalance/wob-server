@@ -12,6 +12,7 @@ import java.util.Random;
 
 // Other Imports
 import shared.core.GameEngine;
+import shared.core.EcosystemController;
 import lby.core.world.World;
 import shared.db.CSVDAO;
 import shared.db.EcosystemDAO;
@@ -23,6 +24,7 @@ import lby.net.response.ResponseChart;
 import lby.net.response.ResponseUpdateEnvironmentScore;
 import shared.simulation.SpeciesZoneType;
 import shared.util.CSVParser;
+import shared.util.Log;
 import shared.util.NetworkFunctions;
 
 /**
@@ -200,7 +202,7 @@ public class Ecosystem {
 
     public void setNewSpeciesNode(int node_id, int amount) {
         try {
-        	System.out.println("setNewSpeciesNode " + node_id + " " + amount);
+            System.out.println("setNewSpeciesNode " + node_id + " " + amount);
             if (addNodeList.containsKey(node_id)) {
                 addNodeList.put(node_id, addNodeList.get(node_id) + amount);
                 ZoneNodeAddDAO.updateAmount(eco_id, node_id, addNodeList.get(node_id));
@@ -233,10 +235,10 @@ public class Ecosystem {
     
     public void removeEntry(int species_id){
     	try {
-			SpeciesChangeListDAO.removeEntry(eco_id, species_id);
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
+            SpeciesChangeListDAO.removeEntry(eco_id, species_id);
+	} catch (SQLException e) {
+            System.err.println(e.getMessage());
+	}
     }
     
     public void removeNewSpeciesNode(int node_id, int amount) {
@@ -319,10 +321,15 @@ public class Ecosystem {
     public void updateScore() {
         updateEcosystemScore();
 
+        /* It seems that only web services simulation supports score_csv
+        Log.println("score_csv.size() " + (score_csv.size()));
+        
         List<String> rowFirst = score_csv.get(0), rowSecond = score_csv.get(1);
+        Log.println("after score_csv");
 
         int lastMonth = Integer.valueOf(rowFirst.get(rowFirst.size() - 1));
         int currentMonth = gameEngine.getCurrentMonth();
+        Log.println("after currentMonth");
 
         for (int i = lastMonth; i <= currentMonth; i++) {
             if (i == lastMonth && i == currentMonth) {
@@ -332,17 +339,23 @@ public class Ecosystem {
                 rowSecond.add(Integer.toString(score));
             }
         }
+        Log.println("after for loop");
 
         String csv = CSVParser.createCSV(score_csv);
+        Log.println("after CSVParser");
         CSVDAO.createScoreCSV(eco_id, csv);
-
+        
+        Log.println("In EcoSystem, before ResponseChart()");
+        Log.println("csv = " + csv);
         if(!Constants.DEBUG_MODE){
 	        ResponseChart response = new ResponseChart();
 	        response.setType(2);
 	        response.setCSV(csv);
 	        NetworkFunctions.sendToWorld(response, world_id);
         }
+        Log.println("In EcoSystem, after ResponseChart()");
 
+        */
         updateAccumEnvScore();
     }
 
@@ -357,7 +370,7 @@ public class Ecosystem {
         if (biomass > 0) {
             biomass = Math.round(Math.log(biomass) / Math.log(2)) * 5;
         }
-
+        
         score = (int) Math.round(Math.pow(biomass, 2) + Math.pow(speciesList.size(), 2));
 
         if (score > highEnvScore) {
@@ -367,12 +380,9 @@ public class Ecosystem {
         ScoreDAO.updateEnvironmentScore(eco_id, score, highEnvScore);
 
         if(!Constants.DEBUG_MODE){
-	        NetworkFunctions.sendToWorld(
-	                new ResponseUpdateEnvironmentScore(
-	                        eco_id,
-	                        score
-	                ), world_id
-	        );
+	    NetworkFunctions.sendToWorld(
+	        new ResponseUpdateEnvironmentScore(
+	            eco_id, score), world_id);
         }
     }
 

@@ -7,6 +7,7 @@ import java.io.IOException;
 // Other Imports
 import lby.core.world.WorldController;
 import lby.net.request.GameRequest;
+import shared.util.Log;
 
 public class RequestWorld extends GameRequest {
 

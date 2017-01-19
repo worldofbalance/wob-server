@@ -48,7 +48,6 @@ public class RequestTilePrice extends GameRequest {
     
         @Override
     public void process() throws Exception {
-
         ResponseTilePrice response = new ResponseTilePrice();
         
         boolean isOwned = true;
@@ -67,13 +66,13 @@ public class RequestTilePrice extends GameRequest {
         } else {
           
         // first calculate the price of the tile 
-        Log.println("Carrying capacity " + WorldZoneDAO.getCarryingCapacity(zone_id));
+        Log.println("Carrying capacity: " + WorldZoneDAO.getCarryingCapacity(zone_id));
         zone_capacity = (int)WorldZoneDAO.getCarryingCapacity(zone_id);
         //price is 10x the capacity 
         price = 10* zone_capacity;
         
         }
-        Log.println("Player's current credits" + PlayerDAO.getCredits(client.getPlayer().getID()));
+        Log.println("Player's current credits: " + PlayerDAO.getCredits(client.getPlayer().getID()));
        //compare the price with the player's credits  AND check if tile is owned
         if (client.getPlayer().getCredits() >= price  && !isOwned){
             
