@@ -29,8 +29,7 @@ public class RequestConvergeGetOtherScore extends GameRequest {
     public void parse(DataInputStream dataInput) throws IOException {
     	Log.consoleln("Parsing RequestConvergeGetOtherScore");
         otherPlayerID = DataReader.readInt(dataInput);
-    }
-    
+    }    
 
     @Override
     public void process() throws Exception {

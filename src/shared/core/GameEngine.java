@@ -106,6 +106,8 @@ public class GameEngine {
         return world.getDay() / 30 + 1;
     }
     
+    // Presently this is disabled in World. 
+    // The day = simulation number
     public int setCurrentMonth(int month) {
         return world.setDay(month * 30 + 1);
     }
@@ -127,8 +129,9 @@ public class GameEngine {
      * @param currentTimeStep 
      */
     private void runSimulation(Ecosystem ecosystem, int currentTimeStep) {
+        SpeciesChangeListDAO.setDay(SpeciesChangeListDAO.getDay() + 1);
         ecosystem.updateScore();
-        
+         
         Map<Integer, Species> speciesList = ecosystem.getSpeciesList();        
         Map<Integer, Integer> newSpeciesNodeList = ecosystem.getAddSpeciesList();
 
@@ -162,6 +165,7 @@ public class GameEngine {
         // getCurrentMonth() is designed to do 1 time step
         int timeStepsDefault = 1;
         runSimulation(ecosystem, timeStepsDefault);
+        world.updateClock();
     }
     
     /**
@@ -170,6 +174,7 @@ public class GameEngine {
     public void forceSimulation(int timestep) {
         runSimulation(ecosystem, timestep);
         ecosystem.updateTimeSteps(timestep);
+        world.updateClock();
     }
     
     public void deleteSimulationIds() {
@@ -235,6 +240,7 @@ public class GameEngine {
             List<Integer> speciesList = new ArrayList<Integer>(runnable.getCurrentSpeciesList().keySet());
             Collections.shuffle(speciesList);
             // Adjust the number of species by creating or reducing the existing amount
+            int day = SpeciesChangeListDAO.getDay();
             for (int species_id : speciesList) {
                 SpeciesType speciesType = ServerResources.getSpeciesTable().getSpecies(species_id);
 
@@ -287,7 +293,7 @@ public class GameEngine {
 
                 if (gDiff + rDiff != 0) {
                     speciesChangeList.put(species_id, gDiff + rDiff);
-                    SpeciesChangeListDAO.createEntry(zone.getID(), species_id, gDiff + rDiff);
+                    SpeciesChangeListDAO.createEntry(zone.getID(), species_id, gDiff + rDiff, day);
                 }
             }
 
@@ -361,6 +367,7 @@ public class GameEngine {
 
             Species species = null;
 
+            int day = SpeciesChangeListDAO.getDay();
             if (ecosystem.containsSpecies(species_id)) {
                 species = ecosystem.getSpecies(species_id);
                 int eco_id = ecosystem.getID();
@@ -375,10 +382,10 @@ public class GameEngine {
 	                    NetworkFunctions.sendToLobby(response, lobby.getID());
                     }
                 }
-                SpeciesChangeListDAO.createEntry(eco_id, species_id, biomass);                
+                SpeciesChangeListDAO.createEntry(eco_id, species_id, biomass, day);                
             } else {
                     int group_id = EcoSpeciesDAO.createSpecies(ecosystem.getID(), species_id, biomass);
-                    SpeciesChangeListDAO.createEntry(ecosystem.getID(), species_id, biomass); 
+                    SpeciesChangeListDAO.createEntry(ecosystem.getID(), species_id, biomass, day); 
                     species = new Species(species_id, speciesType);
                     SpeciesGroup group = new SpeciesGroup(species, group_id, biomass, Vector3.zero);
                     species.add(group);
@@ -498,6 +505,7 @@ public class GameEngine {
             // Shuffle the order at when each species get processed.
             List<Integer> speciesList = new ArrayList<Integer>(runnable.getCurrentSpeciesList().keySet());
             Collections.shuffle(speciesList);
+            int day = SpeciesChangeListDAO.getDay();
             // Adjust the number of species by creating or reducing the existing amount
             for (int species_id : speciesList) {
                 SpeciesType speciesType = ServerResources.getSpeciesTable().getSpecies(species_id);
@@ -557,7 +565,7 @@ public class GameEngine {
                         Log.println("GameEngine, updateATNPrediction: biomassOld <= 0, DB has: " + biomassOld);
                     }
                     EcoSpeciesDAO.updateBiomass(zone.getID(), group_id, species_id, biomassOld + gDiff + rDiff);
-                    SpeciesChangeListDAO.createEntry(zone.getID(), species_id, gDiff + rDiff);
+                    SpeciesChangeListDAO.createEntry(zone.getID(), species_id, gDiff + rDiff, day);
                     // Update the in memory biomass
                     SpeciesGroup speciesGroup = ecoSpeciesList.get(species_id).getGroups().get(group_id);
                     speciesGroup.setBiomass(speciesGroup.getBiomass() + gDiff + rDiff); 

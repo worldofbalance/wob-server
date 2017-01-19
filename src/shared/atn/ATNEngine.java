@@ -973,6 +973,7 @@ public class ATNEngine {
 
             public void updateBiomass(Ecosystem ecosystem, Map<Integer, SpeciesZoneType> nextSpeciesNodeList) {
                 int eco_id = ecosystem.getID();
+                int day = SpeciesChangeListDAO.getDay();
 	        for (Entry<Integer, SpeciesZoneType> entry : nextSpeciesNodeList.entrySet()) {
 	            int species_id = entry.getKey();
 	            SpeciesZoneType szt = entry.getValue();
@@ -982,7 +983,7 @@ public class ATNEngine {
                                 group.setBiomass(biomassValue);	
 		        EcoSpeciesDAO.updateBiomass(eco_id, group.getID(), species_id, group.getBiomass());
 		    }
-                    SpeciesChangeListDAO.createEntry(eco_id, species_id, biomassValue); 
+                    SpeciesChangeListDAO.createEntry(eco_id, species_id, biomassValue, day); 
                 }
             }
 }

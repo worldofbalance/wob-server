@@ -38,8 +38,8 @@ public class RequestConvergeGetNames extends GameRequest {
         Log.println("RequestConvergeGetNames, player id/name");
         for (Map.Entry<Integer, MCMatchPlayer> entry : playersList.entrySet()) {
             Integer key = entry.getKey();
-            if (key != player_id) {
-                MCMatchPlayer value = getValue(entry);
+            MCMatchPlayer value = entry.getValue();
+            if ((!value.getLeftGame()) && (key != player_id)) {
                 playerNames.put(key, value.getPlayerName());
                 Log.println(" " + key + " " + value.getPlayerName());
             }
@@ -53,9 +53,10 @@ public class RequestConvergeGetNames extends GameRequest {
         client.add(response);
         Log.println("Processed RequestConvergeGetNames");
     }
-    
+    /*
     MCMatchPlayer getValue(Map.Entry<Integer, MCMatchPlayer> entry) {
         return entry.getValue();
     }
+    */
     
 }

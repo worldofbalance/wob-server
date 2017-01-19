@@ -40,6 +40,7 @@ import shared.util.Vector3;
 
 public class World {
 
+    private final int CLOCK_UPDATE_CYCLE = 1000 * 60 * 60;   // Update clock (event triggers) every hour
     // Variables
     private final int world_id;
     private String name;
@@ -60,7 +61,8 @@ public class World {
         this.name = name;
         this.type = type;
         this.time_rate = time_rate;
-        this.day = day;
+        // this.day = day;
+        day = SpeciesChangeListDAO.getDay();
 
         clock = new Clock(day, time_rate * Constants.TIME_MODIFIER);
         createClockEvents();
@@ -70,7 +72,7 @@ public class World {
             public void run() {
                 clock.run();
            }
-        }, 1000, 1000);
+        }, 1000, CLOCK_UPDATE_CYCLE);
     }
 
     private void createClockEvents() {
@@ -78,9 +80,10 @@ public class World {
         clock.createEvent(EventType.NEW_DAY, new EventListener() {
             @Override
             public void run(Object... args) {
-                day = (Integer) args[0];
+                // day = (Integer) args[0];
 
                 // Update Time Every 5 Days
+                day = SpeciesChangeListDAO.getDay();
                 if (day % 5 == 0) {
                     WorldDAO.updateDay(world_id, day);
                 }
@@ -109,11 +112,14 @@ public class World {
     }
 
     public int getDay() {
-        return day;
+        return SpeciesChangeListDAO.getDay();
     }
 
+    // Presently this is disabled
+    // day = simulation number
     public int setDay(int day) {
-        return this.day = day;
+        return SpeciesChangeListDAO.getDay();
+        // return this.day = day;
     }
     
     public List<Zone> getZones() {
@@ -147,6 +153,11 @@ public class World {
     public void remove(int player_id) {
         playerList.remove(player_id);
     }
+    
+    public void updateClock() {
+        clock.run();
+    }
+    
 
     /**
      * Create new and merge existing purchases until a given time frame is up.
@@ -318,7 +329,7 @@ public class World {
 //	                    NetworkFunctions.sendToLobby(response, lobby.getID());
 //                    }
             }
-            SpeciesChangeListDAO.createEntry(ecosystem.getID(), species_id, biomass); 
+            SpeciesChangeListDAO.createEntry(ecosystem.getID(), species_id, biomass, SpeciesChangeListDAO.getDay()); 
             // Log.println("Added to ecosystem, id: " + species.getID());
             // Log.println("biomass: " + species.getTotalBiomass());
             ecosystem.addSpecies(species);

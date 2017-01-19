@@ -30,6 +30,7 @@ import java.util.TimerTask;
 import lby.MiniGameServers;
 import shared.db.PlayerDAO;
 import shared.db.EcosystemDAO;
+import shared.db.SpeciesChangeListDAO;
 import shared.metadata.Constants;
 import shared.metadata.GameRequestTable;
 import shared.model.Account;
@@ -296,6 +297,7 @@ public class GameServer {
         try {
             server = new GameServer(Configuration.lobbyPortNumber, Constants.MAX_CLIENT_THREADS);
             server.configure();            
+            SpeciesChangeListDAO.fetchDay();   // Sets the internalDay to largest DB day
             MiniGameServers.getInstance().runServers();
             world_id = WorldController.getInstance().first().getID();
             server.startEcosystemUpdate();
