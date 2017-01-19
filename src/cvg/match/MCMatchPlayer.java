@@ -44,9 +44,9 @@ public class MCMatchPlayer{
         // 0 = no response 
         // 1 = not betting
         // 2 = betting
-        private int[] betStatus = new int[MAX_NUM_ROUNDS];
-        private int[] improveAmount = new int [MAX_NUM_ROUNDS];   // amount of improvement
-        private boolean[] winUpdate = new boolean[MAX_NUM_ROUNDS];   // Make sure you don't add winnings twice
+        private int[] betStatus = new int[MAX_NUM_ROUNDS+1];
+        private int[] improveAmount = new int [MAX_NUM_ROUNDS+1];   // amount of improvement
+        private boolean[] winUpdate = new boolean[MAX_NUM_ROUNDS+1];   // Make sure you don't add winnings twice
         private int winnings = 0;
         private int[] scores = new int[5];  // stores the 5 most recent score values
         private ResponseConvergeBetUpdate response;

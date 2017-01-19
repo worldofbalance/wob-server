@@ -52,8 +52,8 @@ public class RequestConvergeGetTime extends GameRequest {
         Log.println("player id: " + player_id);
         for (Map.Entry<Integer, MCMatchPlayer> entry : playersList.entrySet()) {
             Integer key = entry.getKey();
-            if (key != player_id) {
-                MCMatchPlayer value = getValue(entry);
+            MCMatchPlayer value = getValue(entry);
+            if ((!value.getLeftGame()) & (key != player_id)) {                
                 Integer betStatus = value.getBetStatus(round);
                 Log.println("Original id/ Bet status: " + key + " " + betStatus);
                 // MCMatchPlayer betStatus is:
@@ -62,8 +62,7 @@ public class RequestConvergeGetTime extends GameRequest {
                 //      0->no bet yet; 1->bet
                 if (betStatus == 2) {
                     betStatus = 1;
-                }
-                else {
+                } else {
                     betStatus = 0;
                 }
                 betStatusList.put(key, betStatus);

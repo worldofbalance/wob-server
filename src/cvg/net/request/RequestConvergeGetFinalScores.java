@@ -38,6 +38,7 @@ public class RequestConvergeGetFinalScores extends GameRequest {
         Log.println("RequestConvergeGetFinalScores for player ID: " + player_id);
         MCMatchManager manager = MCMatchManager.getInstance();
         MCMatch match = manager.getMatchByPlayer(player_id);
+        int numRounds = match.getNumRounds();
         Map<Integer, MCMatchPlayer> playersList = match.getPlayers();
         Log.println("RequestConvergeGetFinalScores, player id/winnings/last improve");
         index = 0;
@@ -47,6 +48,10 @@ public class RequestConvergeGetFinalScores extends GameRequest {
             if (MCPlayer.getLeftGame()) {
                 continue;
             }
+            if (!MCPlayer.getWinUpdate(numRounds)) {
+                response.setStatus((short) 0);  // 0 -> scores not final yet
+                Log.println("RequestConvergeGetFinalScores, scores not final, player_id: " + MCPlayer.getID());
+            } 
             playerId[index] = key;
             playerWinnings[index] = MCPlayer.getWinnings();
             playerLastImprove[index] = MCPlayer.getImproveAmount(match.getNumRounds());

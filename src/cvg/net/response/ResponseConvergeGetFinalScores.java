@@ -17,6 +17,7 @@ import java.util.Map;
  */
 public class ResponseConvergeGetFinalScores extends GameResponse {
     
+    short status = 1;           // 1 = values are final, 0 = not final yet
     int [] playerId = new int[5];
     int [] playerWinnings = new int[5];
     int [] playerLastImprove = new int[5];
@@ -37,11 +38,16 @@ public class ResponseConvergeGetFinalScores extends GameResponse {
         this.playerLastImprove = playerLastImprove;
     }
     
+    public void setStatus(short status) {
+        this.status = status;
+    }
+    
 
     @Override
     public byte[] getBytes() {
         GamePacket packet = new GamePacket(response_id);
         
+        packet.addShort16(status);
         for (int i = 0; i < 5; i++) {
             packet.addInt32(playerId[i]);
             packet.addInt32(playerWinnings[i]);

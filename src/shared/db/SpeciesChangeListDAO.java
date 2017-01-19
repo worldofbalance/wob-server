@@ -14,13 +14,12 @@ import shared.util.Log;
 public final class SpeciesChangeListDAO {
     public final static long scale = 1000 * 60 * 60 * 24;
     public final static SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-    
+    private static int internalDay = 0;    
 
     private SpeciesChangeListDAO() {
     }
 
-    public static void createEntry(int eco_id, int species_id, int biomass) {
-        int day = getCurrentDay();
+    public static void createEntry(int eco_id, int species_id, int biomass, int day) {
         
         String query_1 = "SELECT * FROM `eco_species_change` WHERE `eco_id` = ? AND `species_id` = ? AND `day` = ?";
 
@@ -137,11 +136,8 @@ public final class SpeciesChangeListDAO {
                 GameDB.closeConnection(con, pstmt);
             }
         }
-
         return speciesHistoryList;
     }
-    
-    
     
     /* DH 2017-1-11 - This function needs work to be used.
     // (eco_id, species_id) is no longer a unique key
@@ -176,6 +172,7 @@ public final class SpeciesChangeListDAO {
     }
     */
     
+    /* This version is based upon the actual number of days from 1/1/2015
     public static int getCurrentDay() {
         int result = 0;
         try {
@@ -187,6 +184,46 @@ public final class SpeciesChangeListDAO {
         } 
         return result;
     }
+    */
 
+    // Fetches the highest day from the DB, returns it and updates internalDay
+    public static int fetchDay() {
+        int result = 0;
+        
+        String query_1 = "SELECT `day` FROM `eco_species_change` ORDER BY `day` DESC";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = GameDB.getConnection();
+            pstmt = con.prepareStatement(query_1);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                result = rs.getInt("day");
+                Log.println("SpeciesChangeListDAO, getCurrentDay: day = " + result);
+            } 
+            
+            pstmt.close();
+        } catch (SQLException ex) {
+            Log.println_e("SpeciesChangeListDAO, getCurrentDay: " + ex.getMessage());
+        } finally {
+            if (con != null) {
+                GameDB.closeConnection(con, pstmt);
+            }
+        }
+        
+        internalDay = result;
+        return result;
+    }
     
+    public static int getDay() {
+        return internalDay;
+    }
+    
+    public static void setDay(int day) {
+        internalDay = day;
+    }
 }

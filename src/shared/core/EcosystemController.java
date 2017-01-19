@@ -150,11 +150,12 @@ public class EcosystemController {
         }
         
         // First Month Logic
+        int day = SpeciesChangeListDAO.getDay();
         for (SpeciesZoneType szt : mSpecies) {
             int species_id = ServerResources.getSpeciesTable().getSpeciesTypeByNodeID(szt.getNodeIndex()).getID();
             //Will write the values into 'eco_species' table
             EcoSpeciesDAO.createSpecies(ecosystem.getID(), species_id, (int) szt.getCurrentBiomass());
-            SpeciesChangeListDAO.createEntry(ecosystem.getID(), species_id, (int) szt.getCurrentBiomass()); 
+            SpeciesChangeListDAO.createEntry(ecosystem.getID(), species_id, (int) szt.getCurrentBiomass(), day); 
         }
     }
     /**
@@ -196,10 +197,11 @@ public class EcosystemController {
         }
         se.setParameters2(mSpecies, 1, ecosystem.getManipulationID());
         // First Month Logic
+        int day = SpeciesChangeListDAO.getDay();
         for (SpeciesZoneType szt : mSpecies) {
             int species_id = ServerResources.getSpeciesTable().getSpeciesTypeByNodeID(szt.getNodeIndex()).getID();
             EcoSpeciesDAO.createSpecies(ecosystem.getID(), species_id, (int) szt.getCurrentBiomass());
-            SpeciesChangeListDAO.createEntry(ecosystem.getID(), species_id, (int) szt.getCurrentBiomass()); 
+            SpeciesChangeListDAO.createEntry(ecosystem.getID(), species_id, (int) szt.getCurrentBiomass(), day); 
         }
     }
 
