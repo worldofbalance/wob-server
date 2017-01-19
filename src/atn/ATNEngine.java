@@ -25,6 +25,7 @@ import ch.systemsx.cisd.hdf5.HDF5IntStorageFeatures;
 import ch.systemsx.cisd.hdf5.IHDF5Writer;
 
 import org.apache.commons.math3.analysis.solvers.BisectionSolver;
+import org.apache.commons.math3.exception.NoBracketingException;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.events.EventFilter;
 import org.apache.commons.math3.ode.events.FilterType;
@@ -225,11 +226,18 @@ public class ATNEngine {
                    integrator.addEventHandler(oscEventHandler, timeIntvl, 0.0001, 1000, new BisectionSolver());
                }
 
-               integrator.integrate(equations,
-                       startTimestep * timeIntvl,
-                       calcBiomass[startTimestep],
-                       endTimestep * timeIntvl,
-                       currBiomass);
+               try {
+                   integrator.integrate(equations,
+                           startTimestep * timeIntvl,
+                           calcBiomass[startTimestep],
+                           endTimestep * timeIntvl,
+                           currBiomass);
+               } catch (NoBracketingException e) {
+                   System.err.println();
+                   System.err.println(e);
+                   System.err.println("\n*** NoBracketingException caught; removing event handlers\n");
+                   integrator.clearEventHandlers();
+               }
 
                if (stopOnSteadyState
                        && (eventHandler.integrationWasStopped() || oscEventHandler.integrationWasStopped())) {
