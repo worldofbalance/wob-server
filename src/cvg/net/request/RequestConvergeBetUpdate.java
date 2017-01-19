@@ -79,7 +79,6 @@ public class RequestConvergeBetUpdate extends GameRequest {
         
         // if your bet status > 0 then skip loading data and substracting bet     
         if (player.getBetStatus(round) == 0) {
-            // I think the next two items have to be indexed by round
             player.setImproveAmount(round, improveAmount);
             player.setScores(scores);
             player.setClient(client);
@@ -154,7 +153,6 @@ public class RequestConvergeBetUpdate extends GameRequest {
                     response.setWon(yes);
                     response.setWonAmount(dividedBet);
                     if (!player.getWinUpdate(round)) {
-                        player.setWinUpdate(round, true);
                         player.setWinnings(player.getWinnings() + dividedBet);
                     }                    
                 } else {
@@ -167,6 +165,8 @@ public class RequestConvergeBetUpdate extends GameRequest {
                 response.setWon(no);  // these entries should not matter
                 response.setWonAmount(0); 
             }
+            // The winnings values is final for this round
+            player.setWinUpdate(round, true);
                
             /*            
             for (Map.Entry<Integer, MCMatchPlayer> entry : playerList.entrySet()) {
