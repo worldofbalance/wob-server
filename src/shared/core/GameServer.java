@@ -239,6 +239,7 @@ public class GameServer {
    
     void ecosystemUpdate() {
         Log.println("GameServer, ecosystemUpdate()");
+        SpeciesChangeListDAO.setDay(SpeciesChangeListDAO.getDay() + 1);
         ArrayList<Integer> playerIds = EcosystemDAO.getPlayerIds(world_id);
         for (int i = 0; i < playerIds.size(); i++) {
             int player_id = playerIds.get(i);

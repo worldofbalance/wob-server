@@ -128,8 +128,7 @@ public class GameEngine {
      * @param world
      * @param currentTimeStep 
      */
-    private void runSimulation(Ecosystem ecosystem, int currentTimeStep) {
-        SpeciesChangeListDAO.setDay(SpeciesChangeListDAO.getDay() + 1);
+    private void runSimulation(Ecosystem ecosystem, int currentTimeStep) {        
         ecosystem.updateScore();
          
         Map<Integer, Species> speciesList = ecosystem.getSpeciesList();        
