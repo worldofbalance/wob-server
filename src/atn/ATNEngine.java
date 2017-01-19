@@ -181,7 +181,8 @@ public class ATNEngine {
                    1.0e-10);  // allowed relative error
 
            // Set up the ATN equations based on the current food web and parameters
-           equations = new ATNEquations(sztArray, ecosysRelationships, lPs);
+           boolean useSystemK = Boolean.valueOf(propertiesConfig.getProperty("useSystemK"));
+           equations = new ATNEquations(sztArray, ecosysRelationships, lPs, useSystemK);
 
            ATNEventHandler eventHandler = null;
            ATNOscillationEventHandler oscEventHandler = null;
@@ -481,6 +482,10 @@ public class ATNEngine {
 
            // Links
            writer.writeIntMatrix("/links", equations.getLinks());
+
+           // System parameters
+           writer.writeBoolean("/parameters/system/use_system_k", equations.getUseSystemK());
+           writer.writeDouble("/parameters/system/ks", equations.getKs());
 
            // Node parameters
            writer.writeDoubleArray("/parameters/node/x", equations.getX());

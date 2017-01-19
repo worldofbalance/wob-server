@@ -10,9 +10,13 @@ import java.util.Map;
 /**
  * Implements the ATN model differential equations in a form usable by the Apache Commons Math integrators.
  * The equations come from the Dynamics.bioenergetic.ModelDerivative class in the Network3D web services codebase, with
- * two differences:
+ * the following differences:
  * 1. e[j][i] is used in place of e[i][j] for consistency with the literature
  * 2. the - x[i] * B[i] is excluded from the producer equation (Network3D automatically sets x[i] for producers to 0)
+ * 3. A system-wide carrying capacity can optionally be used. In this case, Ks = sum(k[i]) and
+ *    G[i] = 1 - ((sum for j in producers of (c[i][j] * B[j])) / Ks)
+ *    (Boit et al. 2012)
+ *    The competition coefficient c[i][j] is currently fixed at 1.
  *
  * @author Ben Saylor
  * @see <a href="https://commons.apache.org/proper/commons-math/userguide/ode.html">The Apache Commons Math ode package documentation</a>
@@ -46,6 +50,11 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
     private ArrayList<ArrayList<Integer>> predatorsOf;  // predatorsOf[i] is the list of i/j indices of predators of species i
     private ArrayList<ArrayList<Integer>> preyOf;       // preyOf[i] is the list of i/j indices of prey of species i
 
+    // ATN model parameters: system-level
+    private boolean useSystemK;
+
+    private double ks;  // System-wide carrying capacity (only used if useSystemK is true)
+
     // ATN model parameters: species-level
     private double[] x;  // Mass-specific metabolic rate
     private double[] r;  // Maximum mass-specific growth rate
@@ -60,11 +69,20 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
     private double[][] e;      // Assimilation efficiency
 
     // ATN model intermediate calculations
+    private double[] G;    // Growth function
     private double[][] F;  // Functional response
 
+    /**
+     * Constructor.
+     * @param speciesZoneTypes array of object describing species, one per species
+     * @param nodeRelationships structure of the food web
+     * @param linkParams link parameter values
+     * @param useSystemK if true, use system-wide carrying capacity by summing node-level values of k
+     */
     public ATNEquations(SimJobSZT[] speciesZoneTypes,
                         Map<Integer, NodeRelationships> nodeRelationships,
-                        LinkParams linkParams) {
+                        LinkParams linkParams, boolean useSystemK) {
+        this.useSystemK = useSystemK;
 
         numSpecies = speciesZoneTypes.length;
         B = new double[numSpecies];
@@ -171,7 +189,16 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
             }
         }
 
-        // Initialize functional response matrix
+        // Initialize system-wide carrying capacity
+        ks = 0;
+        if (useSystemK) {
+            for (double ki : k) {
+                ks += ki;
+            }
+        }
+
+        // Initialize arrays for intermediate calculations
+        G = new double[numSpecies];
         F = new double[numSpecies][numSpecies];
     }
 
@@ -208,10 +235,26 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
             }
         }
 
+        // Compute growth function
+        if (useSystemK) {
+            // Use system-wide carrying capacity
+            for (int i : producers) {
+                double numerator = 0;
+                for (int j : producers) {
+                    numerator += B[j];  // Assumes producer competition coefficient c_ij is 1
+                }
+                G[i] = 1 - numerator / ks;
+            }
+        } else {
+            // Use species-level carrying capacity
+            for (int i : producers) {
+                G[i] = 1 - B[i] / k[i];
+            }
+        }
+
         // Compute derivatives for producers
         for (int i : producers) {
-            double G = 1 - B[i] / k[i];
-            BDot[i] = r[i] * B[i] * G;
+            BDot[i] = r[i] * B[i] * G[i];
             for (int j : predatorsOf.get(i)) {
                 BDot[i] -= x[j] * y[j][i] * alpha[j][i] * F[j][i] * B[j] / e[j][i];
             }
@@ -242,6 +285,14 @@ public class ATNEquations implements FirstOrderDifferentialEquations {
 
     public int[][] getLinks() {
         return links;
+    }
+
+    public boolean getUseSystemK() {
+        return useSystemK;
+    }
+
+    public double getKs() {
+        return ks;
     }
 
     public double[] getX() {
