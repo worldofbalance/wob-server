@@ -1,14 +1,14 @@
 plugins {
     id "org.gradle.java"
-
-    // Makes the Vim Syntastic plugin work
-    id "com.scuilion.syntastic" version "0.3.6"
 }
 
 sourceSets {
     main {
         java {
             srcDir 'src'
+        }
+        resources {
+            srcDir 'src/resources'
         }
     }
 }

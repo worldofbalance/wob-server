@@ -1,6 +1,15 @@
 /build
-.gradle/
-.syntastic_javac_config
 conf/db.conf
 src/log/
 /bin/
+.gradle
+.idea/*
+/nbproject/
+/nbproject/private/
+/dist/
+/dist*
+/out
+/src/shared/log/
+*.class
+.tmp
+wob-server.iml

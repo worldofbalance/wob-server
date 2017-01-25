@@ -1,0 +1,31 @@
+sudo: false
+language: java
+jdk:
+- oraclejdk8
+notifications:
+  email:
+    recipients:
+      - jvanderh@mail.sfsu.edu
+      - dhoff@mail.sfsu.edu
+    on_success: always # default: change
+    on_failure: always # default: always
+ 
+addons:
+  ssh_known_hosts:
+  - 130.212.3.10
+  - smurf.sfsu.edu
+before_install:
+- openssl aes-256-cbc -K $encrypted_dc1c0b2897bc_key -iv $encrypted_dc1c0b2897bc_iv
+  -in smurf_ssh_key.enc -out smurf_ssh_key -d
+script:
+- sh ./scripts/compile.sh
+before_deploy:
+- eval "$(ssh-agent -s)"
+- chmod 600 $TRAVIS_BUILD_DIR/smurf_ssh_key
+- ssh-add $TRAVIS_BUILD_DIR/smurf_ssh_key
+deploy:
+- provider: script
+  skip_cleanup: true
+  script: sh ./scripts/deploy.sh
+  on:
+    branch: smurf-deployment

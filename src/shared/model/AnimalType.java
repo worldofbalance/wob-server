@@ -1,0 +1,11 @@
+package shared.model;
+
+import shared.metadata.Constants;
+
+public class AnimalType extends SpeciesType {
+
+    public AnimalType(int species_id) {
+        organism_type = Constants.ORGANISM_TYPE_ANIMAL;
+        this.species_id = species_id;
+    }
+}
