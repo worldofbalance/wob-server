@@ -239,7 +239,7 @@ public class GameServer {
                     System.out.println("Hour remaining until next simulation = " + mCount);
                 } 
            }
-        }, 1000 * 60, 1000 * 60 * 60);
+        }, 1000 * 30, 1000 * 60 * 60);
     }
    
     void ecosystemUpdate() {

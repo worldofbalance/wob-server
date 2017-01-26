@@ -110,7 +110,12 @@ public class ATNEngine {
        propertiesConfig = new Properties();
        try {
            InputStream in = this.getClass().getClassLoader()
-                            .getResourceAsStream("shared/atn/SimJobConfig.properties");
+                            .getResourceAsStream("src/shared/atn/SimJobConfig.properties");
+           if (in == null) {
+               System.out.println("ATNEngine: in is null");
+           } else {
+               System.out.println("ATNEngine: in is not null");
+           }
            propertiesConfig.load(in);
        } catch (FileNotFoundException ex) {
            Logger.getLogger(ATNEngine.class.getName()).log(
