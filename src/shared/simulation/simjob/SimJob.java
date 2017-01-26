@@ -773,8 +773,8 @@ public class SimJob {
 
 	public void setBiomassCsv(String biomassCSV) {
 		this.biomassCSV = biomassCSV;
-        String str = String.format("biomassCSV for %d %s", job_Id, biomassCSV);
-        Log.consoleln(str);
+        //String str = String.format("biomassCSV for %d %s", job_Id, biomassCSV);
+        //Log.consoleln(str);
 	}
 	
 	public String getBiomassCSV(){

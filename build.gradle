@@ -1,0 +1,25 @@
+plugins {
+    id "org.gradle.java"
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+        }
+        resources {
+            srcDir 'src/resources'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'lib', include: '*.jar')
+    compile fileTree(dir: 'chartlib', include: '*.jar')
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'core.GameServer'
+    }
+}
