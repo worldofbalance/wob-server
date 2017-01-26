@@ -107,6 +107,7 @@ public class ATNEngine {
 
    public ATNEngine() {
        //load properties file containing ATN model parameter values
+       System.out.println("ATNEngine: Before properties");
        propertiesConfig = new Properties();
        try {
            InputStream in = this.getClass().getClassLoader()
