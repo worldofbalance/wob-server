@@ -230,16 +230,16 @@ public class GameServer {
             @Override
             public void run() {
                 mCount--;
-                System.out.println("Hour remaining until next simulation = " + mCount);             
+                System.out.println("Hour(s) remaining until next simulation = " + mCount);             
                 if (mCount <= 0) {
                     mCount = getCycle();
                     LocalDateTime now = LocalDateTime.now();
                     System.out.println("Simulation start date/time: " + dtf.format(now));
                     ecosystemUpdate();    
-                    System.out.println("Hour remaining until next simulation = " + mCount);
+                    System.out.println("Hour(s) remaining until next simulation = " + mCount);
                 } 
            }
-        }, 1000 * 60, 1000 * 60 * 60);
+        }, 1000 * 30, 1000 * 60 * 60);
     }
    
     void ecosystemUpdate() {
