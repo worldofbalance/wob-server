@@ -222,16 +222,16 @@ public class GameServer {
     }
     
     void startEcosystemUpdate() {    
-        mCount = 0;
+        mCount = 1;
         ecoUpdateTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 mCount--;
-                System.out.println("GameServer,startEcosystemUpdate: mCount = " + mCount);             
-                if (mCount < 0) {
+                System.out.println("Hour(s) remaining until next simulation = " + mCount);             
+                if (mCount <= 0) {
                     mCount = getCycle();
                     ecosystemUpdate();    
-                    System.out.println("GameServer,startEcosystemUpdate: mCount = " + mCount);
+                    System.out.println("Hour(s) remaining until next simulation = " + mCount);
                 } 
            }
         }, 1000 * 60, 1000 * 60 * 60);
