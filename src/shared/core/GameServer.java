@@ -227,11 +227,11 @@ public class GameServer {
             @Override
             public void run() {
                 mCount--;
-                System.out.println("GameServer,startEcosystemUpdate: mCount = " + mCount);             
+                System.out.println("Hour remaining until next simulation = " + mCount);             
                 if (mCount < 0) {
                     mCount = getCycle();
                     ecosystemUpdate();    
-                    System.out.println("GameServer,startEcosystemUpdate: mCount = " + mCount);
+                    System.out.println("Hour remaining until next simulation = " + mCount);
                 } 
            }
         }, 1000 * 60, 1000 * 60 * 60);
