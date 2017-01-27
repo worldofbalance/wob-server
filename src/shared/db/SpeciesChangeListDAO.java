@@ -203,7 +203,7 @@ public final class SpeciesChangeListDAO {
 
             if (rs.next()) {
                 result = rs.getInt("day");
-                Log.println("SpeciesChangeListDAO, getCurrentDay: day = " + result);
+                // Log.println("SpeciesChangeListDAO, getCurrentDay: day = " + result);
             } 
             
             pstmt.close();
