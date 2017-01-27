@@ -28,4 +28,4 @@ deploy:
   skip_cleanup: true
   script: sh ./scripts/deploy.sh
   on:
-    branch: development
+    branch: development-new-atn
