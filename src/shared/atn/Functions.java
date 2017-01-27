@@ -230,33 +230,36 @@ public class Functions {
         }
     }
 
-    //open printstream
-    public static PrintStream getPrintStream(
-            String filename, 
-            String destDir
-    ) {
-        final String name = filename, extension = ".csv";
-        PrintStream ps = null;
-
-        // Determine filename
-        File dir = new File(destDir);
+    /**
+     * Generate new filename in the given directory with the given prefix and
+     * extension. The file will be named "prefix.extension" if a file with that
+     * name doesn't already exist; otherwise, it will be named
+     * "prefix_num.extension", where num is an integer chosen sequentially to
+     * avoid clobbering existing files.
+     *
+     * @param dir The directory in which the output file will be stored (will be created if it doesn't exist)
+     * @param prefix The beginning of the filename
+     * @param extension The file extension, including the "."
+     * @return the new output file's full path
+     */
+    public static File getNewOutputFile(File dir, String prefix, String extension) {
         dir.mkdirs();
         String[] files = dir.list(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String fullname) {
-                return fullname.startsWith(name)
+                return fullname.startsWith(prefix)
                         && fullname.endsWith(extension);
             }
         });
 
         //check current files to find next number that has not been used
-        String csvFilename = name;
+        String filename = prefix;
 
         if (files.length > 0) {
             int[] temp = new int[files.length];
 
             for (int i = 0; i < temp.length; i++) {
-                String lastFilename = files[i].replaceFirst(name, "").
+                String lastFilename = files[i].replaceFirst(prefix, "").
                         replaceFirst("_", "");
 
                 try {
@@ -269,14 +272,29 @@ public class Functions {
 
             Arrays.sort(temp);
 
-            csvFilename += "_" + (temp[temp.length - 1] + 1);
+            filename += "_" + (temp[temp.length - 1] + 1);
         }
-        setLastCSVFilePath(destDir + csvFilename);
-        csvFilename += extension;
+        if (extension.equals(".csv")) {
+            setLastCSVFilePath(new File(dir, filename).toString());
+        }
+        filename += extension;
+        return new File(dir, filename);
+    }
+
+    //open printstream
+    public static PrintStream getPrintStream(
+            String prefix,
+            String destDir
+    ) {
+        final String extension = ".csv";
+        PrintStream ps = null;
+
+        // Determine filename
+        File dir = new File(destDir);
+        File outputFile = getNewOutputFile(dir, prefix, extension);
         try {
-            System.out.println(destDir + csvFilename);
-            ps = new PrintStream(new FileOutputStream(
-                    destDir + csvFilename));
+            System.out.println(outputFile.toString());
+            ps = new PrintStream(new FileOutputStream(outputFile));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ATN.class.getName()).log(
                     Level.SEVERE, null, ex);

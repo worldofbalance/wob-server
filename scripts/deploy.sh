@@ -30,27 +30,27 @@ ssh wob_server@smurf.sfsu.edu <<WOB_SERVER
 
     # Lobby
     chmod u+x ~/scripts/start_lobby.sh
-    nohup ~/scripts/start_lobby.sh > ~/logs/lobby.log
+    nohup ~/scripts/start_lobby.sh 2>&1 > ~/logs/lobby.log
     echo "Lobby Started"
 
     # Cards of Wild
     chmod u+x ~/scripts/start_cow.sh
-    nohup ~/scripts/start_cow.sh > ~/logs/cow.log
+    nohup ~/scripts/start_cow.sh 2>&1 > ~/logs/cow.log
     echo "Cards of Wild started"
 
     # Clash of Species
     chmod u+x ~/scripts/start_cos.sh
-    nohup ~/scripts/start_cos.sh > ~/logs/cos.log
+    nohup ~/scripts/start_cos.sh 2>&1 > ~/logs/cos.log
     echo "Clash of Species started."
 
     # Running Rhino
     # chmod u+x ~/scripts/start_rno.sh
-    # nohup ~/scripts/start_rno.sh > ~/logs/rno.log
+    # nohup ~/scripts/start_rno.sh 2>&1 > ~/logs/rno.log
     # echo "Running Rhino Started"
 
     # A Sea Divided
     chmod u+x ~/scripts/start_sdv.sh
-    nohup ~/scripts/start_sdv.sh > ~/logs/sdv.log
+    nohup ~/scripts/start_sdv.sh > 2>&1 ~/logs/sdv.log
     echo "A sea divided started"
 WOB_SERVER
 

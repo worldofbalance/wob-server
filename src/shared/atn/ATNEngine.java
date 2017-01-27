@@ -10,7 +10,7 @@ Relies on WoB_Server source code for objects that store simulation timesteps and
 species information.
 */
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +19,6 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -32,10 +31,17 @@ import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 
-import shared.org.datacontract.schemas._2004._07.ManipulationParameter.ManipulatingNode;
-import shared.org.datacontract.schemas._2004._07.ManipulationParameter.ManipulatingNodeProperty;
-import shared.org.datacontract.schemas._2004._07.ManipulationParameter.ManipulatingParameter;
-import shared.org.datacontract.schemas._2004._07.ManipulationParameter.NodeBiomass;
+import ch.systemsx.cisd.hdf5.HDF5Factory;
+import ch.systemsx.cisd.hdf5.HDF5IntStorageFeatures;
+import ch.systemsx.cisd.hdf5.IHDF5Writer;
+
+import org.apache.commons.math3.analysis.solvers.BisectionSolver;
+import org.apache.commons.math3.exception.NoBracketingException;
+import org.apache.commons.math3.ode.FirstOrderIntegrator;
+import org.apache.commons.math3.ode.events.EventFilter;
+import org.apache.commons.math3.ode.events.FilterType;
+import org.apache.commons.math3.ode.nonstiff.GraggBulirschStoerIntegrator;
+import org.apache.commons.math3.ode.sampling.*;
 
 import shared.metadata.Constants;
 import shared.model.Ecosystem;
@@ -48,7 +54,6 @@ import shared.simulation.SimulationException;
 import shared.simulation.SpeciesZoneType;
 import shared.simulation.SpeciesZoneType.SpeciesTypeEnum;
 import shared.simulation.config.ManipulatingParameterName;
-import shared.simulation.config.ManipulationActionType;
 import shared.simulation.simjob.ConsumeMap;
 import shared.simulation.simjob.EcosystemTimesteps;
 import shared.simulation.simjob.NodeTimesteps;
@@ -71,6 +76,16 @@ public class ATNEngine {
 
    private static UserInput userInput;
    public static Properties propertiesConfig;
+
+    // If true, disable CSV output and produce HDF5 files instead
+    public static boolean useHDF5 = false;
+
+    // If true, detect steady states in the simulation and stop simulating
+    public static boolean stopOnSteadyState = false;
+
+    // Output directory for simulation data files
+    private String outputDir = Constants.ATN_CSV_SAVE_PATH;
+
    private PrintStream psATN = null;
    /*
     The first two timesteps values produced by WebServices do not
@@ -81,8 +96,9 @@ public class ATNEngine {
    private double maxBSIErr = 1.0E-3;
    private double timeIntvl = 0.1;
    private static final int biomassScale = 1000;
+   private boolean roundBiomass = Constants.ROUND_BIOMASS;
    // DH 1-6-2017 reqd for periodic ecosystem simulation and update
-   public static boolean LOAD_SIM_TEST_PARAMS = true;   
+   public static boolean LOAD_SIM_TEST_PARAMS = true;
    private static int equationSet = 0;  //0=ATN; 1=ODE 1; 2=ODE 2
    private double initTime = 0.0;
    private double initVal = 0.0;  //for non-ATN test
@@ -113,7 +129,7 @@ public class ATNEngine {
 	       SpeciesType.loadSimTestNodeParams(Constants.ECOSYSTEM_TYPE);
 	       SpeciesType.loadSimTestLinkParams(Constants.ECOSYSTEM_TYPE);
        }
-       //Above is not needed SimJobManager does this       
+       //Above is not needed SimJobManager does this
    }
    
 	public void setSimJob(SimJob job) {
@@ -126,8 +142,10 @@ public class ATNEngine {
            Map<Integer, NodeRelationships> ecosysRelationships
    ) {
        //calc information relevant to entire ecosystem
-       int speciesCnt = ecosysTimesteps.getNodeList().size();
-       int timesteps = ecosysTimesteps.getTimesteps();
+       int speciesCnt = ecosysTimesteps.getNodeList().size();  // Number of species
+       int timesteps = ecosysTimesteps.getTimesteps();         // Maximum number of timesteps to run simulation
+       int timestepsToSave = 0;         // Number of timesteps of data to save to output file
+       int[] matchingTimesteps = null;  // Array of matching timesteps returned by findMatchingTimesteps()
 
        //read in link parameters; this was explicitly configured to allow
        //manipulation of link parameter values, but no manipulation is 
@@ -165,36 +183,137 @@ public class ATNEngine {
     	   calcBiomass[0][i] =  currBiomass[i];
        }
 
-       //create integration object
-       boolean isTest = false;
-       BulirschStoerIntegration bsi = new BulirschStoerIntegration(
-               timeIntvl,
-               speciesID,
-               sztArray,
-               ecosysRelationships,
-               lPs,
-               maxBSIErr,
-               equationSet
-       );
+       ATNEquations equations = null;
+       ATNEventHandler.EventType stopEvent = ATNEventHandler.EventType.NONE;
 
-       //calculate delta-biomass and biomass "contributions" from each related
-       //species
-       for (int t = initTimeIdx + 1; t < timesteps; t++) {
-           boolean success = bsi.performIntegration(time(initTime, t), currBiomass);
-           if (!success) {
-               //System.out.printf("Integration failed to converge, t = %d\n", t);
-               //System.out.print(bsi.extrapArrayToString(biomassScale));
-               break;
+       if (Constants.useCommonsMathIntegrator) {
+
+           // Use Apache Commons Math GraggBulirschStoerIntegrator
+
+           FirstOrderIntegrator integrator = new GraggBulirschStoerIntegrator(
+                   1.0e-8,    // minimal step
+                   100.0,     // maximal step
+                   ATNEquations.EXTINCT,   // allowed absolute error
+                   1.0e-10);  // allowed relative error
+
+           // Set up the ATN equations based on the current food web and parameters
+           boolean useSystemK = Boolean.valueOf(propertiesConfig.getProperty("useSystemK"));
+           equations = new ATNEquations(sztArray, ecosysRelationships, lPs, useSystemK);
+
+           ATNEventHandler eventHandler = null;
+           ATNOscillationEventHandler oscEventHandler = null;
+           if (stopOnSteadyState) {
+               eventHandler = new ATNEventHandler(equations);
+               // FIXME: Choose best parameter values
+               integrator.addEventHandler(new EventFilter(eventHandler, FilterType.TRIGGER_ONLY_DECREASING_EVENTS),
+                       1,  // maximal time interval between switching function checks (this interval prevents missing sign changes in case the integration steps becomes very large)
+                       0.0001,  // convergence threshold in the event time search
+                       1000,  // upper limit of the iteration count in the event time search
+                       new BisectionSolver()
+               );
+
+               oscEventHandler = new ATNOscillationEventHandler(equations);
            }
-           currBiomass = bsi.getYNew();
-           System.arraycopy(currBiomass, 0, calcBiomass[t], 0, speciesCnt);
 
-           contribsT = bsi.getContribs();
-           for (int i = 0; i < speciesCnt; i++) {
-               System.arraycopy(contribsT[i], 0, contribs[t - 1][i], 0, speciesCnt);
+           // Set up the StepHandler, which is triggered at each time step by the integrator,
+           // and copies the current biomass of each species into calcBiomass[timestep].
+           // See the "Continuous Output" section of https://commons.apache.org/proper/commons-math/userguide/ode.html
+           ATNStepHandler fixedStepHandler = new ATNStepHandler(calcBiomass, timeIntvl);
+           StepHandler stepHandler = new StepNormalizer(timeIntvl, fixedStepHandler,
+                   StepNormalizerMode.MULTIPLES,  // step at multiples of timeIntvl
+                   StepNormalizerBounds.FIRST);   // ensure the first time step is handled
+           integrator.addStepHandler(stepHandler);
+
+           // Run the integrator to compute the biomass time series.
+           // The integration is run in chunks to facilitate the use of the oscillation detection event handler.
+           // Because the period of an oscillating state could be of any length,
+           // we double the chunk length each time.
+           int prevStartTimestep = -1;
+           for (int i = 0, startTimestep = 0, endTimestep = 1000;
+
+                    startTimestep < timesteps && startTimestep > prevStartTimestep;
+
+                    prevStartTimestep = startTimestep,
+                    startTimestep = fixedStepHandler.getLastHandledTimestep(),
+                    endTimestep = Math.min(timesteps, endTimestep * 2),
+                    i++) {
+
+               // Only start checking for oscillations starting with the second integration
+               if (stopOnSteadyState && i == 1) {
+                   integrator.addEventHandler(oscEventHandler, timeIntvl, 0.0001, 1000, new BisectionSolver());
+               }
+
+               try {
+                   integrator.integrate(equations,
+                           startTimestep * timeIntvl,
+                           calcBiomass[startTimestep],
+                           endTimestep * timeIntvl,
+                           currBiomass);
+               } catch (NoBracketingException e) {
+                   System.err.println();
+                   System.err.println(e);
+                   System.err.println("\n*** NoBracketingException caught; removing event handlers\n");
+                   integrator.clearEventHandlers();
+               }
+
+               if (stopOnSteadyState
+                       && (eventHandler.integrationWasStopped() || oscEventHandler.integrationWasStopped())) {
+                   break;
+               }
            }
 
-       }  //timestep loop
+           if (stopOnSteadyState && eventHandler.integrationWasStopped()) {
+               timestepsToSave = (int) (eventHandler.getTimeStopped() / timeIntvl);
+               stopEvent = eventHandler.getStopEvent();
+           } else if (stopOnSteadyState && oscEventHandler.integrationWasStopped()) {
+               timestepsToSave = (int) (oscEventHandler.getTimeStopped() / timeIntvl);
+               stopEvent = oscEventHandler.getStopEvent();
+           } else {
+               timestepsToSave = timesteps;
+               stopEvent = ATNEventHandler.EventType.NONE;
+           }
+
+       } else {
+
+           // Use BulirschStoerIntegration
+
+           //create integration object
+           boolean isTest = false;
+           BulirschStoerIntegration bsi = new BulirschStoerIntegration(
+                   timeIntvl,
+                   speciesID,
+                   sztArray,
+                   ecosysRelationships,
+                   lPs,
+                   maxBSIErr,
+                   equationSet
+           );
+
+           //calculate delta-biomass and biomass "contributions" from each related
+           //species
+           for (int t = initTimeIdx + 1; t < timesteps; t++) {
+               boolean success = bsi.performIntegration(time(initTime, t), currBiomass);
+               if (!success) {
+                   System.out.printf("Integration failed to converge, t = %d\n", t);
+                   System.out.print(bsi.extrapArrayToString(biomassScale));
+                   break;
+               }
+               currBiomass = bsi.getYNew();
+               System.arraycopy(currBiomass, 0, calcBiomass[t], 0, speciesCnt);
+
+               contribsT = bsi.getContribs();
+               for (int i = 0; i < speciesCnt; i++) {
+                   System.arraycopy(contribsT[i], 0, contribs[t - 1][i], 0, speciesCnt);
+               }
+
+           }  //timestep loop
+
+       }
+
+       if (useHDF5) {
+           saveHDF5OutputFile(calcBiomass, speciesID, job.getNode_Config(), equations, timestepsToSave, stopEvent);
+           return null;
+       }
 
 	   double[][] webServicesData = new double[speciesCnt][timesteps];
        if(Constants.useSimEngine){		//We need the webServicesData only for marginOfErrorCalculation
@@ -306,6 +425,99 @@ public class ATNEngine {
        return mSpecies;
    }
 
+    /**
+     * Save a generated biomass dataset to an HDF5 file in the output directory
+     * given by the outputDir attribute.
+     * @param biomass The generated biomass as a (num_timesteps) x (num_nodes) array
+     * @param nodeIDs The node IDs. The order must correspond to the columns of the biomass array
+     * @param nodeConfig The node configuration string used to generate the data
+     * @param equations The ATN equations used for the simulation
+     * @param numTimesteps The number of time steps of biomass data to save
+     * @param stopEvent Event that caused the simulation to be stopped (if any)
+     */
+   private void saveHDF5OutputFile(double[][] biomass, int[] nodeIDs,
+                                   String nodeConfig, ATNEquations equations, int numTimesteps,
+                                   ATNEventHandler.EventType stopEvent) {
+
+       // Determine the filename
+       File file = Functions.getNewOutputFile(new File(outputDir), "ATN", ".h5");
+       System.out.println("Writing output to " + file.toString());
+
+       // Write the data to the output file
+       IHDF5Writer writer = HDF5Factory.configure(file).writer();
+
+       if (roundBiomass) {
+           // Scale biomass for consistency with CSV output.
+           // Round and cast to 32-bit integers to facilitate deflate compression.
+           // Note: there is technically a risk of integer overflow,
+           // but it won't happen unless scaled biomass exceeds 2 billion.
+           int[][] scaledBiomass = new int[numTimesteps][nodeIDs.length];
+           for (int t = 0; t < numTimesteps; t++) {
+               for (int i = 0; i < nodeIDs.length; i++) {
+                   scaledBiomass[t][i] = (int) Math.round((biomass[t][i] * Constants.BIOMASS_SCALE));
+               }
+           }
+
+           writer.int32().writeMatrix("biomass", scaledBiomass, HDF5IntStorageFeatures.INT_DEFLATE);
+
+       } else {
+           // Scale biomass for consistency with CSV output, but do not round.
+           double[][] scaledBiomass = new double[numTimesteps][nodeIDs.length];
+           for (int t = 0; t < numTimesteps; t++) {
+               for (int i = 0; i < nodeIDs.length; i++) {
+                   scaledBiomass[t][i] = (biomass[t][i] * Constants.BIOMASS_SCALE);
+               }
+           }
+           writer.float64().writeMatrix("biomass", scaledBiomass);
+       }
+
+       writer.writeIntArray("node_ids", nodeIDs);
+
+       // Save parameter values and food web information
+       if (equations != null) {
+
+           // Producers
+           int[] producersArray = new int[equations.getProducers().size()];
+           ArrayList<Integer> producers = equations.getProducers();
+           for (int i = 0; i < producers.size(); i++) {
+               producersArray[i] = producers.get(i);
+           }
+           writer.writeIntArray("/producers", producersArray);
+
+           // Consumers
+           int[] consumersArray = new int[equations.getConsumers().size()];
+           ArrayList<Integer> consumers = equations.getConsumers();
+           for (int i = 0; i < consumers.size(); i++) {
+               consumersArray[i] = consumers.get(i);
+           }
+           writer.writeIntArray("/consumers", consumersArray);
+
+           // Links
+           writer.writeIntMatrix("/links", equations.getLinks());
+
+           // System parameters
+           writer.writeBoolean("/parameters/system/use_system_k", equations.getUseSystemK());
+           writer.writeDouble("/parameters/system/ks", equations.getKs());
+
+           // Node parameters
+           writer.writeDoubleArray("/parameters/node/x", equations.getX());
+           writer.writeDoubleArray("/parameters/node/r", equations.getR());
+           writer.writeDoubleArray("/parameters/node/k", equations.getK());
+
+           // Link parameters
+           writer.writeDoubleMatrix("/parameters/link/y", equations.getY());
+           writer.writeDoubleMatrix("/parameters/link/d", equations.getD());
+           writer.writeDoubleMatrix("/parameters/link/q", equations.getQ());
+           writer.writeDoubleMatrix("/parameters/link/alpha", equations.getAlpha());
+           writer.writeDoubleMatrix("/parameters/link/b0", equations.getB0());
+           writer.writeDoubleMatrix("/parameters/link/e", equations.getE());
+       }
+
+       writer.string().setAttr("/", "node_config", nodeConfig);
+       writer.string().setAttr("/", "stop_event", stopEvent.toString());
+       writer.close();
+   }
+
    /*
    Test run for integration using problem with known solution:
    equationSet 1:
@@ -404,8 +616,8 @@ public class ATNEngine {
    private void initOutputStreams() {
        System.out.println("Ecosystem output will be written to:");
        System.out.println("Network output will be written to:");
-       // psATN = Functions.getPrintStream("ATN", userInput.destDir);
-       psATN = Functions.getPrintStream("ATN", Constants.ATN_CSV_SAVE_PATH);
+       //psATN = Functions.getPrintStream("ATN", userInput.destDir);
+       psATN = Functions.getPrintStream("ATN", outputDir);
    }
  	
 	public HashMap<Integer, SpeciesZoneType> processSimJob(SimJob job) throws SQLException, SimulationException {
@@ -415,7 +627,11 @@ public class ATNEngine {
        EcosystemTimesteps ecosysTimesteps = new EcosystemTimesteps();
        Map<Integer, NodeRelationships> ecosysRelationships = new HashMap<>();
        NodeTimesteps nodeTimesteps;
-       initOutputStreams();
+
+        if (useHDF5 == false) {
+            initOutputStreams();
+        }
+
        int[] nodeListArray = job.getSpeciesNodeList();
        List<SpeciesZoneType> speciesZoneList = job.getSpeciesZoneList();
        
@@ -430,12 +646,13 @@ public class ATNEngine {
 	       	}
 	       	ecosysTimesteps.putNodeTimesteps(nodeId, nodeTimesteps);
        }
-              
+
        ConsumeMap consumeMap = new ConsumeMap(job.getSpeciesNodeList(),
                Constants.ECOSYSTEM_TYPE);
        PathTable pathTable = new PathTable(consumeMap, 
                job.getSpeciesNodeList(), !PathTable.PP_ONLY);
-       // Log.consoleln("consumeMap " + consumeMap.toString());
+//       Log.consoleln("consumeMap " + consumeMap.toString());
+//       Log.consoleln("pathTable " + pathTable.toString());
        status = Constants.STATUS_SUCCESS;
        job.setConsumeMap(consumeMap);
        job.setPathTable(pathTable);
@@ -466,7 +683,7 @@ public class ATNEngine {
 	        //loop through dataset
 	        //1 chart: 0: relationship/distance
 	        int chart = 0, nodes = 0, relnOffset = 0, distOffset = 0, pathCntOffset = 0;
-	        List<Integer> sortedNodeList = null;
+	        List<Integer> nodeList = null;
 	        boolean empty = false;
 	        boolean newChart = true;
 	        for (List<String> csvLine : dataSet) {
@@ -491,19 +708,26 @@ public class ATNEngine {
 	                case 1:  //relationship/distance chart
 	                    //bypass first - header - line
 	                    if (newChart) {
-	                        sortedNodeList = new ArrayList<>(ecosysTimesteps.getNodeList());
-	                        Collections.sort(sortedNodeList);
-	                        nodes = sortedNodeList.size();
+	                    	nodes = ecosysTimesteps.getNodeList().size();
 	                        relnOffset = 2;  //offset in csvLine to 1st reln
 	                        distOffset = relnOffset + nodes;  //offset in csvLine to distance info
 	                        pathCntOffset = distOffset + nodes; //offset in csvLine to pathCnt info
+
+	                        // Build list of node IDs in the order they appear in the
+	                        // columns of the table.
+	                        nodeList = new ArrayList<>(nodes);
+	                        for (int i = 0; i < nodes; i++) {
+	                        	Integer _nodeId = Integer.valueOf(csvLine.get(relnOffset + i));
+	                        	nodeList.add(i, _nodeId);
+	                        }
+
 	                        newChart = false;
 	                        break;
 	                    }
 	                    int nodeA = Integer.valueOf(csvLine.get(0));
 	                    NodeRelationships nodeRelns = new NodeRelationships(nodeA);
 	                    for (int i = 0; i < nodes; i++) {
-	                        int nodeB = sortedNodeList.get(i);
+	                        int nodeB = nodeList.get(i);
 	                        String relnStr = csvLine.get(relnOffset + i);
 	                        int dist = Integer.valueOf(csvLine.get(distOffset + i));
 	                        int pathCnt = Integer.valueOf(csvLine.get(pathCntOffset + i));
@@ -556,7 +780,7 @@ public class ATNEngine {
        return szt;
    }
 
-   /*//HJR Concept orginally borrowed from Simulation engine and modified to 
+   /*//HJR Concept orginally borrowed from Simulation engine and modified to
     * work for ATN Engine
     */
   public HashMap<Integer, SpeciesZoneType> getPrediction(String networkOrManipulationId,
@@ -566,12 +790,12 @@ public class ATNEngine {
       long milliseconds = System.currentTimeMillis();
 
       Log.printf("\nPrediction at %d\n", startTimestep);
-      
+
       //Get previous timestep biomass for all species from web service
       //JTC, use new HashMap containing all current settings from zoneNodes, masterSpeciesList
       //HJR changing to make a deep copy here , I am getting a null while iterating
       HashMap<Integer, SpeciesZoneType> masterSpeciesList = new HashMap<Integer, SpeciesZoneType>(zoneNodes.getNodes());     
-      
+
       HashMap<Integer, SpeciesZoneType> mNewSpecies = new HashMap<Integer, SpeciesZoneType>();
       //JTC, mUpdateBiomass renamed from mUpdateSpecies
       HashMap<Integer, SpeciesZoneType> mUpdateBiomass = new HashMap<Integer, SpeciesZoneType>();
@@ -581,7 +805,7 @@ public class ATNEngine {
       SpeciesZoneType szt;
       String nodeConfig = null;
 
-      for (int node_id : addSpeciesNodeList.keySet()) {          
+      for (int node_id : addSpeciesNodeList.keySet()) {
           int addedBiomass = addSpeciesNodeList.get(node_id);
 
           if (!masterSpeciesList.containsKey(node_id)) {
@@ -619,7 +843,7 @@ public class ATNEngine {
     	  nodeConfig = addMultipleSpeciesType(
                   mNewSpecies,
                   masterSpeciesList,
-                  runTimestep,  // startTimestep, - 1-10-2017 DH does not seem to be used 
+                  runTimestep,  // startTimestep, - 1-10-2017 DH does not seem to be used
                   false,
                   networkOrManipulationId
           );
@@ -660,10 +884,10 @@ public class ATNEngine {
 
 //      run(startTimestep, runTimestep, networkOrManipulationId);
 
-      // get new predicted biomass      
+      // get new predicted biomass
       try {
     	  if(!masterSpeciesList.isEmpty() || !mNewSpecies.isEmpty()){
-    		  mUpdateBiomass = submitManipRequest("ATN", nodeConfig, 
+    		  mUpdateBiomass = submitManipRequest("ATN", nodeConfig,
                           runTimestep + 1,  // startTimestep + runTimestep,  DH 1-10-2017, needs to be +1
                           false, networkOrManipulationId);
     	  }
@@ -689,7 +913,7 @@ public class ATNEngine {
 
       return (HashMap) zoneNodes.getNodes();
   }
-  
+
      public String getExistingNodeConfig(ZoneNodes zoneNodes){
         HashMap<Integer, SpeciesZoneType> masterSpeciesList = new HashMap<Integer, SpeciesZoneType>(zoneNodes.getNodes());
         String nodeConfig = null;
@@ -980,10 +1204,37 @@ public class ATNEngine {
                     int biomassValue = (int) entry.getValue().getCurrentBiomass();
                     Species species = ecosystem.getSpecies(szt.getSpeciesType().getID());
 		    for (SpeciesGroup group : species.getGroups().values()) {
-                                group.setBiomass(biomassValue);	
+                                group.setBiomass(biomassValue);
 		        EcoSpeciesDAO.updateBiomass(eco_id, group.getID(), species_id, group.getBiomass());
 		    }
-                    SpeciesChangeListDAO.createEntry(eco_id, species_id, biomassValue, day); 
+                    SpeciesChangeListDAO.createEntry(eco_id, species_id, biomassValue, day);
                 }
             }
+
+    public String getOutputDir() {
+        return outputDir;
+    }
+
+    public void setOutputDir(String outputDir) {
+        if (outputDir.endsWith("/")) {
+            this.outputDir = outputDir;
+        } else {
+            this.outputDir = outputDir + "/";
+        }
+    }
+
+    /**
+     * @return true if biomass will be rounded to integer values; false otherwise
+     */
+    public boolean getRoundBiomass() {
+        return roundBiomass;
+    }
+
+    /**
+     * @param roundBiomass true if biomass should be rounded to integer values
+     */
+    public void setRoundBiomass(boolean roundBiomass) {
+        this.roundBiomass = roundBiomass;
+    }
+
 }
