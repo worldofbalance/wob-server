@@ -22,6 +22,8 @@ import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -69,6 +71,7 @@ public class GameServer {
     private static int world_id;
     private final static int ECC_UPDATE_CYCLE_DEFAULT = 24;   // Default update all ecosystems once per day, every 24 hours
     private final static int ECC_UPDATE_STAGGER = 1000 * 10;   // Stagger ecosystem updates by 10 seconds
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 
     /**
      * Create the GameServer by setting up the request types and creating a
@@ -230,11 +233,13 @@ public class GameServer {
                 System.out.println("Hour(s) remaining until next simulation = " + mCount);             
                 if (mCount <= 0) {
                     mCount = getCycle();
+                    LocalDateTime now = LocalDateTime.now();
+                    System.out.println("Simulations starting at: " + dtf.format(now));
                     ecosystemUpdate();    
                     System.out.println("Hour(s) remaining until next simulation = " + mCount);
                 } 
            }
-        }, 1000 * 60, 1000 * 60 * 60);
+        }, 1000 * 30, 1000 * 60 * 60);
     }
    
     void ecosystemUpdate() {
@@ -298,7 +303,7 @@ public class GameServer {
         try {
             server = new GameServer(Configuration.lobbyPortNumber, Constants.MAX_CLIENT_THREADS);
             server.configure();            
-            SpeciesChangeListDAO.fetchDay();   // Sets the internalDay to largest DB day
+            Log.println("WoB current day is " + SpeciesChangeListDAO.fetchDay());
             MiniGameServers.getInstance().runServers();
             world_id = WorldController.getInstance().first().getID();
             server.startEcosystemUpdate();
