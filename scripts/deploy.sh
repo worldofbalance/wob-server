@@ -50,7 +50,7 @@ ssh wob_server@smurf.sfsu.edu <<WOB_SERVER
 
     # A Sea Divided
     chmod u+x ~/scripts/start_sdv.sh
-    nohup ~/scripts/start_sdv.sh 2>&1 ~/logs/sdv.log
+    nohup ~/scripts/start_sdv.sh 2>&1 > ~/logs/sdv.log
     echo "A sea divided started"
 WOB_SERVER
 
