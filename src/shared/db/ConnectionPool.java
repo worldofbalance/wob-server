@@ -47,7 +47,7 @@ public class ConnectionPool {
          * job for now.
          */
         ObjectPool connectionPool = new GenericObjectPool(null,
-                -1, // Default is 8 changed to 16. Can change to -1 for no limit.
+                16, // Default is 8 changed to 16. Can change to -1 for no limit.
                 // GenericObjectPool.DEFAULT_MAX_ACTIVE,
                 GenericObjectPool.DEFAULT_WHEN_EXHAUSTED_ACTION,
                 GenericObjectPool.DEFAULT_MAX_WAIT,

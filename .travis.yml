@@ -27,5 +27,5 @@ deploy:
 - provider: script
   skip_cleanup: true
   script: sh ./scripts/deploy.sh
-  on:
-    branch: smurf-deployment
+  on:  
+    branch: development-new-atn
