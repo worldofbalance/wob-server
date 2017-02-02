@@ -49,7 +49,7 @@ public class RequestSpeciesAction extends GameRequest {
                 biomass = DataReader.readInt(dataInput);
 
                 speciesList.put(species_id, biomass);
-                Log.println("RequestSpeciesAction, id,biomass = " + species_id + " " + biomass);
+                // Log.println("RequestSpeciesAction, id,biomass = " + species_id + " " + biomass);
             }
         } else if (action == 3) {
             species_id = DataReader.readInt(dataInput);
@@ -57,7 +57,7 @@ public class RequestSpeciesAction extends GameRequest {
             index = DataReader.readShort(dataInput);
         } else if (action == 4) {
             species_id = DataReader.readInt(dataInput);            
-            Log.println("RequestSpeciesAction, parse, action = 4 id = " + species_id);
+            // Log.println("RequestSpeciesAction, parse, action = 4 id = " + species_id);
         }
     }
 
@@ -111,9 +111,7 @@ public class RequestSpeciesAction extends GameRequest {
 
             client.add(response);
         } else if (action == 1) { // Create Ecosystem Using Species
-            Log.println("RequestSpeciesAction, process, client.getPlayer() == null? " + (client.getPlayer() == null));
             Ecosystem ecosystem = client.getPlayer().getEcosystem();
-            Log.println("RequestSpeciesAction, process, ecosystem == null? " + (ecosystem == null));
 
             if (ecosystem != null) {
                 EcosystemController.createEcosystem(ecosystem, speciesList);
@@ -132,17 +130,17 @@ public class RequestSpeciesAction extends GameRequest {
                 client.add(response);
             }
         } else if (action == 2) { // Return species_id, biomass pairs for Ecosystem
-            Log.println("RequestSpeciesAction, action = 2");
+            // Log.println("RequestSpeciesAction, action = 2");
             // speciesListFull = EcosystemController.getInstance().getEcosystem().getSpeciesList();
             // speciesListFull = client.getPlayer().getEcosystem().getSpeciesList();
             speciesListFull = EcoSpeciesDAO.getSpecies(client.getPlayer().getEcosystem().getID());
             int count = speciesListFull.size();  
-            Log.println("RequestSpeciesAction, speciesListFull.size() = " + speciesListFull.size());
+            // Log.println("RequestSpeciesAction, speciesListFull.size() = " + speciesListFull.size());
             response.setCount(count);
             for (Species species : speciesListFull) {
                 int species_id = species.getID();
                 int biomass = species.getTotalBiomass();
-                Log.println("species_id, biomass = " + species_id + " " + biomass);
+                // Log.println("species_id, biomass = " + species_id + " " + biomass);
                 response.addSpeciesList(species_id, biomass);
             }
             /* This is for the memory map
@@ -166,7 +164,7 @@ public class RequestSpeciesAction extends GameRequest {
             response.setSpeciesId(species_id);
             response.setSpeciesHistoryList(
                     SpeciesChangeListDAO.getSpeciesHistory(client.getPlayer().getEcosystem().getID(), species_id));
-            Log.println("RequestSpeciesAction, process, action = 4, size = " + response.speciesHistoryList.size());
+            // Log.println("RequestSpeciesAction, process, action = 4, size = " + response.speciesHistoryList.size());
             client.add(response);
         }
     }

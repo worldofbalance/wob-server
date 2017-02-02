@@ -60,13 +60,13 @@ public class ResponseSpeciesAction extends GameResponse {
             packet.addFloat(biomass);
             packet.addShort16(index);
         } else if (action == 4) {
-            Log.println("ResponseSpeciesAction, action = 4, species, size = " + species_id + " " + speciesHistoryList.size());
+            // Log.println("ResponseSpeciesAction, action = 4, species, size = " + species_id + " " + speciesHistoryList.size());
             packet.addInt32(species_id);
             packet.addShort16((short) speciesHistoryList.size());
             for (Integer key : speciesHistoryList.keySet()) {
                 packet.addInt32(key);
                 packet.addInt32(speciesHistoryList.get(key));    
-                Log.println("day, biomass change = " + key + " " + speciesHistoryList.get(key));
+                // Log.println("day, biomass change = " + key + " " + speciesHistoryList.get(key));
             }
         }
         

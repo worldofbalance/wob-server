@@ -107,7 +107,7 @@ public final class SpeciesChangeListDAO {
 
     public static Map<Integer, Integer> getSpeciesHistory(int eco_id, int species_id) {
         Map<Integer, Integer> speciesHistoryList = new HashMap<Integer, Integer>();
-        Log.println("SpeciesChangeListDAO, getSpeciesHistory: e/s = " + eco_id + " " + species_id);
+        // Log.println("SpeciesChangeListDAO, getSpeciesHistory: e/s = " + eco_id + " " + species_id);
 
         String query = "SELECT * FROM `eco_species_change` WHERE `eco_id` = ? AND `species_id` = ?";
 
@@ -124,7 +124,7 @@ public final class SpeciesChangeListDAO {
 
             while (rs.next()) {
                 speciesHistoryList.put(rs.getInt("day"), rs.getInt("biomass"));
-                Log.println("SpeciesChangeListDAO, getSpeciesHistory: d/b = " + rs.getInt("day") + " " + rs.getInt("biomass"));
+                // Log.println("SpeciesChangeListDAO, getSpeciesHistory: d/b = " + rs.getInt("day") + " " + rs.getInt("biomass"));
             }
 
             rs.close();
