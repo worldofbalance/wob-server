@@ -164,7 +164,7 @@ public class GameEngine {
         // getCurrentMonth() is designed to do 1 time step
         int timeStepsDefault = 1;
         runSimulation(ecosystem, timeStepsDefault);
-        world.updateClock();
+        // world.updateClock();
     }
     
     /**
@@ -173,7 +173,7 @@ public class GameEngine {
     public void forceSimulation(int timestep) {
         runSimulation(ecosystem, timestep);
         ecosystem.updateTimeSteps(timestep);
-        world.updateClock();
+        // world.updateClock();
     }
     
     public void deleteSimulationIds() {
