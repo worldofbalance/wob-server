@@ -462,13 +462,13 @@ public class ATNEngine {
 
        } else {
            // Scale biomass for consistency with CSV output, but do not round.
-           double[][] scaledBiomass = new double[numTimesteps][nodeIDs.length];
+           float[][] scaledBiomass = new float[numTimesteps][nodeIDs.length];
            for (int t = 0; t < numTimesteps; t++) {
                for (int i = 0; i < nodeIDs.length; i++) {
-                   scaledBiomass[t][i] = (biomass[t][i] * Constants.BIOMASS_SCALE);
+                   scaledBiomass[t][i] = (float) (biomass[t][i] * Constants.BIOMASS_SCALE);
                }
            }
-           writer.float64().writeMatrix("biomass", scaledBiomass);
+           writer.float32().writeMatrix("biomass", scaledBiomass);
        }
 
        writer.writeIntArray("node_ids", nodeIDs);
