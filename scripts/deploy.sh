@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
-echo "deploying to smurf.sfsu.edu"
+
+SERVER_HOSTNAME=54.153.66.118
+
+echo "deploying to $SERVER_HOSTNAME"
+
 
 # log into smurf everything under this is executed under the wob_server user
-ssh wob_server@smurf.sfsu.edu <<WOB_SERVER
+ssh wob_server@$SERVER_HOSTNAME <<WOB_SERVER
     # kill the already running servers
     # Lobby
     fuser -k 9255/tcp
@@ -19,11 +23,11 @@ WOB_SERVER
 # now we are back in Travis.
 
 # Copy the JAR files and the scripts to SMURF.
-rsync -avr --delete ./dist/ wob_server@smurf.sfsu.edu:~/wob-server-binaries
-rsync -avr --delete ./scripts/ wob_server@smurf.sfsu.edu:~/scripts
+rsync -avr --delete ./dist/ wob_server@$SERVER_HOSTNAME:~/wob-server-binaries
+rsync -avr --delete ./scripts/ wob_server@$SERVER_HOSTNAME:~/scripts
 
 ## log into thecity again, this time to start the JAR Files, everything under this is executed under the WOB_WOB user
-ssh wob_server@smurf.sfsu.edu <<WOB_SERVER
+ssh wob_server@$SERVER_HOSTNAME <<WOB_SERVER
     # make sure a logs directory exists
     mkdir logs
     # Restart all the JAR servers
