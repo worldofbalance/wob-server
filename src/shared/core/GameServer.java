@@ -70,7 +70,7 @@ public class GameServer {
     private final GameTimer ecoUpdateTimer = new GameTimer();
     private static int world_id;
     private final static int ECC_UPDATE_CYCLE_DEFAULT = 24;   // Default update all ecosystems once per day, every 24 hours
-    private final static int ECC_UPDATE_STAGGER = 1000 * 10;   // Stagger ecosystem updates by 10 seconds
+    private final static int ECC_UPDATE_STAGGER = 1000 * 20;   // Stagger ecosystem updates by 20 seconds
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 
     /**
@@ -246,9 +246,10 @@ public class GameServer {
         Log.println("GameServer, ecosystemUpdate()");
         SpeciesChangeListDAO.setDay(SpeciesChangeListDAO.getDay() + 1);
         ArrayList<Integer> playerIds = EcosystemDAO.getPlayerIds(world_id);
+        GameTimer ecoSimTimer = new GameTimer();
         for (int i = 0; i < playerIds.size(); i++) {
             int player_id = playerIds.get(i);
-            (new GameTimer()).schedule(createEcosystemUpdateTask(player_id), ECC_UPDATE_STAGGER * i);
+            ecoSimTimer.schedule(createEcosystemUpdateTask(player_id), ECC_UPDATE_STAGGER * i);
         }
     }
 

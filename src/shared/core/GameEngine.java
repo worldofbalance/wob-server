@@ -563,6 +563,7 @@ public class GameEngine {
                         biomassOld = EcoSpeciesDAO.getSpeciesBiomass(group_id, species_id);
                         Log.println("GameEngine, updateATNPrediction: biomassOld <= 0, DB has: " + biomassOld);
                     }
+                    Log.println("GameEngine, updateATNPrediction: original biomass: " + biomassOld);
                     EcoSpeciesDAO.updateBiomass(zone.getID(), group_id, species_id, biomassOld + gDiff + rDiff);
                     SpeciesChangeListDAO.createEntry(zone.getID(), species_id, gDiff + rDiff, day);
                     // Update the in memory biomass
