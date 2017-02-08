@@ -86,6 +86,9 @@ public class ATNEngine {
     // Output directory for simulation data files
     private String outputDir = Constants.ATN_CSV_SAVE_PATH;
 
+    // Sequence number to use for output file; if -1, it will be determined automatically
+    private int outputFileSequenceNumber = -1;
+
    private PrintStream psATN = null;
    /*
     The first two timesteps values produced by WebServices do not
@@ -440,7 +443,18 @@ public class ATNEngine {
                                    ATNEventHandler.EventType stopEvent) {
 
        // Determine the filename
-       File file = Functions.getNewOutputFile(new File(outputDir), "ATN", ".h5");
+       File file;
+       if (outputFileSequenceNumber == -1) {
+           file = Functions.getNewOutputFile(new File(outputDir), "ATN", ".h5");
+       } else {
+           String filename;
+           if (outputFileSequenceNumber == 0) {
+               filename = "ATN.h5";
+           } else {
+               filename = "ATN_" + outputFileSequenceNumber + ".h5";
+           }
+           file = new File(outputDir, filename);
+       }
        System.out.println("Writing output to " + file.toString());
 
        // Write the data to the output file
@@ -1237,4 +1251,10 @@ public class ATNEngine {
         this.roundBiomass = roundBiomass;
     }
 
+    /**
+     * @param outputFileSequenceNumber sequence number to use for next output file; -1 to determine automatically
+     */
+    public void setOutputFileSequenceNumber(int outputFileSequenceNumber) {
+        this.outputFileSequenceNumber = outputFileSequenceNumber;
+    }
 }
