@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-printf "\n" | /opt/jdk1.8.0_112/bin/java -jar ~/wob-server-binaries/cards-of-wild.jar & printf "\n"
+printf "\n" | java -jar ~/wob-server-binaries/cards-of-wild.jar 2>&1 & printf "\n"

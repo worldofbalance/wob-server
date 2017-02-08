@@ -301,6 +301,7 @@ public class GameServer {
      */
     public static void main(String[] args) {
         Log.printf("World of Balance Lobby Server is starting on port: %d", Configuration.lobbyPortNumber);
+        System.err.println("This is a test message printed to stderr.");
         try {
             server = new GameServer(Configuration.lobbyPortNumber, Constants.MAX_CLIENT_THREADS);
             server.configure();            
