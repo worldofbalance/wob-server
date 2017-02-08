@@ -557,7 +557,7 @@ public class GameEngine {
                 }
 
                 if (gDiff + rDiff != 0) {
-                    speciesChangeList.put(species_id, gDiff + rDiff);
+                    speciesChangeList.put(species_id, gDiff + rDiff);   
                     int biomassOld = zone.getSpeciesList().get(species_id).getTotalBiomass();
                     if (biomassOld <= 0) {
                         biomassOld = EcoSpeciesDAO.getSpeciesBiomass(group_id, species_id);
