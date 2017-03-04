@@ -31,7 +31,8 @@ public class ATNEventHandler implements EventHandler {
         NONE,
         UNKNOWN_EVENT,
         TOTAL_EXTINCTION,
-        CONSTANT_BIOMASS,
+        CONSTANT_BIOMASS_PRODUCERS_ONLY,
+        CONSTANT_BIOMASS_WITH_CONSUMERS,
         OSCILLATING_STEADY_STATE
     }
     private EventType stopEvent = EventType.NONE;
@@ -87,7 +88,19 @@ public class ATNEventHandler implements EventHandler {
         if (maxBiomass <= ATNEquations.EXTINCT) {
             stopEvent = EventType.TOTAL_EXTINCTION;
         } else if (maxAbsRelDerivative <= ABS_RELATIVE_DERIVATIVE_THRESHOLD) {
-            stopEvent = EventType.CONSTANT_BIOMASS;
+            // Check if any consumers are still alive
+            boolean consumerAlive = false;
+            for (int i : consumers) {
+                if (Bt[i] > ATNEquations.EXTINCT) {
+                    consumerAlive = true;
+                    break;
+                }
+            }
+            if (consumerAlive) {
+                stopEvent = EventType.CONSTANT_BIOMASS_WITH_CONSUMERS;
+            } else {
+                stopEvent = EventType.CONSTANT_BIOMASS_PRODUCERS_ONLY;
+            }
         } else {
             stopEvent = EventType.UNKNOWN_EVENT;
         }

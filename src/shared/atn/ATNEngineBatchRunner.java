@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import shared.metadata.Constants;
 
@@ -25,8 +26,13 @@ import shared.simulation.simjob.SimJobManager;
  */
 public class ATNEngineBatchRunner {
 
-    public static void printUsage() {
-        System.out.println("Args: <timesteps> <node config input file> [--use-webservices] [--use-csv] [--output-dir <dir>]");
+    private static int timesteps;
+    private static File inputFile;
+    private static String outputDir;
+    private static int threadCount;
+
+    private static void printUsage() {
+        System.out.println("Args: <timesteps> <node config input file> [--use-webservices] [--use-csv] [--output-dir <dir>] [--threads <thread count>]");
     }
 
     public static void main(String[] args) {
@@ -36,9 +42,10 @@ public class ATNEngineBatchRunner {
             printUsage();
             return;
         }
-        int timesteps = Integer.parseInt(args[0]);
-        File inputFile = new File(args[1]);
-        String outputDir = null;
+        timesteps = Integer.parseInt(args[0]);
+        inputFile = new File(args[1]);
+        outputDir = null;
+        threadCount = 1;
         ATNEngine.useHDF5 = true;
         ATNEngine.stopOnSteadyState = true;
 
@@ -62,11 +69,45 @@ public class ATNEngineBatchRunner {
                     outputDir = args[i];
                     System.out.println("Saving output to " + outputDir);
                     break;
+                case "--threads":
+                    i++;
+                    if (i >= args.length) {
+                        System.err.println("No thread count specified");
+                        return;
+                    }
+                    try {
+                        threadCount = Integer.parseInt(args[i]);
+                    } catch (NumberFormatException e) {
+                        System.err.println("Invalid thread count: " + args[i]);
+                        return;
+                    }
+                    if (threadCount < 1) {
+                        System.err.println("Invalid thread count: " + args[i]);
+                        return;
+                    }
+                    break;
                 default:
                     System.err.println("Error: unrecognized argument " + args[i]);
                     return;
             }
         }
+
+        if (Constants.useSimEngine && threadCount > 1) {
+            System.err.println("Can't use web services with more than 1 thread");
+            return;
+        }
+
+        // Crashes without this
+        ATNEngine.LOAD_SIM_TEST_PARAMS = true;
+
+        if (threadCount == 1) {
+            runSingleThreaded();
+        } else {
+            runMultiThreaded();
+        }
+    }
+
+    private static void runSingleThreaded() {
 
         Scanner input;
         try {
@@ -75,9 +116,6 @@ public class ATNEngineBatchRunner {
             System.out.println("Input file " + inputFile + " not found");
             return;
         }
-
-        // Crashes without this
-        ATNEngine.LOAD_SIM_TEST_PARAMS = true;
 
         SimJobManager jobMgr = null;
         if (Constants.useSimEngine) {
@@ -117,10 +155,10 @@ public class ATNEngineBatchRunner {
                 simulationsRun++;
             }
         } catch (SQLException ex) {
-            System.err.println ("SQLException: " + ex.getMessage() + 
+            System.err.println ("SQLException: " + ex.getMessage() +
                     ", cause: " + ex.getCause());
         } catch (SimulationException ex) {
-            System.err.println ("SimulationException: " + ex.getMessage() + 
+            System.err.println ("SimulationException: " + ex.getMessage() +
                     ", cause: " + ex.getCause());
         } finally {
             long endTime = System.currentTimeMillis();
@@ -131,6 +169,92 @@ public class ATNEngineBatchRunner {
             System.out.printf("Total time: %.3f seconds\n", totalSeconds);
             System.out.printf("Average time: %.3f seconds\n", averageSeconds);
             input.close();
+        }
+    }
+
+    private static void runMultiThreaded() {
+
+        System.err.println("runMultiThreaded: " + threadCount);
+
+        Scanner input;
+        try {
+            input = new Scanner(inputFile);
+        } catch (FileNotFoundException ex) {
+            System.out.println("Input file " + inputFile + " not found");
+            return;
+        }
+
+        // Add all node configs from the file along with their sim numbers to a queue
+        ConcurrentLinkedQueue<SimulationTask> queue = new ConcurrentLinkedQueue<>();
+        int simNumber = 0;
+        while (input.hasNextLine()) {
+            SimulationTask task = new SimulationTask();
+            task.simNumber = simNumber++;
+            task.nodeConfig = input.nextLine();
+            queue.add(task);
+        }
+
+        // Instantiate <threadCount> simulation threads that pull tasks from the queue
+        for (int i = 0; i < threadCount; i++) {
+            (new SimulationThread(queue, timesteps, outputDir)).start();
+        }
+    }
+}
+
+
+class SimulationTask {
+    public int simNumber;
+    public String nodeConfig;
+}
+
+
+/**
+ * Contains one ATNEngine object that pulls tasks off the queue and simulates them,
+ * saving output in outputDir.
+ */
+class SimulationThread extends Thread {
+
+    private ConcurrentLinkedQueue<SimulationTask> queue;  // The queue that feeds tasks to all threads
+    private int timesteps;
+    String outputDir;
+    ATNEngine atn;
+
+    public SimulationThread(
+            ConcurrentLinkedQueue<SimulationTask> queue,
+            int timesteps,
+            String outputDir) {
+
+        this.queue = queue;
+        this.timesteps = timesteps;
+        this.outputDir = outputDir;
+
+        atn = new ATNEngine();
+        atn.setRoundBiomass(false);  // Save full-precision output
+        if (outputDir != null) {
+            atn.setOutputDir(outputDir);
+        }
+    }
+
+    public void run() {
+        SimulationTask task;
+        try {
+            while ((task = queue.poll()) != null) {
+
+                System.out.println("-----------------------------------------");
+                System.out.println("Simulation " + task.simNumber);
+                System.out.println("NodeConfig: " + task.nodeConfig);
+                SimJob job = new SimJob();
+                job.setNode_Config(task.nodeConfig);
+                job.setTimesteps(timesteps);
+
+                atn.setOutputFileSequenceNumber(task.simNumber);
+                atn.processSimJob(job);
+            }
+
+        } catch (SQLException ex) {
+            System.err.println ("SQLException: " + ex.getMessage() + ", cause: " + ex.getCause());
+        } catch (SimulationException ex) {
+            System.err.println("SimulationException: " + ex.getMessage() + ", cause: " + ex.getCause());
         }
     }
 }
