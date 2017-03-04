@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SERVER_HOSTNAME=54.153.66.118
+SERVER_HOSTNAME=smurf.sfsu.edu
 
 echo "deploying to $SERVER_HOSTNAME"
 
