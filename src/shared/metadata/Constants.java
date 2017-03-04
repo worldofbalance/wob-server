@@ -62,6 +62,7 @@ public class Constants {
     public final static int SAVE_INTERVAL = 60000;
     public final static int SHOP_PROCESS_DELAY = 0;//20000;
     public final static float BIOMASS_SCALE = 1000;
+    public final static boolean ROUND_BIOMASS = true;  // If true, simulated biomass will be rounded to integer values.
     public final static String CLIENT_VERSION = "1.00";
     //public final static int TIMEOUT_MILLISECONDS = 900000000;  //90000; - jtc, using breakpoints, need more time
     public final static int TIMEOUT_MILLISECONDS = 180000;
@@ -147,6 +148,11 @@ public class Constants {
     public static final int ADDITIONAL_TIMESTEPS = 2;	//Needed so that it aligns with Simulationengine, otherwise client will be in processing state
 	public static boolean useSimEngine = false;		//To run both the simulation engine and the atn engine set useSimEngine =true && useAtnEngine == true
 	public static boolean useAtnEngine = true;
+
+    // Set to true to run simulations using GraggBulirschStoerIntegrator from Apache Commons Math
+    // Set to false to run simulations using BulirschStoerIntegration instead
+    public static boolean useCommonsMathIntegrator = true;
+
 	public static final boolean DEBUG_MODE = false;
 
     // DH change

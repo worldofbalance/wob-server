@@ -164,7 +164,7 @@ public class GameEngine {
         // getCurrentMonth() is designed to do 1 time step
         int timeStepsDefault = 1;
         runSimulation(ecosystem, timeStepsDefault);
-        world.updateClock();
+        // world.updateClock();
     }
     
     /**
@@ -173,7 +173,7 @@ public class GameEngine {
     public void forceSimulation(int timestep) {
         runSimulation(ecosystem, timestep);
         ecosystem.updateTimeSteps(timestep);
-        world.updateClock();
+        // world.updateClock();
     }
     
     public void deleteSimulationIds() {
@@ -557,12 +557,13 @@ public class GameEngine {
                 }
 
                 if (gDiff + rDiff != 0) {
-                    speciesChangeList.put(species_id, gDiff + rDiff);
+                    speciesChangeList.put(species_id, gDiff + rDiff);   
                     int biomassOld = zone.getSpeciesList().get(species_id).getTotalBiomass();
                     if (biomassOld <= 0) {
                         biomassOld = EcoSpeciesDAO.getSpeciesBiomass(group_id, species_id);
                         Log.println("GameEngine, updateATNPrediction: biomassOld <= 0, DB has: " + biomassOld);
                     }
+                    Log.println("GameEngine, updateATNPrediction: original biomass: " + biomassOld);
                     EcoSpeciesDAO.updateBiomass(zone.getID(), group_id, species_id, biomassOld + gDiff + rDiff);
                     SpeciesChangeListDAO.createEntry(zone.getID(), species_id, gDiff + rDiff, day);
                     // Update the in memory biomass

@@ -1,4 +1,7 @@
 /build
+conf/db.conf
+src/log/
+/bin/
 .gradle
 .idea/*
 /nbproject/
