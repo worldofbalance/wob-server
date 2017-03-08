@@ -43,7 +43,6 @@ public class ResponseSpeciesAction extends GameResponse {
                 for (String value : settings) {
                     packet.addString(value);
                 }
-
                 packet.addString(selectionList);
             }
         } else if (action == 1) {
@@ -68,6 +67,9 @@ public class ResponseSpeciesAction extends GameResponse {
                 packet.addInt32(speciesHistoryList.get(key));    
                 Log.println("day, biomass change = " + key + " " + speciesHistoryList.get(key));
             }
+        } else if (action == 5) {
+            packet.addShort16(count);
+            Log.println("ResponseSpeciesAction, action = 5, species, size = " + count);
         }
         
         return packet.getBytes();
