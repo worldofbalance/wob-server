@@ -174,6 +174,7 @@ public class RequestSpeciesAction extends GameRequest {
             int count = speciesListFull.size();  
             Log.println("RequestSpeciesAction, speciesListFull.size() = " + speciesListFull.size());
             response.setCount(count);
+            client.add(response);
         }
     }
 }
