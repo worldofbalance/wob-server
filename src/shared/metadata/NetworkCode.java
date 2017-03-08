@@ -78,20 +78,7 @@ public class NetworkCode {
     public final static short CONVERGE_HINT_COUNT = 151;
     public final static short CONVERGE_NEW_ATTEMPT_SCORE = 152;
 
-    // Multiplayer Convergence 
-    public final static short MC_MATCH_INIT = 180;
-    public final static short MC_GET_TIME = 181;
-    public final static short MC_BET_UPDATE = 182;
-    public final static short MC_GET_NAMES = 183;
-    public final static short MC_GET_OTHER_SCORE = 184;
-    public final static short MC_CHECK_PLAYERS = 185;
-    public final static short MC_HOST_CONFIG = 186;
-    public final static short MC_NONHOST_CONFIG = 187;
-    public final static short MC_SETUP = 188;
-    public final static short MC_GET_FINAL_SCORES = 189;
-    
-    public final static short TOPLIST = 153;
-    
+    public final static short TOPLIST = 153;    
     public final static short WAITFORGAME = 154;
     public final static short NOWAITFORGAME = 155;
     public final static short WAITLIST = 156;
@@ -110,6 +97,18 @@ public class NetworkCode {
     public final static short CLASH_PLAYER_VIEW = 166;
     public final static short CLASH_INITIATE_BATTLE = 167;
     public final static short CLASH_END_BATTLE = 168;
+    
+    // Multiplayer Convergence 
+    public final static short MC_MATCH_INIT = 180;
+    public final static short MC_GET_TIME = 181;
+    public final static short MC_BET_UPDATE = 182;
+    public final static short MC_GET_NAMES = 183;
+    public final static short MC_GET_OTHER_SCORE = 184;
+    public final static short MC_CHECK_PLAYERS = 185;
+    public final static short MC_HOST_CONFIG = 186;
+    public final static short MC_NONHOST_CONFIG = 187;
+    public final static short MC_SETUP = 188;
+    public final static short MC_GET_FINAL_SCORES = 189;
     
     public final static short BACK_TO_LOBBY = 192;
     public final static short PLAY_GAME = 193;

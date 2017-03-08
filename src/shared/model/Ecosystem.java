@@ -382,7 +382,7 @@ public class Ecosystem {
         if(!Constants.DEBUG_MODE){
 	    NetworkFunctions.sendToWorld(
 	        new ResponseUpdateEnvironmentScore(
-	            eco_id, score), world_id);
+	            eco_id, score, highEnvScore), world_id);
         }
     }
 

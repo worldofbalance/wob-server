@@ -111,9 +111,9 @@ public class RequestSpeciesAction extends GameRequest {
 
             client.add(response);
         } else if (action == 1) { // Create Ecosystem Using Species
-            Log.println("RequestSpeciesAction, process, client.getPlayer() == null? " + (client.getPlayer() == null));
+            // Log.println("RequestSpeciesAction, process, client.getPlayer() == null? " + (client.getPlayer() == null));
             Ecosystem ecosystem = client.getPlayer().getEcosystem();
-            Log.println("RequestSpeciesAction, process, ecosystem == null? " + (ecosystem == null));
+            // Log.println("RequestSpeciesAction, process, ecosystem == null? " + (ecosystem == null));
 
             if (ecosystem != null) {
                 EcosystemController.createEcosystem(ecosystem, speciesList);
@@ -132,7 +132,7 @@ public class RequestSpeciesAction extends GameRequest {
                 client.add(response);
             }
         } else if (action == 2) { // Return species_id, biomass pairs for Ecosystem
-            Log.println("RequestSpeciesAction, action = 2");
+            // Log.println("RequestSpeciesAction, action = 2");
             // speciesListFull = EcosystemController.getInstance().getEcosystem().getSpeciesList();
             // speciesListFull = client.getPlayer().getEcosystem().getSpeciesList();
             speciesListFull = EcoSpeciesDAO.getSpecies(client.getPlayer().getEcosystem().getID());
@@ -168,6 +168,12 @@ public class RequestSpeciesAction extends GameRequest {
                     SpeciesChangeListDAO.getSpeciesHistory(client.getPlayer().getEcosystem().getID(), species_id));
             Log.println("RequestSpeciesAction, process, action = 4, size = " + response.speciesHistoryList.size());
             client.add(response);
+        } else if (action == 5) {  // Return just the count of species owned
+            Log.println("RequestSpeciesAction, action = 5");
+            speciesListFull = EcoSpeciesDAO.getSpecies(client.getPlayer().getEcosystem().getID());
+            int count = speciesListFull.size();  
+            Log.println("RequestSpeciesAction, speciesListFull.size() = " + speciesListFull.size());
+            response.setCount(count);
         }
     }
 }
