@@ -77,6 +77,7 @@ public final class ScoreDAO {
     public static List<String[]> getBestEnvScore_2(int min_range, int max_range) {
         List<String[]> scoreList = new ArrayList<String[]>();
 
+        // This block gets the three players that have achieved the highest scores ever
         String query = "SELECT * FROM `ecosystem` z INNER JOIN `player` p ON z.`player_id` = p.`player_id`";
 
         query += " GROUP BY p.`account_id` ORDER BY z.`high_score` DESC LIMIT ?, ?";
@@ -95,6 +96,33 @@ public final class ScoreDAO {
 
             while (rs.next()) {
                 String[] score = new String[]{rs.getString("player_id"), rs.getString("high_score")};
+                scoreList.add(score);
+            }
+        } catch (SQLException ex) {
+            Log.println_e(ex.getMessage());
+        } finally {
+            GameDB.closeConnection(con, pstmt, rs);
+        }
+        
+        // This block gets the three players that have the current highest scores 
+        query = "SELECT * FROM `ecosystem` z INNER JOIN `player` p ON z.`player_id` = p.`player_id`";
+
+        query += " GROUP BY p.`account_id` ORDER BY z.`score` DESC LIMIT ?, ?";
+
+        con = null;
+        pstmt = null;
+        rs = null;
+        
+        try {
+            con = GameDB.getConnection();
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, min_range);
+            pstmt.setInt(2, max_range);
+
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                String[] score = new String[]{rs.getString("player_id"), rs.getString("score")};
                 scoreList.add(score);
             }
         } catch (SQLException ex) {
