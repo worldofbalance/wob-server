@@ -176,5 +176,16 @@ public class RequestSpeciesAction extends GameRequest {
             response.setCount(count);
             client.add(response);
         }
+        else if (action == 6) {  // Returns 3 day values; current day, first day of ecosystem, and the last simulations day
+            // Generally, the first and last day values should be the same 
+            Log.println("RequestSpeciesAction, action = 6");
+            int [] results = new int[3];
+            results = SpeciesChangeListDAO.getDayInfo(client.getPlayer().getEcosystem().getID());
+            Log.println("RequestSpeciesAction, c,f,lDay = " + results[0] + " " + results[1] + " " + results[2]);
+            response.setCDay(results[0]);
+            response.setFDay(results[1]);
+            response.setLDay(results[2]);
+            client.add(response);
+        }
     }
 }
