@@ -17,6 +17,7 @@ public class ResponseSpeciesAction extends GameResponse {
     private short index;
     private float biomass;
     private int cost;
+    private int cDay, fDay, lDay;
     private String[] settings;
     private String selectionList;
     private Map<Integer, Integer> speciesList = new HashMap<Integer, Integer>();
@@ -43,7 +44,6 @@ public class ResponseSpeciesAction extends GameResponse {
                 for (String value : settings) {
                     packet.addString(value);
                 }
-
                 packet.addString(selectionList);
             }
         } else if (action == 1) {
@@ -68,6 +68,14 @@ public class ResponseSpeciesAction extends GameResponse {
                 packet.addInt32(speciesHistoryList.get(key));    
                 Log.println("day, biomass change = " + key + " " + speciesHistoryList.get(key));
             }
+        } else if (action == 5) {
+            packet.addShort16(count);
+            Log.println("ResponseSpeciesAction, action = 5, species, size = " + count);
+        } else if (action == 6) {
+            Log.println("ResponseSpeciesAction, action = 6, values are: " + cDay + " " + fDay + " " + lDay);
+            packet.addInt32(cDay);
+            packet.addInt32(fDay);
+            packet.addInt32(lDay);
         }
         
         return packet.getBytes();
@@ -119,5 +127,17 @@ public class ResponseSpeciesAction extends GameResponse {
     
     public void setBiomass(float biomass) {
         this.biomass = biomass;
+    }    
+    
+    public void setCDay(int cDay) {
+        this.cDay = cDay;
+    }    
+    
+    public void setFDay(int fDay) {
+        this.fDay = fDay;
+    }    
+    
+    public void setLDay(int lDay) {
+        this.lDay = lDay;
     }    
 }

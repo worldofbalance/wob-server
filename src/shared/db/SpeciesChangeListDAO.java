@@ -104,10 +104,58 @@ public final class SpeciesChangeListDAO {
             }
         }
     }
+    
+    public static int[] getDayInfo(int eco_id) {
+        int[] results = new int[3];
+        results[0] = getDay();
+        Log.println("SpeciesChangeListDAO, getDayInfo: day[0] = " + results[0]);
+        
+        String query = "SELECT * FROM `eco_species_change` WHERE `eco_id` = ? ORDER BY `day` ASC";
+        
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        
+        try {
+            con = GameDB.getConnection();
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, eco_id);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            results[1] = getDay();
+            if (rs.next()) {
+                results[1] = rs.getInt("day");
+                Log.println("SpeciesChangeListDAO, getDayInfo: day[1] = " + results[1]);
+            } 
+            
+            query = "SELECT * FROM `eco_species_change` WHERE `eco_id` = ? ORDER BY `day` DESC";
+            
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, eco_id);
+
+            rs = pstmt.executeQuery();
+
+            results[2] = getDay();
+            if (rs.next()) {
+                results[2] = rs.getInt("day");
+                Log.println("SpeciesChangeListDAO, getDayInfo: day[2] = " + results[2]);
+            } 
+            
+            rs.close();
+            pstmt.close();
+        } catch (SQLException ex) {
+            Log.println_e("SpeciesChangeListDAO, getDayInfo: " + ex.getMessage());
+        } finally {
+            if (con != null) {
+                GameDB.closeConnection(con, pstmt);
+            }
+        }
+        return results;
+    }
 
     public static Map<Integer, Integer> getSpeciesHistory(int eco_id, int species_id) {
         Map<Integer, Integer> speciesHistoryList = new HashMap<Integer, Integer>();
-        Log.println("SpeciesChangeListDAO, getSpeciesHistory: e/s = " + eco_id + " " + species_id);
+        // Log.println("SpeciesChangeListDAO, getSpeciesHistory: e/s = " + eco_id + " " + species_id);
 
         String query = "SELECT * FROM `eco_species_change` WHERE `eco_id` = ? AND `species_id` = ?";
 
@@ -124,7 +172,7 @@ public final class SpeciesChangeListDAO {
 
             while (rs.next()) {
                 speciesHistoryList.put(rs.getInt("day"), rs.getInt("biomass"));
-                Log.println("SpeciesChangeListDAO, getSpeciesHistory: d/b = " + rs.getInt("day") + " " + rs.getInt("biomass"));
+                // Log.println("SpeciesChangeListDAO, getSpeciesHistory: d/b = " + rs.getInt("day") + " " + rs.getInt("biomass"));
             }
 
             rs.close();
