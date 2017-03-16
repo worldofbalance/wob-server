@@ -29,7 +29,9 @@ import shared.util.NetworkFunctions;
 import shared.atn.ATNEngine;
 // Other Imports
 import lby.core.EcosystemLobby;
+import lby.core.Lobby;
 import lby.core.LobbyController;
+import lby.core.world.WorldController;
 import lby.core.world.Zone;
 import shared.db.CSVDAO;
 import shared.db.EcoSpeciesDAO;
@@ -37,6 +39,7 @@ import shared.db.EcosystemDAO;
 import shared.db.LogDAO;
 import shared.db.ScoreDAO;
 import lby.db.world.WorldZoneDAO;
+import lby.net.response.ResponseSpeciesInfo;
 import shared.db.SpeciesChangeListDAO;
 
 public class EcosystemController {
@@ -48,6 +51,7 @@ public class EcosystemController {
     private static EcosystemLobby lobby;
     private static List<Zone> zones;
     private static Ecosystem ecosystem;
+    private static int world_id;
 
     private EcosystemController() {
     }
@@ -282,6 +286,67 @@ public class EcosystemController {
 //        zone.setAddNodeList(ZoneNodeAddDAO.getList(zone.getID()));
         // Update Last Access
         EcosystemDAO.updateTime(ecosystem.getID());
+        
+        // Code that sends zone (x,y) and species on that zone (or tile) to client for lobby map
+        Log.println("EcosystemController: send to client world_zone (x,y) with species_ids");
+        // This row, column pair will view the best in lobby
+        int rowIdeal = 19;
+        int columnIdeal = 21;
+        int rowBest, columnBest;
+        int playerId = player.getID();
+        world_id = WorldController.getInstance().first().getID();
+        ArrayList<Integer> playerIds = EcosystemDAO.getPlayerIds(world_id);
+        List<Zone> zoneList;
+        List<Species> speciesList;
+        ArrayList<Integer> speciesIds;
+        Ecosystem eco;
+        Lobby lobby1 = LobbyController.getInstance().get(0);  // Get the first lobby
+        for (int i = 0; i < playerIds.size(); i++) {
+            int player_id = playerIds.get(i);
+            if (playerId == player_id) {
+                continue;
+            }
+            zoneList = WorldZoneDAO.getZoneList(world_id, player_id);
+            Log.println("Player_id = " + player_id + " has these zones");
+            rowBest = -1;
+            columnBest = -1;
+            for (int j = 0; j < zoneList.size(); j++) {
+                int row = zoneList.get(j).getRow();
+                int column = zoneList.get(j).getColumn();
+                if (Math.abs(row - rowIdeal) < Math.abs(rowBest - rowIdeal)) {
+                    rowBest = row;
+                    columnBest = column;
+                } else if (Math.abs(row - rowIdeal) == Math.abs(rowBest - rowIdeal)) {
+                    if (Math.abs(column - columnIdeal) < Math.abs(columnBest - columnIdeal)) {
+                        rowBest = row;
+                        columnBest = column;
+                    }
+                } 
+                Log.println("# " + j + "row, column = " + row + ", " + column);
+            }
+            Log.println("Best row, column found = " + rowBest + ", " + columnBest);
+            if (rowBest == -1) {
+                continue;
+            }
+            eco = EcosystemDAO.getEcosystem(world_id, player_id);
+            int eco_id = eco.getID();
+            Log.println("Ecosystem_id = " + eco_id + ", and contains the following species");
+            speciesList = EcoSpeciesDAO.getSpecies(eco_id);
+            speciesIds = new ArrayList<Integer>();
+            for (int j = 0; j < speciesList.size(); j++) {
+                int species_id = speciesList.get(j).getID();
+                speciesIds.add(species_id);
+                Log.printf("%d, ", species_id);
+            }
+            
+            if ((rowBest != -1) && (speciesList.size() > 0)) {
+                Log.println("This data is being sent to client, size = " + speciesIds.size());
+                ResponseSpeciesInfo response = new ResponseSpeciesInfo(rowBest, columnBest, speciesIds);
+                NetworkFunctions.sendToPlayer(response, playerId);
+            }
+            
+            Log.println("");
+        }
     }
 
     private static void setLobby(EcosystemLobby l) {
