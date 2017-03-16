@@ -69,6 +69,8 @@ public class NetworkCode {
     public final static short BATTLE_END = 144;
         
     public final static short PLAYER_SELECT = 145;
+    
+    public final static short SPECIES_INFO = 190;
 
     public final static short CONVERGE_ECOSYSTEMS = 146;
     public final static short CONVERGE_NEW_ATTEMPT = 147;
