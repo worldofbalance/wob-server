@@ -380,9 +380,13 @@ public class Ecosystem {
         ScoreDAO.updateEnvironmentScore(eco_id, score, highEnvScore);
 
         if(!Constants.DEBUG_MODE){
-	    NetworkFunctions.sendToWorld(
-	        new ResponseUpdateEnvironmentScore(
-	            eco_id, score, highEnvScore), world_id);
+            
+            ResponseUpdateEnvironmentScore response = 
+                    new ResponseUpdateEnvironmentScore(eco_id, score, highEnvScore);
+            
+	    NetworkFunctions.sendToWorld(response, world_id);        
+            // Sometimes the player did not receive message, so send to player also
+            NetworkFunctions.sendToPlayer(response, player_id);            
         }
     }
 
