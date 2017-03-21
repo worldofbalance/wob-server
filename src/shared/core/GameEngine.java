@@ -305,7 +305,7 @@ public class GameEngine {
 	        NetworkFunctions.sendToLobby(response, lobby.getID());
             }
 
-            zone.updateEcosystemScore();
+            zone.updateEnvironmentScore();
         } catch (Exception ex) {
             Log.println_e(ex.getMessage());
             ex.printStackTrace();
@@ -581,7 +581,7 @@ public class GameEngine {
 	            NetworkFunctions.sendToLobby(response, lobby.getID());
             }
 
-            zone.updateEcosystemScore();
+            zone.updateEnvironmentScore();
             if(updatePredictionListener != null){
             	updatePredictionListener.updatePredictionComplete();
             }

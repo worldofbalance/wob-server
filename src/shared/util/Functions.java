@@ -9,6 +9,13 @@ public class Functions {
     private Functions() {
     }
 
+    /**
+     * @return the log base 2 of x
+     */
+    public static double log2(double x) {
+        return Math.log(x) / Math.log(2);
+    }
+
     public static int clamp(int value, int min, int max) {
         if (value < min) {
             value = min;

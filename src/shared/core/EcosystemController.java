@@ -280,7 +280,7 @@ public class EcosystemController {
         }
         // Recalculate Ecosystem Score
         
-        ecosystem.updateEcosystemScore();
+        ecosystem.updateEnvironmentScore();
 
 //        zone.setSpeciesChangeList(SpeciesChangeListDAO.getList(zone.getID()));
 //        zone.setAddNodeList(ZoneNodeAddDAO.getList(zone.getID()));
