@@ -347,6 +347,7 @@ public class EcosystemController {
             
             Log.println("");
         }
+        ecosystem.updateEcosystemScore();  // One more time to make sure player gets it
     }
 
     private static void setLobby(EcosystemLobby l) {
