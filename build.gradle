@@ -23,3 +23,9 @@ jar {
         attributes 'Main-Class': 'core.GameServer'
     }
 }
+
+test {
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}

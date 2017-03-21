@@ -7,10 +7,7 @@ import java.util.*;
 
 // Other Imports
 import shared.core.GameEngine;
-import shared.db.EcosystemDAO;
-import shared.db.ScoreDAO;
-import shared.db.SpeciesChangeListDAO;
-import shared.db.ZoneNodeAddDAO;
+import shared.db.*;
 import shared.metadata.Constants;
 import lby.net.response.ResponseUpdateEnvironmentScore;
 import shared.simulation.SpeciesZoneType;
@@ -58,9 +55,10 @@ public class Ecosystem {
 	private String atnManipId;
 	private String networkId;
 
-	private int scoreSmoothingWindowSize;
-	private Deque<Integer> rawScoreHistory;
-	private int rawScoreHistoryLastDay;
+	private int scoreSmoothingWindowSize = 100;
+	private Deque<Integer> rawScoreHistory = new ArrayDeque<>();
+	private int rawScoreHistoryLastDay = -1;
+	private boolean rawScoreHistoryLoaded = false;
 
     public Ecosystem(int eco_id, int world_id, int player_id, String name, short type) {
         this.eco_id = eco_id;
@@ -68,9 +66,6 @@ public class Ecosystem {
         this.player_id = player_id;
         this.name = name;
         this.type = type;
-        this.scoreSmoothingWindowSize = 100;
-        this.rawScoreHistory = new ArrayDeque<>();
-        this.rawScoreHistoryLastDay = -1;
     }
 
     public int getID() {
@@ -470,7 +465,11 @@ public class Ecosystem {
      */
     public void updateEnvironmentScore() {
 
+        if (!rawScoreHistoryLoaded) {
+            loadRawScoreHistory();
+        }
         score = smoothedEnvironmentScore();
+        ScoreHistoryDAO.setRawScore(eco_id, rawScoreHistoryLastDay, rawScoreHistory.getLast());
 
         if (score > highEnvScore) {
             highEnvScore = score;
@@ -483,6 +482,19 @@ public class Ecosystem {
 	        new ResponseUpdateEnvironmentScore(
 	            eco_id, score, highEnvScore), world_id);
         }
+    }
+
+    /**
+     * Populate the raw score history from the database.
+     */
+    void loadRawScoreHistory() {
+        int startDay = getCurrentDay() - scoreSmoothingWindowSize;
+        System.err.println("startDay = " + startDay);
+        for (int rawScore : ScoreHistoryDAO.getRawScoreHistory(eco_id, startDay)) {
+            rawScoreHistory.addLast(rawScore);
+        }
+        System.err.println("rawScoreHistory = " + rawScoreHistory);
+        rawScoreHistoryLoaded = true;
     }
 
     public void updateAccumEnvScore() {

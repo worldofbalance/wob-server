@@ -1,11 +1,17 @@
 package shared.model;
 
+import common.TestUtils;
 import org.junit.Before;
 import static org.junit.Assert.assertEquals;
+
+import org.junit.BeforeClass;
 import org.junit.Test;
+import shared.db.ScoreHistoryDAO;
 import shared.util.Vector3;
 
+import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class EcosystemTest {
@@ -14,9 +20,15 @@ public class EcosystemTest {
     private int nextSpeciesGroupId = 0;
     private Ecosystem ecosystem;
 
+    @BeforeClass
+    public static void setUpClass() throws SQLException {
+        TestUtils.useTestDatabase();
+    }
+
     @Before
-    public void setUp() {
+    public void setUp() throws SQLException {
         ecosystem = makeEmptyEcosystem();
+        TestUtils.clearTable("score_history");
     }
 
     private Ecosystem makeEmptyEcosystem() {
@@ -39,8 +51,8 @@ public class EcosystemTest {
 
     @Test
     public void testTotalBiomassTwoSpecies() {
-        ecosystem.addSpecies(makeSpecies(100, 1f));
-        ecosystem.addSpecies(makeSpecies(200, 2f));
+        ecosystem.setSpecies(makeSpecies(100, 1f));
+        ecosystem.setSpecies(makeSpecies(200, 2f));
         assertEquals(300, ecosystem.totalBiomass());
     }
 
@@ -51,36 +63,36 @@ public class EcosystemTest {
 
     @Test
     public void testShannonIndexOneSpecies() {
-        ecosystem.addSpecies(makeSpecies(100, 1f));
+        ecosystem.setSpecies(makeSpecies(100, 1f));
         assertEquals(0.0, ecosystem.shannonIndex(), 1e-20);
     }
 
     @Test
     public void testShannonIndexOneSpeciesZeroBiomass() {
-        ecosystem.addSpecies(makeSpecies(0, 1f));
+        ecosystem.setSpecies(makeSpecies(0, 1f));
         assertEquals(0.0, ecosystem.shannonIndex(), 1e-20);
     }
 
     @Test
     public void testShannonIndexTwoSpeciesEqual() {
-        ecosystem.addSpecies(makeSpecies(100, 1f));
-        ecosystem.addSpecies(makeSpecies(100, 1f));
+        ecosystem.setSpecies(makeSpecies(100, 1f));
+        ecosystem.setSpecies(makeSpecies(100, 1f));
         assertEquals(1.0, ecosystem.shannonIndex(), 1e-20);
     }
 
     @Test
     public void testShannonIndexTwoSpeciesEqualAndThirdZero() {
-        ecosystem.addSpecies(makeSpecies(100, 1f));
-        ecosystem.addSpecies(makeSpecies(100, 1f));
-        ecosystem.addSpecies(makeSpecies(0, 1f));
+        ecosystem.setSpecies(makeSpecies(100, 1f));
+        ecosystem.setSpecies(makeSpecies(100, 1f));
+        ecosystem.setSpecies(makeSpecies(0, 1f));
         assertEquals(1.0, ecosystem.shannonIndex(), 1e-20);
     }
 
     @Test
     public void testShannonIndexThreeSpecies() {
-        ecosystem.addSpecies(makeSpecies(100, 1f));
-        ecosystem.addSpecies(makeSpecies(50, 1f));
-        ecosystem.addSpecies(makeSpecies(50, 1f));
+        ecosystem.setSpecies(makeSpecies(100, 1f));
+        ecosystem.setSpecies(makeSpecies(50, 1f));
+        ecosystem.setSpecies(makeSpecies(50, 1f));
         assertEquals(1.5, ecosystem.shannonIndex(), 1e-20);
     }
 
@@ -91,8 +103,8 @@ public class EcosystemTest {
 
     @Test
     public void testTrophicLevelWeightedTotalBiomassTwoSpecies() {
-        ecosystem.addSpecies(makeSpecies(100, 1f));
-        ecosystem.addSpecies(makeSpecies(200, 2f));
+        ecosystem.setSpecies(makeSpecies(100, 1f));
+        ecosystem.setSpecies(makeSpecies(200, 2f));
         assertEquals(500.0, ecosystem.trophicLevelWeightedTotalBiomass(), 1e-20);
     }
 
@@ -103,15 +115,15 @@ public class EcosystemTest {
 
     @Test
     public void testRawEnvironmentScoreOneSpeciesZeroBiomass() {
-        ecosystem.addSpecies(makeSpecies(0, 1f));
+        ecosystem.setSpecies(makeSpecies(0, 1f));
         assertEquals(0, ecosystem.rawEnvironmentScore());
     }
 
     @Test
     public void testRawEnvironmentScoreThreeSpecies() {
-        ecosystem.addSpecies(makeSpecies(100, 1f));
-        ecosystem.addSpecies(makeSpecies(50, 2f));
-        ecosystem.addSpecies(makeSpecies(50, 3f));
+        ecosystem.setSpecies(makeSpecies(100, 1f));
+        ecosystem.setSpecies(makeSpecies(50, 2f));
+        ecosystem.setSpecies(makeSpecies(50, 3f));
         int expectedBiomassScore = 100 + 50 * 2 + 50 * 3;
         int expectedDiversityScore = (int) Math.round(1.5 * expectedBiomassScore);
         int expectedTotalScore = expectedBiomassScore + expectedDiversityScore;
@@ -125,9 +137,9 @@ public class EcosystemTest {
 
     @Test
     public void testSmoothedEnvironmentScoreNoHistory() {
-        ecosystem.addSpecies(makeSpecies(100, 1f));
-        ecosystem.addSpecies(makeSpecies(50, 2f));
-        ecosystem.addSpecies(makeSpecies(50, 3f));
+        ecosystem.setSpecies(makeSpecies(100, 1f));
+        ecosystem.setSpecies(makeSpecies(50, 2f));
+        ecosystem.setSpecies(makeSpecies(50, 3f));
         int rawScore = ecosystem.rawEnvironmentScore();
         assertEquals(rawScore, ecosystem.smoothedEnvironmentScore());
     }
@@ -162,7 +174,7 @@ public class EcosystemTest {
             ecosystem.setCurrentDay(day);
             int iterations = daysToRepeat.contains(day) ? 2 : 1;
             for (int i = 0; i < iterations; i++) {
-                ecosystem.addSpecies(makeSpecies(day * 100, (float) day / 2));
+                ecosystem.setSpecies(makeSpecies(day * 100, (float) day / 2));
                 rawScores[day] = ecosystem.rawEnvironmentScore();
                 smoothedScore = ecosystem.smoothedEnvironmentScore();
             }
@@ -177,5 +189,30 @@ public class EcosystemTest {
         }
         double mean = sum / windowSize;
         return (int) (Math.round(mean));
+    }
+
+    @Test
+    public void testLoadRawScoreHistory() {
+        ScoreHistoryDAO.setRawScore(0, 1, 10);
+        ScoreHistoryDAO.setRawScore(0, 2, 20);
+        ecosystem.setScoreSmoothingWindowSize(2);
+        ecosystem.setCurrentDay(3);
+        ecosystem.loadRawScoreHistory();
+        int smoothedScore = ecosystem.smoothedEnvironmentScore();
+        assertEquals(10, smoothedScore);  // (10 + 20 + 0) / 3 = 10
+    }
+
+    /**
+     * Note: testing of updateEnvironmentScore is currently limited to testing the
+     * changes related to the new smoothedEnvironmentScore() method.
+     */
+    @Test
+    public void testUpdateEnvironmentScore() {
+        ScoreHistoryDAO.setRawScore(0, 1, 10);
+        ScoreHistoryDAO.setRawScore(0, 2, 20);
+        ecosystem.setScoreSmoothingWindowSize(2);
+        ecosystem.setCurrentDay(3);
+        ecosystem.updateEnvironmentScore();
+        assertEquals(10, ecosystem.getScore());
     }
 }
