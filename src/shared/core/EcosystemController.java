@@ -280,7 +280,7 @@ public class EcosystemController {
         }
         // Recalculate Ecosystem Score
         
-        ecosystem.updateEcosystemScore();
+        ecosystem.updateEnvironmentScore();
 
 //        zone.setSpeciesChangeList(SpeciesChangeListDAO.getList(zone.getID()));
 //        zone.setAddNodeList(ZoneNodeAddDAO.getList(zone.getID()));
@@ -347,7 +347,7 @@ public class EcosystemController {
             
             Log.println("");
         }
-        ecosystem.updateEcosystemScore();  // One more time to make sure player gets it
+        ecosystem.updateEnvironmentScore();  // One more time to make sure player gets it
     }
 
     private static void setLobby(EcosystemLobby l) {

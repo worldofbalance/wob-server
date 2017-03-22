@@ -3,28 +3,16 @@ package shared.model;
 // Java Imports
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 // Other Imports
 import shared.core.GameEngine;
-import shared.core.EcosystemController;
-import lby.core.world.World;
-import shared.db.CSVDAO;
-import shared.db.EcosystemDAO;
-import shared.db.ScoreDAO;
-import shared.db.SpeciesChangeListDAO;
-import shared.db.ZoneNodeAddDAO;
+import shared.db.*;
 import shared.metadata.Constants;
-import lby.net.response.ResponseChart;
 import lby.net.response.ResponseUpdateEnvironmentScore;
 import shared.simulation.SpeciesZoneType;
-import shared.util.CSVParser;
-import shared.util.Log;
+
+import static shared.util.Functions.log2;
 import shared.util.NetworkFunctions;
 
 /**
@@ -66,6 +54,11 @@ public class Ecosystem {
 //    private float perBiomass;
 	private String atnManipId;
 	private String networkId;
+
+	private int scoreSmoothingWindowSize = 100;
+	private Deque<Integer> rawScoreHistory = new ArrayDeque<>();
+	private int rawScoreHistoryLastDay = -1;
+	private boolean rawScoreHistoryLoaded = false;
 
     public Ecosystem(int eco_id, int world_id, int player_id, String name, short type) {
         this.eco_id = eco_id;
@@ -301,13 +294,13 @@ public class Ecosystem {
     public void addSpecies(Species species) {
         speciesList.put(species.getID(), species);
 
-        updateEcosystemScore();
+        updateEnvironmentScore();
     }
     
     public void removeSpecies(int species_id) {
         speciesList.remove(species_id);
 
-        updateEcosystemScore();
+        updateEnvironmentScore();
     }
 
     public GameEngine getGameEngine() {
@@ -317,9 +310,116 @@ public class Ecosystem {
     public GameEngine setGameEngine(GameEngine gameEngine) {
         return this.gameEngine = gameEngine;
     }
-    
+
+    /**
+     * Calculate a simple moving average of the rawEnvironmentScore
+     * based on the history of raw environment scores
+     * over the past [scoreSmoothingWindowSize] game days.
+     * @return the smoothed environment score
+     */
+    public int smoothedEnvironmentScore() {
+        updateRawScoreHistory();
+        double sum = 0;
+        for (int rawScore : rawScoreHistory) {
+            sum += rawScore;
+        }
+        int mean = (int) Math.round(sum / (rawScoreHistory.size()));
+        return mean;
+    }
+
+    public void setScoreSmoothingWindowSize(int scoreSmoothingWindowSize) {
+        this.scoreSmoothingWindowSize = scoreSmoothingWindowSize;
+    }
+
+    /**
+     * Update the in-memory raw environment score history window.
+     * Does not update the database.
+     */
+    private void updateRawScoreHistory() {
+        int currentRawScore = rawEnvironmentScore();
+        int currentDay = getCurrentDay();
+        if (currentDay == rawScoreHistoryLastDay && rawScoreHistory.size() > 0) {
+            rawScoreHistory.removeLast();
+        }
+        rawScoreHistory.addLast(currentRawScore);
+        rawScoreHistoryLastDay = currentDay;
+        while (rawScoreHistory.size() > scoreSmoothingWindowSize) {
+            rawScoreHistory.removeFirst();
+        }
+    }
+
+    /**
+     * @return the current game day
+     */
+    public int getCurrentDay() {
+        return SpeciesChangeListDAO.getDay();
+    }
+
+    /**
+     * Set the current game day.
+     * Intended for testing purposes, not general usage.
+     */
+    void setCurrentDay(int day) {
+        SpeciesChangeListDAO.setDay(day);
+    }
+
+    /**
+     * Calculate the environment score for the current point in time, without smoothing.
+     * @see https://bensfoodwebs.wordpress.com/2017/02/25/alternative-environment-score-for-world-of-balance/
+     * @return the current environment score
+     */
+    public int rawEnvironmentScore() {
+        int biomassScore = (int) Math.round(trophicLevelWeightedTotalBiomass());
+        int diversityScore = (int) Math.round(biomassScore * shannonIndex());
+        int totalScore = biomassScore + diversityScore;
+        return totalScore;
+    }
+
+    /**
+     * Calculate a weighted total biomass of all species in the ecosystem,
+     * where the weight for a species is its trophic level.
+     * @return the weighted total biomass
+     */
+    public double trophicLevelWeightedTotalBiomass() {
+        double total = 0;
+        for (Species species : speciesList.values()) {
+            total += species.getTotalBiomass() * species.getSpeciesType().getTrophicLevel();
+        }
+        return total;
+    }
+
+    /**
+     * Calculate the biomass-based Shannon index of the ecosystem.
+     * The Shannon index is a standard measure of ecological diversity.
+     * This version uses biomass to represent population, rather than the number of individuals,
+     * and uses base-2 logarithms.
+     * @return the Shannon index
+     */
+    public double shannonIndex() {
+        int totalBiomass = this.totalBiomass();
+        double shannon = 0;
+        for (Species species : speciesList.values()) {
+            if (species.getTotalBiomass() <= 0)
+                continue;
+            double proportion = (double) species.getTotalBiomass() / Math.max(1, totalBiomass);
+            shannon -= proportion * log2(proportion);
+        }
+        return shannon;
+    }
+
+    /**
+     * @return the total biomass of all species in the ecosystem
+     */
+    public int totalBiomass() {
+        int total = 0;
+        for (Species species : speciesList.values()) {
+            total += species.getTotalBiomass();
+        }
+        return total;
+    }
+
     public void updateScore() {
-        updateEcosystemScore();
+        updateEnvironmentScore();
 
         /* It seems that only web services simulation supports score_csv
         Log.println("score_csv.size() " + (score_csv.size()));
@@ -359,19 +459,17 @@ public class Ecosystem {
         updateAccumEnvScore();
     }
 
-    public void updateEcosystemScore() {
-        double biomass = 0;
+    /**
+     * Calculate the current and high environment scores,
+     * updating the database and sending the new score values to the client.
+     */
+    public void updateEnvironmentScore() {
 
-        for (Species species : speciesList.values()) {
-            SpeciesType speciesType = species.getSpeciesType();
-            biomass += speciesType.getBiomass() * Math.pow(species.getTotalBiomass() / speciesType.getBiomass(), speciesType.getTrophicLevel());
+        if (!rawScoreHistoryLoaded) {
+            loadRawScoreHistory();
         }
-
-        if (biomass > 0) {
-            biomass = Math.round(Math.log(biomass) / Math.log(2)) * 5;
-        }
-        
-        score = (int) Math.round(Math.pow(biomass, 2) + Math.pow(speciesList.size(), 2));
+        score = smoothedEnvironmentScore();
+        ScoreHistoryDAO.setRawScore(eco_id, rawScoreHistoryLastDay, rawScoreHistory.getLast());
 
         if (score > highEnvScore) {
             highEnvScore = score;
@@ -388,6 +486,19 @@ public class Ecosystem {
             // Sometimes the player did not receive message, so send to player also
             NetworkFunctions.sendToPlayer(response, player_id);            
         }
+    }
+
+    /**
+     * Populate the raw score history from the database.
+     */
+    void loadRawScoreHistory() {
+        int startDay = getCurrentDay() - scoreSmoothingWindowSize;
+        System.err.println("startDay = " + startDay);
+        for (int rawScore : ScoreHistoryDAO.getRawScoreHistory(eco_id, startDay)) {
+            rawScoreHistory.addLast(rawScore);
+        }
+        System.err.println("rawScoreHistory = " + rawScoreHistory);
+        rawScoreHistoryLoaded = true;
     }
 
     public void updateAccumEnvScore() {
