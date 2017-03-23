@@ -73,7 +73,7 @@ public class GameEngine {
         if(Constants.useAtnEngine){
         	this.atnEngine = new ATNEngine();
         }
-        createClockEvents();
+        // createClockEvents();
     }
 
     private void createClockEvents() {
@@ -85,9 +85,9 @@ public class GameEngine {
 
                 for (Player player : lobby.getPlayers()) {
                     if (month % 2 == 0) {
-                        GameResources.updateCredits(player, 400);
+                        // GameResources.updateCredits(player, 400);
                     } else {
-                        GameResources.updateCredits(player, 350);
+                        // GameResources.updateCredits(player, 350);
                     }
                 }
             }

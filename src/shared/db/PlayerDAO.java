@@ -247,6 +247,8 @@ public final class PlayerDAO {
         boolean status = false;
 
         String query = "UPDATE `player` SET `credits` = ? WHERE `player_id` = ?";
+        
+        System.out.println("PlayerDAO, updateCredits, player/credits = " + player_id + " " + credits);
 
         Connection con = null;
         PreparedStatement pstmt = null;

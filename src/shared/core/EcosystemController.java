@@ -288,7 +288,7 @@ public class EcosystemController {
         EcosystemDAO.updateTime(ecosystem.getID());
         
         // Code that sends zone (x,y) and species on that zone (or tile) to client for lobby map
-        Log.println("EcosystemController: send to client world_zone (x,y) with species_ids");
+        // Log.println("EcosystemController: send to client world_zone (x,y) with species_ids");
         // This row, column pair will view the best in lobby
         int rowIdeal = 19;
         int columnIdeal = 21;
@@ -307,7 +307,7 @@ public class EcosystemController {
                 continue;
             }
             zoneList = WorldZoneDAO.getZoneList(world_id, player_id);
-            Log.println("Player_id = " + player_id + " has these zones");
+            // Log.println("Player_id = " + player_id + " has these zones");
             rowBest = -1;
             columnBest = -1;
             for (int j = 0; j < zoneList.size(); j++) {
@@ -322,30 +322,30 @@ public class EcosystemController {
                         columnBest = column;
                     }
                 } 
-                Log.println("# " + j + "row, column = " + row + ", " + column);
+                // Log.println("# " + j + "row, column = " + row + ", " + column);
             }
-            Log.println("Best row, column found = " + rowBest + ", " + columnBest);
+            // Log.println("Best row, column found = " + rowBest + ", " + columnBest);
             if (rowBest == -1) {
                 continue;
             }
             eco = EcosystemDAO.getEcosystem(world_id, player_id);
             int eco_id = eco.getID();
-            Log.println("Ecosystem_id = " + eco_id + ", and contains the following species");
+            // Log.println("Ecosystem_id = " + eco_id + ", and contains the following species");
             speciesList = EcoSpeciesDAO.getSpecies(eco_id);
             speciesIds = new ArrayList<Integer>();
             for (int j = 0; j < speciesList.size(); j++) {
                 int species_id = speciesList.get(j).getID();
                 speciesIds.add(species_id);
-                Log.printf("%d, ", species_id);
+                // Log.printf("%d, ", species_id);
             }
             
             if ((rowBest != -1) && (speciesList.size() > 0)) {
-                Log.println("This data is being sent to client, size = " + speciesIds.size());
+                // Log.println("This data is being sent to client, size = " + speciesIds.size());
                 ResponseSpeciesInfo response = new ResponseSpeciesInfo(rowBest, columnBest, speciesIds);
                 NetworkFunctions.sendToPlayer(response, playerId);
             }
             
-            Log.println("");
+            // Log.println("");
         }
         ecosystem.updateEnvironmentScore();  // One more time to make sure player gets it
     }
