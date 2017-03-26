@@ -482,9 +482,7 @@ public class Ecosystem {
             ResponseUpdateEnvironmentScore response = 
                     new ResponseUpdateEnvironmentScore(eco_id, score, highEnvScore);
             
-	    NetworkFunctions.sendToWorld(response, world_id);        
-            // Sometimes the player did not receive message, so send to player also
-            NetworkFunctions.sendToPlayer(response, player_id);            
+            NetworkFunctions.sendToPlayer(response, player_id);
         }
     }
 
