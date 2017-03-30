@@ -305,7 +305,14 @@ public class GameEngine {
 	        NetworkFunctions.sendToLobby(response, lobby.getID());
             }
 
+            int scoreBefore = zone.getScore();
             zone.updateEnvironmentScore();
+            int scoreAfter = zone.getScore();
+            Log.println("GameEngine: before / after environment score: " + scoreBefore + " " + scoreAfter);
+            int delta = scoreAfter - scoreBefore;
+            if (delta != 0) {
+                SpeciesChangeListDAO.createEntry(zone.getID(), -1, delta, day);
+            }  
         } catch (Exception ex) {
             Log.println_e(ex.getMessage());
             ex.printStackTrace();
@@ -580,8 +587,15 @@ public class GameEngine {
 	            response.setResults(speciesChangeList);
 	            NetworkFunctions.sendToLobby(response, lobby.getID());
             }
-
+            
+            int scoreBefore = zone.getScore();
             zone.updateEnvironmentScore();
+            int scoreAfter = zone.getScore();
+            Log.println("GameEngine: before / after environment score: " + scoreBefore + " " + scoreAfter);
+            int delta = scoreAfter - scoreBefore;
+            if (delta != 0) {
+                SpeciesChangeListDAO.createEntry(zone.getID(), -1, delta, day);
+            }                        
             if(updatePredictionListener != null){
             	updatePredictionListener.updatePredictionComplete();
             }
