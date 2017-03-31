@@ -312,19 +312,27 @@ public class Ecosystem {
     }
 
     /**
+     * Calculate a version of the smoothed environment score
+     * with numbers in a smaller range more interpretable by players.
+     * @return the scaled smoothed environment score
+     */
+    public int scaledSmoothedEnvironmentScore() {
+        return (int) Math.round(Math.sqrt(smoothedEnvironmentScore()) * Constants.SCORE_MULTIPLIER);
+    }
+
+    /**
      * Calculate a simple moving average of the rawEnvironmentScore
      * based on the history of raw environment scores
      * over the past [scoreSmoothingWindowSize] game days.
      * @return the smoothed environment score
      */
-    public int smoothedEnvironmentScore() {
+    public double smoothedEnvironmentScore() {
         updateRawScoreHistory();
         double sum = 0;
         for (int rawScore : rawScoreHistory) {
             sum += rawScore;
         }
-        int mean = (int) Math.round(sum / (rawScoreHistory.size()));
-        return mean;
+        return sum / rawScoreHistory.size();
     }
 
     public void setScoreSmoothingWindowSize(int scoreSmoothingWindowSize) {
@@ -468,7 +476,7 @@ public class Ecosystem {
         if (!rawScoreHistoryLoaded) {
             loadRawScoreHistory();
         }
-        score = smoothedEnvironmentScore();
+        score = scaledSmoothedEnvironmentScore();
         ScoreHistoryDAO.setRawScore(eco_id, rawScoreHistoryLastDay, rawScoreHistory.getLast());
 
         if (score > highEnvScore) {

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import shared.db.ScoreHistoryDAO;
+import shared.metadata.Constants;
 import shared.util.Vector3;
 
 import java.sql.SQLException;
@@ -132,7 +133,7 @@ public class EcosystemTest {
 
     @Test
     public void testSmoothedEnvironmentScoreNoSpecies() {
-        assertEquals(0, ecosystem.smoothedEnvironmentScore());
+        assertEquals(0, ecosystem.smoothedEnvironmentScore(), 1e-20);
     }
 
     @Test
@@ -141,7 +142,7 @@ public class EcosystemTest {
         ecosystem.setSpecies(makeSpecies(50, 2f));
         ecosystem.setSpecies(makeSpecies(50, 3f));
         int rawScore = ecosystem.rawEnvironmentScore();
-        assertEquals(rawScore, ecosystem.smoothedEnvironmentScore());
+        assertEquals(rawScore, ecosystem.smoothedEnvironmentScore(), 1e-20);
     }
 
     @Test
@@ -168,7 +169,7 @@ public class EcosystemTest {
 
     private void testSmoothedEnvironmentScore(int numDays, int windowSize, Set<Integer> daysToRepeat) {
         int[] rawScores = new int[numDays];
-        int smoothedScore = -1;
+        double smoothedScore = -1;
         ecosystem.setScoreSmoothingWindowSize(windowSize);
         for (int day = 0; day < numDays; day++) {
             ecosystem.setCurrentDay(day);
@@ -179,16 +180,15 @@ public class EcosystemTest {
                 smoothedScore = ecosystem.smoothedEnvironmentScore();
             }
         }
-        assertEquals(arrayWindowMean(rawScores, numDays - windowSize, windowSize), smoothedScore);
+        assertEquals(arrayWindowMean(rawScores, numDays - windowSize, windowSize), smoothedScore, 1e-20);
     }
 
-    private int arrayWindowMean(int[] data, int start, int windowSize) {
+    private double arrayWindowMean(int[] data, int start, int windowSize) {
         double sum = 0;
         for (int i = start; i < start + windowSize; i++) {
             sum += data[i];
         }
-        double mean = sum / windowSize;
-        return (int) (Math.round(mean));
+        return sum / windowSize;
     }
 
     @Test
@@ -198,13 +198,13 @@ public class EcosystemTest {
         ecosystem.setScoreSmoothingWindowSize(2);
         ecosystem.setCurrentDay(3);
         ecosystem.loadRawScoreHistory();
-        int smoothedScore = ecosystem.smoothedEnvironmentScore();
-        assertEquals(10, smoothedScore);  // (10 + 20 + 0) / 3 = 10
+        double smoothedScore = ecosystem.smoothedEnvironmentScore();
+        assertEquals(10, smoothedScore, 1e-20);  // (10 + 20 + 0) / 3 = 10
     }
 
     /**
      * Note: testing of updateEnvironmentScore is currently limited to testing the
-     * changes related to the new smoothedEnvironmentScore() method.
+     * changes related to the smoothedEnvironmentScore() and scaledSmoothedEnvironmentScore() methods.
      */
     @Test
     public void testUpdateEnvironmentScore() {
@@ -217,6 +217,7 @@ public class EcosystemTest {
         } catch (NullPointerException e) {
             // Ignore irrelevant NullPointerException caused by NetworkFunctions.sendToPlayer()
         }
-        assertEquals(10, ecosystem.getScore());
+        int expectedScore = (int) Math.round(Math.sqrt(10) * Constants.SCORE_MULTIPLIER);
+        assertEquals(expectedScore, ecosystem.getScore());
     }
 }
