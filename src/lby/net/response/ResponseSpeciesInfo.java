@@ -30,7 +30,7 @@ public class ResponseSpeciesInfo extends GameResponse {
         for (int idx = 0; idx < speciesList.size(); idx++) {
             packet.addInt32(speciesList.get(idx));
         }
-        Log.println("ResponseSpeciesInfo, zoneX, zoneY, count = " + zoneX + " " + zoneY + " " + speciesList.size());
+        // Log.println("ResponseSpeciesInfo, zoneX, zoneY, count = " + zoneX + " " + zoneY + " " + speciesList.size());
 
         return packet.getBytes();
     }
