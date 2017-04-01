@@ -35,14 +35,14 @@ public class Clock {
 
             while (prevDay < day) {
                 prevDay++;
-                eventHandler.execute(EventType.NEW_DAY, prevDay);
+                // eventHandler.execute(EventType.NEW_DAY, prevDay);
 
                 if (prevDay % 30 == 0) { // New Month
-                    eventHandler.execute(EventType.NEW_MONTH, prevDay / 30 + 1);
+                    // eventHandler.execute(EventType.NEW_MONTH, prevDay / 30 + 1);
                 }
 
                 if (prevDay % 360 == 0) { // New Year
-                    eventHandler.execute(EventType.NEW_YEAR, prevDay / 360 + 1);
+                    // eventHandler.execute(EventType.NEW_YEAR, prevDay / 360 + 1);
                 }
             }
 
