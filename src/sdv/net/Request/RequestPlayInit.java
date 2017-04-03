@@ -30,6 +30,7 @@ public class RequestPlayInit extends GameRequest {
 
     @Override
     public void doBusiness() throws Exception {
+
         int tester; //number of players in game test.
         Log.println("Trying to start Play: PlayerID[" +
                 player_id + "], RoomID[" + room_id + "]");
@@ -72,7 +73,7 @@ public class RequestPlayInit extends GameRequest {
             try{
             int opp_id= PlayManager.getInstance().getPlayByPlayerID(client.getPlayer().getPlayer_id())
                 .getOpponent(client.getPlayer()).getPlayer_id();
-            
+
             /* this is meant for adding a response for all players in a match.
             for(int p_id : play.getPlayers().keySet()) {
                 NetworkManager.addResponseForUser(p_id, response);
@@ -84,8 +85,6 @@ public class RequestPlayInit extends GameRequest {
             }
             Log.println("Play created with players: " + play.getPlayers().keySet().toString());
         }
-        
-        
         
     }
     
