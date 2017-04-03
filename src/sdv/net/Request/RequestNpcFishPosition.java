@@ -22,7 +22,7 @@ public class RequestNpcFishPosition extends GameRequest{
     @Override
     public void parse() throws IOException {
         numFish = Integer.parseInt(DataReader.readString(dataInput));
-        System.out.println("Num fish is " + numFish);
+        //System.out.println("Num fish is " + numFish);
         Prey fish;
         while(numFish > 0){
             fish = new Prey();
@@ -32,7 +32,7 @@ public class RequestNpcFishPosition extends GameRequest{
             fish.setY(Float.parseFloat(DataReader.readString(dataInput)));
             fish.setRotation(Float.parseFloat(DataReader.readString(dataInput)));
             fishMap.put(fish.getPrey_id(),fish);
-            System.out.println("Parsed. ");
+            //System.out.println("Parsed. ");
             numFish--;
         }
     }

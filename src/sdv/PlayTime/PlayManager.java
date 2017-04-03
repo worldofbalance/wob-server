@@ -79,6 +79,7 @@ public class PlayManager {
     }
 
     public Play createPlay(int player_id, int playID) throws IOException{
+      synchronized(this) {  // synchronized block added by Rupal on 3-30-2017
         Play play = this.playList.get(playID);
         if (play == null) {
 
@@ -112,6 +113,7 @@ public class PlayManager {
             
         }
         return play;
+      }
     }
 
     /**
