@@ -562,7 +562,7 @@ public class GameEngine {
                         Log.printf("    Node[%d] decreased by %d", node_id, Math.abs(biomass));
                     }
                 }
-                
+
                 if (gDiff + rDiff != 0) {
                     speciesChangeList.put(species_id, gDiff + rDiff);   
                     int biomassOld = zone.getSpeciesList().get(species_id).getTotalBiomass();
@@ -573,6 +573,7 @@ public class GameEngine {
                     Log.println("GameEngine, updateATNPrediction: original biomass: " + biomassOld);
                     EcoSpeciesDAO.updateBiomass(zone.getID(), group_id, species_id, biomassOld + gDiff + rDiff);     
                     SpeciesChangeListDAO.createEntry(zone.getID(), species_id, gDiff + rDiff, day);
+                    EcoSpeciesDAO.updateBiomass(zone.getID(), group_id, species_id, biomassOld + gDiff + rDiff);                    
                     // Update the in memory biomass
                     SpeciesGroup speciesGroup = ecoSpeciesList.get(species_id).getGroups().get(group_id);
                     speciesGroup.setBiomass(speciesGroup.getBiomass() + gDiff + rDiff); 
@@ -595,7 +596,7 @@ public class GameEngine {
             int delta = scoreAfter - scoreBefore;
             if (delta != 0) {
                 SpeciesChangeListDAO.createEntry(zone.getID(), -1, delta, day); 
-            }                               
+            } 
             if(updatePredictionListener != null){
             	updatePredictionListener.updatePredictionComplete();
             }
