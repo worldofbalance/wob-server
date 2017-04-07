@@ -26,7 +26,7 @@ public class RequestSpeciesAction extends GameRequest {
 
     private short action;
     private short type;
-    private int species_id;
+    private int species_id, startDay;
     private short index;
     private Map<Integer, Integer> speciesList;
     private List<Species> speciesListFull;
@@ -58,6 +58,10 @@ public class RequestSpeciesAction extends GameRequest {
         } else if (action == 4) {
             species_id = DataReader.readInt(dataInput);            
             Log.println("RequestSpeciesAction, parse, action = 4 id = " + species_id);
+        } else if (action == 7) {
+            species_id = DataReader.readInt(dataInput);     
+            startDay = DataReader.readInt(dataInput);
+            Log.println("RequestSpeciesAction, parse, action = 7, id/day = " + species_id + " " + startDay);
         }
     }
 
@@ -185,6 +189,12 @@ public class RequestSpeciesAction extends GameRequest {
             response.setCDay(results[0]);
             response.setFDay(results[1]);
             response.setLDay(results[2]);
+            client.add(response);
+        } else if (action == 7) { // Return species biomass change history. Pairs of <day, biomass change>. Use startDay
+            response.setSpeciesId(species_id);
+            response.setSpeciesHistoryList(
+                    SpeciesChangeListDAO.getSpeciesHistory(client.getPlayer().getEcosystem().getID(), species_id, startDay));
+            Log.println("RequestSpeciesAction, process, action = 7, size = " + response.speciesHistoryList.size());
             client.add(response);
         }
     }

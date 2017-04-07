@@ -186,6 +186,49 @@ public final class SpeciesChangeListDAO {
         }
         return speciesHistoryList;
     }
+
+    
+    public static Map<Integer, Integer> getSpeciesHistory(int eco_id, int species_id, int day) {
+        Map<Integer, Integer> speciesHistoryList = new HashMap<Integer, Integer>();
+        Log.println("SpeciesChangeListDAO, getSpeciesHistory: e/s/d = " + eco_id + " " + species_id + " " + day);
+
+        String query = "SELECT * FROM `eco_species_change` WHERE `eco_id` = ? AND `species_id` = ?" 
+                + " AND `day` >= ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = GameDB.getConnection();
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, eco_id);
+            pstmt.setInt(2, species_id);
+            pstmt.setInt(3, day);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                speciesHistoryList.put(rs.getInt("day"), rs.getInt("biomass"));
+                Log.println("SpeciesChangeListDAO, getSpeciesHistory, (>=day): d/b = " 
+                        + rs.getInt("day") + " " + rs.getInt("biomass"));
+            }
+
+            rs.close();
+            pstmt.close();
+        } catch (SQLException ex) {
+            Log.println_e("SpeciesChangeListDAO, createEntry: " + ex.getMessage());
+        } finally {
+            if (con != null) {
+                GameDB.closeConnection(con, pstmt);
+            }
+        }
+        return speciesHistoryList;
+    }
+    
+    
+    
+    
+    
     
     /* DH 2017-1-11 - This function needs work to be used.
     // (eco_id, species_id) is no longer a unique key
