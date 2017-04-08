@@ -59,8 +59,8 @@ public class ResponseSpeciesAction extends GameResponse {
             packet.addInt32(cost);
             packet.addFloat(biomass);
             packet.addShort16(index);
-        } else if (action == 4) {
-            Log.println("ResponseSpeciesAction, action = 4, species, size = " + species_id + " " + speciesHistoryList.size());
+        } else if ((action == 4) || (action == 7)) {  // 4 returns all days, 7 returns from a starting day
+            Log.println("ResponseSpeciesAction, action = 4 or 7, species, size = " + species_id + " " + speciesHistoryList.size());
             packet.addInt32(species_id);
             packet.addShort16((short) speciesHistoryList.size());
             for (Integer key : speciesHistoryList.keySet()) {
