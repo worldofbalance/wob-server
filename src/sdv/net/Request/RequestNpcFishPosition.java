@@ -39,6 +39,7 @@ public class RequestNpcFishPosition extends GameRequest{
 
     @Override
     public void doBusiness() throws Exception {
+	try{
         response = new ResponseNpcFishPosition();
         response.setNpcFishMap(fishMap);
         
@@ -46,7 +47,11 @@ public class RequestNpcFishPosition extends GameRequest{
         p_id = PlayManager.manager.getPlayByPlayerID(client.getPlayer().getPlayer_id())
                 .getOpponent(client.getPlayer()).getPlayer_id();
         
+        if(GameServer.getInstance().getActivePlayer(p_id) != null){
         GameServer.getInstance().getThreadByPlayerID(p_id).send(response);
+        }
+		}
+		catch(Exception ex){}
     }
     
 }
