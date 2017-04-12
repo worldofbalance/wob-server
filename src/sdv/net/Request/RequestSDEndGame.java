@@ -44,6 +44,8 @@ public class RequestSDEndGame extends GameRequest{
 
     @Override
     public void doBusiness() throws Exception {
+
+	try{
       
         int thisPlayerID = this.client.getPlayer().getPlayer_id();
         PlayManager.manager.getPlayByPlayerID(thisPlayerID).getPlayers().get(thisPlayerID).setFinalScore(finalScore);
@@ -90,6 +92,8 @@ public class RequestSDEndGame extends GameRequest{
             }
          }
         }
+		}
+		catch(Exception ex) {}
     }
 
 }
