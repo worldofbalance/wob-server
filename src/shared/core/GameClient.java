@@ -233,6 +233,7 @@ public class GameClient {
      * the server will be removed as well.
      */
     public void logout() {
+        Log.consoleln("Inside GameClient, logout");
         saveTimer.finish();
         responses.clear();
         // Remove Player
@@ -262,6 +263,7 @@ public class GameClient {
     }
 
     public void end() {
+        Log.consoleln("Inside GameClient, end");
         isAlive = false;
     }
 
