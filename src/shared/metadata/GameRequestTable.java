@@ -38,7 +38,7 @@ public class GameRequestTable {
         add(NetworkCode.HEARTBEAT, RequestHeartbeat.class);
         add(NetworkCode.ACTIVITY, RequestActivity.class);
         add(NetworkCode.LOGIN, RequestLogin.class);
-        add(NetworkCode.LOGOUT, RequestLogin.class);
+        add(NetworkCode.LOGOUT, RequestLogout.class);
         add(NetworkCode.REGISTER, RequestRegister.class);
         add(NetworkCode.ERROR_LOG, RequestErrorLog.class);
         add(NetworkCode.MESSAGE, RequestMessage.class);
