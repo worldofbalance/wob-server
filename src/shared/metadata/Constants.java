@@ -58,6 +58,7 @@ public class Constants {
     public final static float MULTIPLIER_EXP = 1f;
     public final static int MAX_WORLDS = 5;
     public final static int SCORE_MULTIPLIER = 10;  // Environment score is multiplied by this number
+    public final static int DEFAULT_SCORE_SMOOTHING_WINDOW_SIZE = 10;  // Default number of days of raw score history to use for smoothing
     // Other
     public final static float TIME_MODIFIER = 1f;
     public final static int SAVE_INTERVAL = 60000;

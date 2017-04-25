@@ -55,10 +55,18 @@ public class Ecosystem {
 	private String atnManipId;
 	private String networkId;
 
-	private int scoreSmoothingWindowSize = 100;
-	private Deque<Integer> rawScoreHistory = new ArrayDeque<>();
-	private int rawScoreHistoryLastDay = -1;
-	private boolean rawScoreHistoryLoaded = false;
+	// rawScoreHistory is contains the raw (i.e. pre-smoothing, pre-scaling)
+    // environment scores for the N most recent game days,
+    // where N is scoreSmoothingWindowSize.
+    // The scores are stored in chronological order, such that
+    // rawScoreHistory.getFirst() returns the oldest score, and
+    // rawScoreHistory.getLast() returns the newest score.
+    // Iteration over rawScoreHistory yields scores in chronological order.
+	protected Deque<Integer> rawScoreHistory = new ArrayDeque<>();
+    private int scoreSmoothingWindowSize =
+            Constants.DEFAULT_SCORE_SMOOTHING_WINDOW_SIZE;  // the number of days of raw score history to use for smoothing
+	private int rawScoreHistoryLastDay = -1;          // the game day of the most recent raw score
+	protected boolean rawScoreHistoryLoaded = false;  // true if the raw score history has been loaded from the database
 
     public Ecosystem(int eco_id, int world_id, int player_id, String name, short type) {
         this.eco_id = eco_id;
@@ -321,18 +329,14 @@ public class Ecosystem {
     }
 
     /**
-     * Calculate a simple moving average of the rawEnvironmentScore
+     * Calculate a weighted moving average of the rawEnvironmentScore
      * based on the history of raw environment scores
      * over the past [scoreSmoothingWindowSize] game days.
      * @return the smoothed environment score
      */
     public double smoothedEnvironmentScore() {
         updateRawScoreHistory();
-        double sum = 0;
-        for (int rawScore : rawScoreHistory) {
-            sum += rawScore;
-        }
-        return sum / rawScoreHistory.size();
+        return rightTriangularWeightedAverage(rawScoreHistory);
     }
 
     public void setScoreSmoothingWindowSize(int scoreSmoothingWindowSize) {
@@ -499,11 +503,9 @@ public class Ecosystem {
      */
     void loadRawScoreHistory() {
         int startDay = getCurrentDay() - scoreSmoothingWindowSize;
-        System.err.println("startDay = " + startDay);
         for (int rawScore : ScoreHistoryDAO.getRawScoreHistory(eco_id, startDay)) {
             rawScoreHistory.addLast(rawScore);
         }
-        System.err.println("rawScoreHistory = " + rawScoreHistory);
         rawScoreHistoryLoaded = true;
     }
 
@@ -785,4 +787,25 @@ public class Ecosystem {
 	public void updateTimeSteps(int timesteps) {
 		EcosystemDAO.updateTimeStep(this.eco_id, timesteps);
 	}
+
+    /**
+     * Calculate a weighted average of the given values,
+     * where the weights follow a linear scale
+     * such that the first element is given the smallest weight
+     * and the last element is given the largest weight.
+     */
+    protected static double rightTriangularWeightedAverage(Deque<Integer> values) {
+        if (values.isEmpty())
+            return 0;
+
+        int weightedSum = 0;
+        int sumOfWeights = 0;
+        int weight = 0;
+        for (int value : values) {
+            weight++;
+            sumOfWeights += weight;
+            weightedSum += weight * value;
+        }
+        return (double) weightedSum / sumOfWeights;
+    }
 }
