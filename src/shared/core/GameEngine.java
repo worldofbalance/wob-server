@@ -14,11 +14,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import shared.metadata.Constants;
-import shared.model.Ecosystem;
-import shared.model.Player;
-import shared.model.Species;
-import shared.model.SpeciesGroup;
-import shared.model.SpeciesType;
+import shared.model.*;
 import lby.net.response.ResponsePrediction;
 import lby.net.response.ResponseSpeciesCreate;
 import shared.simulation.PredictionRunnable;
@@ -321,7 +317,18 @@ public class GameEngine {
         Log.printf("Total Time (Prediction Step): %.2f seconds", Math.round((System.currentTimeMillis() - milliseconds) / 10.0) / 100.0);
     }
 
-    public void initializeSpecies(Species species, Ecosystem ecosystem) {
+    /**
+     * Add the given species to the given ecosystem, updating the ecosystem's ZoneNodes
+     * to hold the biomass of that species.
+     *
+     * Assumptions:
+     * - The species is not already present in the ecosystem
+     * - The biomass of the species is not already represented in ecosystem.zoneNodes
+     *
+     * @param species the species to add
+     * @param ecosystem the ecosystem to add it to
+     */
+    public void addSpeciesToEcosystem(Species species, Ecosystem ecosystem) {
     	if(!Constants.DEBUG_MODE){
 	        for (SpeciesGroup group : species.getGroups().values()) {
 	            ResponseSpeciesCreate response = new ResponseSpeciesCreate(Constants.CREATE_STATUS_DEFAULT, ecosystem.getID(), group);
@@ -329,24 +336,24 @@ public class GameEngine {
 	        }
     	}
         ecosystem.setSpecies(species);
-        //10/12/2015, HJR Not sure if we need to add this logic for the simulation engine,
-        //because web services default food web does this
-//        if(Constants.useSimEngine){
-//	        SpeciesType type = species.getSpeciesType();
-//	        for (Entry<Integer, Float> entry : type.getNodeDistribution().entrySet()) {
-//	            int node_id = entry.getKey(), biomass = (int) (species.getTotalBiomass() * entry.getValue());
-//	
-//	            SpeciesZoneType szt = simEngine.createSpeciesZoneType(node_id, biomass);
-//	            ecosystem.getZoneNodes().addNode(node_id, szt);
-//	        }
-//        }
-        if(Constants.useAtnEngine){
+
+        if (Constants.useAtnEngine) {
 	        SpeciesType type = species.getSpeciesType();
+            ZoneNodes zoneNodes = ecosystem.getZoneNodes();
 	        for (Entry<Integer, Float> entry : type.getNodeDistribution().entrySet()) {
-	            int node_id = entry.getKey(), biomass = (int) (species.getTotalBiomass() * entry.getValue());
-	
-	            SpeciesZoneType szt = atnEngine.createSpeciesZoneType(node_id, biomass);
-	            ecosystem.getZoneNodes().addNode(node_id, szt);
+	            int node_id = entry.getKey();
+                double biomass = species.getTotalBiomass() * entry.getValue();
+                SpeciesZoneType szt;
+                if (zoneNodes.getNodes().containsKey(node_id)) {
+                    // Add biomass to existing SpeciesZoneType
+                    szt = zoneNodes.getNodes().get(node_id);
+                    szt.setCurrentBiomass(szt.getCurrentBiomass() + biomass);
+                    szt.setBiomassUpdated(true);
+                } else {
+                    // Create new SpeciesZoneType
+                    szt = atnEngine.createSpeciesZoneType(node_id, biomass);
+                    zoneNodes.addNode(node_id, szt);
+                }
 	        }
         }
     }

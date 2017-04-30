@@ -276,7 +276,7 @@ public class EcosystemController {
         }
         // Load Existing Species
         for (Species species : EcoSpeciesDAO.getSpecies(ecosystem.getID())) {
-            lobby.getGameEngine().initializeSpecies(species, ecosystem);
+            lobby.getGameEngine().addSpeciesToEcosystem(species, ecosystem);
         }
         // Recalculate Ecosystem Score
         
