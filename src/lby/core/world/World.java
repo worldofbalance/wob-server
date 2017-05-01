@@ -300,9 +300,9 @@ public class World {
             int species_id = entry.getKey(), biomass = entry.getValue();
             SpeciesType speciesType = ServerResources.getSpeciesTable().getSpecies(species_id);
 
-           // for (int node_id : speciesType.getNodeList()) {
-          //  	ecosystem.setNewSpeciesNode(node_id, biomass);
-          //  }
+            for (int node_id : speciesType.getNodeList()) {
+            	ecosystem.setNewSpeciesNode(node_id, biomass);
+            }
 
             Species species = null;
 
