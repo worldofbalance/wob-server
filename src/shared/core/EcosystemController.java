@@ -101,20 +101,9 @@ public class EcosystemController {
 	        // Perform Web Services
 	        createWebServices(ecosystem, nodeBiomassList);
     	}
-        // Update Environment Score
-        double biomass = 0;
 
-        for (Map.Entry<Integer, Integer> entry : speciesList.entrySet()) {
-            SpeciesType speciesType = ServerResources.getSpeciesTable().getSpecies(entry.getKey());
-            biomass += speciesType.getBiomass() * Math.pow(entry.getValue() / speciesType.getBiomass(), speciesType.getTrophicLevel());
-        }
+        ecosystem.updateEnvironmentScore();
 
-        if (biomass > 0) {
-            biomass = Math.round(Math.log(biomass) / Math.log(2)) * 5;
-        }
-
-        int env_score = (int) Math.round(Math.pow(biomass, 2) + Math.pow(speciesList.size(), 2));
-        ScoreDAO.updateEnvironmentScore(ecosystem.getID(), env_score, env_score);
         // Generate CSVs from Web Services
         if(Constants.useSimEngine){
 //        	createCSVs(ecosystem);
