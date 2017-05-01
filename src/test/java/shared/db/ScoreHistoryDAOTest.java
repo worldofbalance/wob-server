@@ -35,7 +35,7 @@ public class ScoreHistoryDAOTest {
 
     @Test
     public void testEmptyTable() {
-        List<Integer> scores = ScoreHistoryDAO.getRawScoreHistory(0, 0);
+        List<Integer> scores = ScoreHistoryDAO.getRawScoreHistory(0, 0, 100);
         assertEquals(0, scores.size());
     }
 
@@ -44,7 +44,7 @@ public class ScoreHistoryDAOTest {
         ScoreHistoryDAO.setRawScore(0, 1, 11);
         ScoreHistoryDAO.setRawScore(0, 2, 22);
         ScoreHistoryDAO.setRawScore(0, 3, 33);
-        List<Integer> scores = ScoreHistoryDAO.getRawScoreHistory(0, 1);
+        List<Integer> scores = ScoreHistoryDAO.getRawScoreHistory(0, 1, 3);
         assertEquals(3, scores.size());
         assertEquals(11, scores.get(0).intValue());
         assertEquals(22, scores.get(1).intValue());
@@ -59,7 +59,7 @@ public class ScoreHistoryDAOTest {
         ScoreHistoryDAO.setRawScore(1, 1, 111);
         ScoreHistoryDAO.setRawScore(1, 2, 222);
         ScoreHistoryDAO.setRawScore(1, 3, 333);
-        List<Integer> scores = ScoreHistoryDAO.getRawScoreHistory(0, 1);
+        List<Integer> scores = ScoreHistoryDAO.getRawScoreHistory(0, 1, 3);
         assertEquals(3, scores.size());
         assertEquals(11, scores.get(0).intValue());
         assertEquals(22, scores.get(1).intValue());
@@ -67,14 +67,25 @@ public class ScoreHistoryDAOTest {
     }
 
     @Test
-    public void testDayFiltering() {
+    public void testExcludeEarlierHistory() {
         ScoreHistoryDAO.setRawScore(0, 1, 11);
         ScoreHistoryDAO.setRawScore(0, 2, 22);
         ScoreHistoryDAO.setRawScore(0, 3, 33);
-        List<Integer> scores = ScoreHistoryDAO.getRawScoreHistory(0, 2);
+        List<Integer> scores = ScoreHistoryDAO.getRawScoreHistory(0, 2, 3);
         assertEquals(2, scores.size());
         assertEquals(22, scores.get(0).intValue());
         assertEquals(33, scores.get(1).intValue());
+    }
+
+    @Test
+    public void testExcludeLaterHistory() {
+        ScoreHistoryDAO.setRawScore(0, 1, 11);
+        ScoreHistoryDAO.setRawScore(0, 2, 22);
+        ScoreHistoryDAO.setRawScore(0, 3, 33);
+        List<Integer> scores = ScoreHistoryDAO.getRawScoreHistory(0, 1, 2);
+        assertEquals(2, scores.size());
+        assertEquals(11, scores.get(0).intValue());
+        assertEquals(22, scores.get(1).intValue());
     }
 
     @Test
@@ -82,9 +93,10 @@ public class ScoreHistoryDAOTest {
         ScoreHistoryDAO.setRawScore(0, 1, 11);
         ScoreHistoryDAO.setRawScore(0, 3, 33);
         ScoreHistoryDAO.setRawScore(0, 2, 22);
-        List<Integer> scores = ScoreHistoryDAO.getRawScoreHistory(0, 2);
-        assertEquals(2, scores.size());
-        assertEquals(22, scores.get(0).intValue());
-        assertEquals(33, scores.get(1).intValue());
+        List<Integer> scores = ScoreHistoryDAO.getRawScoreHistory(0, 1, 3);
+        assertEquals(3, scores.size());
+        assertEquals(11, scores.get(0).intValue());
+        assertEquals(22, scores.get(1).intValue());
+        assertEquals(33, scores.get(2).intValue());
     }
 }

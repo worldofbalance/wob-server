@@ -502,8 +502,9 @@ public class Ecosystem {
      * Populate the raw score history from the database.
      */
     void loadRawScoreHistory() {
-        int startDay = getCurrentDay() - scoreSmoothingWindowSize;
-        for (int rawScore : ScoreHistoryDAO.getRawScoreHistory(eco_id, startDay)) {
+        int endDay = getCurrentDay();
+        int startDay = endDay - scoreSmoothingWindowSize - 1;
+        for (int rawScore : ScoreHistoryDAO.getRawScoreHistory(eco_id, startDay, endDay)) {
             rawScoreHistory.addLast(rawScore);
         }
         rawScoreHistoryLoaded = true;
