@@ -115,7 +115,7 @@ public class GameServer {
      */
     private void run() {
         Log.consoleln("Now accepting connections...");
-        
+        /*
         try {
             String cmd, s;
             Process p;
@@ -135,7 +135,7 @@ public class GameServer {
         } catch (Exception e) {
             System.out.println("Exception: " + e.toString());
         }
-        
+        */
         
         // Loop indefinitely to establish multiple connections
         while (isActive) {
