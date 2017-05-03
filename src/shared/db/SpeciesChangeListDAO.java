@@ -12,13 +12,20 @@ import java.util.Map;
 import shared.util.Log;
 
 public final class SpeciesChangeListDAO {
-    public final static long scale = 1000 * 60 * 60 * 24;
-    public final static SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-    private static int internalDay = 0;    
+    private static int internalDay = 0;
 
     private SpeciesChangeListDAO() {
     }
 
+    /**
+     * Record a change in biomass for a species in an ecosystem for the given day.
+     * Adds the given biomass delta to any existing delta for this ecosystem/species/day.
+     *
+     * @param eco_id ID of the Ecosystem
+     * @param species_id ID of the Species
+     * @param biomass change in biomass
+     * @param day the day in which the biomass changed
+     */
     public static void createEntry(int eco_id, int species_id, int biomass, int day) {
         
         String query_1 = "SELECT * FROM `eco_species_change` WHERE `eco_id` = ? AND `species_id` = ? AND `day` = ?";

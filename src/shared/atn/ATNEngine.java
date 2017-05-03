@@ -786,7 +786,7 @@ public class ATNEngine {
    }
    
    //Wrapper functions
-   public SpeciesZoneType createSpeciesZoneType(int node_id, int biomass) {
+   public SpeciesZoneType createSpeciesZoneType(int node_id, double biomass) {
        SpeciesZoneType szt;
 
        szt = new SpeciesZoneType("", node_id, 0, 0, biomass, null);
@@ -807,8 +807,7 @@ public class ATNEngine {
 
       //Get previous timestep biomass for all species from web service
       //JTC, use new HashMap containing all current settings from zoneNodes, masterSpeciesList
-      //HJR changing to make a deep copy here , I am getting a null while iterating
-      HashMap<Integer, SpeciesZoneType> masterSpeciesList = new HashMap<Integer, SpeciesZoneType>(zoneNodes.getNodes());     
+      HashMap<Integer, SpeciesZoneType> masterSpeciesList = new HashMap<Integer, SpeciesZoneType>(zoneNodes.getNodes());
 
       HashMap<Integer, SpeciesZoneType> mNewSpecies = new HashMap<Integer, SpeciesZoneType>();
       //JTC, mUpdateBiomass renamed from mUpdateSpecies
