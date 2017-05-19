@@ -13,8 +13,10 @@ import java.util.UUID;
 
 // Other Imports
 import conf.Configuration;
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import jdk.nashorn.internal.runtime.regexp.joni.Config;
 import lby.core.badge.BadgeController;
 import lby.core.world.WorldController;
@@ -113,6 +115,28 @@ public class GameServer {
      */
     private void run() {
         Log.consoleln("Now accepting connections...");
+        /*
+        try {
+            String cmd, s;
+            Process p;
+            
+            cmd = "atn-generate-food-web.py --parent-dir /home/wob_server from-node-ids 4 5 7 73 74 87";
+            System.out.println("Executing: " + cmd);
+            
+            p = Runtime.getRuntime().exec(cmd); 
+            System.out.println("Executed");
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((s = stdInput.readLine()) != null) {
+                System.out.println("Out:" + s);
+            }
+
+            int exitVal = p.waitFor();
+            System.out.println("ExitValue: " + exitVal);
+        } catch (Exception e) {
+            System.out.println("Exception: " + e.toString());
+        }
+        */
+        
         // Loop indefinitely to establish multiple connections
         while (isActive) {
             try {
@@ -308,8 +332,7 @@ public class GameServer {
             MiniGameServers.getInstance().runServers();
             world_id = WorldController.getInstance().first().getID();
             server.startEcosystemUpdate();
-            Log.println("Start Ecosystem periodic update");
-
+            Log.println("Start Ecosystem periodic update");            
             server.run();
         } catch (IOException ex) {
             Log.printf_e("Failed to start server. Port %d is already in use", Configuration.lobbyPortNumber);

@@ -1,8 +1,10 @@
 package lby.net.request;
 
 // Java Imports
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +28,9 @@ public class RequestSpeciesAction extends GameRequest {
 
     private short action;
     private short type;
-    private int species_id;
+    private int species_id, startDay;
     private short index;
+    private String spStr;
     private Map<Integer, Integer> speciesList;
     private List<Species> speciesListFull;
 
@@ -58,6 +61,13 @@ public class RequestSpeciesAction extends GameRequest {
         } else if (action == 4) {
             species_id = DataReader.readInt(dataInput);            
             Log.println("RequestSpeciesAction, parse, action = 4 id = " + species_id);
+        } else if (action == 7) {
+            species_id = DataReader.readInt(dataInput);     
+            startDay = DataReader.readInt(dataInput);
+            Log.println("RequestSpeciesAction, parse, action = 7, id/day = " + species_id + " " + startDay);
+        } else if (action == 8) {
+            spStr = DataReader.readString(dataInput);
+            Log.println("RequestSpeciesAction, parse, action = 8, species string = " + spStr);
         }
     }
 
@@ -186,6 +196,30 @@ public class RequestSpeciesAction extends GameRequest {
             response.setFDay(results[1]);
             response.setLDay(results[2]);
             client.add(response);
+        } else if (action == 7) { // Return species biomass change history. Pairs of <day, biomass change>. Use startDay
+            response.setSpeciesId(species_id);
+            response.setSpeciesHistoryList(
+                    SpeciesChangeListDAO.getSpeciesHistory(client.getPlayer().getEcosystem().getID(), species_id, startDay));
+            Log.println("RequestSpeciesAction, process, action = 7, size = " + response.speciesHistoryList.size());
+            client.add(response);
+        } else if (action == 8) { // Generate food web graph            
+            try {
+                String cmd, s;
+                Process p;
+            
+                cmd = "atn-generate-food-web.py --parent-dir /home/wob_server/src from-node-ids " + spStr;
+                Log.println("Executing: " + cmd);            
+                p = Runtime.getRuntime().exec(cmd); 
+                BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                while ((s = stdInput.readLine()) != null) {
+                    Log.println("Out:" + s);
+                }
+
+                int exitVal = p.waitFor();
+                Log.println("ExitValue: " + exitVal);
+            } catch (Exception e) {
+                Log.println("atn-generate-food-web.py exception: " + e.toString());
+            }
         }
     }
 }

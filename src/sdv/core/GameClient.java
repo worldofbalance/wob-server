@@ -137,7 +137,11 @@ public class GameClient implements Runnable{
                         }
                     }
                 //when player disconnects from a timeout.
-                } else { 
+                } 
+                // temporary fix for disconnect after 90 seconds of inactivity 
+                //TODO: find a way to disconnect client
+                /*
+                else { 
                     // If there was no activity for the last moments, exit loop
                     if ((System.currentTimeMillis() - lastActivity) / 1000 >= Constants.TIMEOUT_SECONDS) {
                         isDone = true;
@@ -149,6 +153,7 @@ public class GameClient implements Runnable{
                         
                     }
                 }
+                */
             //incorrect request code. check Constants.
             } catch (Exception ex) {
                 Log.printf_e("Request [%d] Error:", requestCode);

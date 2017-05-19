@@ -25,12 +25,17 @@ public class ScoreHistoryDAO {
      * Get a history window of raw environment scores for an Ecosystem
      * @param ecosystemID eco_id of Ecosystem of interest
      * @param startDay game day number at which the history window should start
-     * @return the recorded scores starting at startDay, in chronological order
+     * @param endDay game day number at which the history window should stop (inclusive)
+     * @return the recorded scores from startDay through endDay, inclusive, in chronological order
      */
-    public static List<Integer> getRawScoreHistory(int ecosystemID, int startDay) {
+    public static List<Integer> getRawScoreHistory(int ecosystemID, int startDay, int endDay) {
         List<Integer> scores = new ArrayList<>();
 
-        String query = "SELECT raw_score FROM score_history WHERE ecosystem_id = ? and day_number >= ? " +
+        String query =
+                "SELECT raw_score FROM score_history " +
+                "WHERE ecosystem_id = ? " +
+                "and day_number >= ? " +
+                "and day_number <= ? " +
                 "ORDER BY day_number";
 
         Connection con = null;
@@ -42,6 +47,7 @@ public class ScoreHistoryDAO {
             pstmt = con.prepareStatement(query);
             pstmt.setInt(1, ecosystemID);
             pstmt.setInt(2, startDay);
+            pstmt.setInt(3, endDay);
 
             rs = pstmt.executeQuery();
 

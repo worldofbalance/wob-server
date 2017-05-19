@@ -32,6 +32,7 @@ public class RequestSDPosition extends GameRequest{
 
     @Override
     public void doBusiness() throws Exception {
+	try {
         PlayTimePlayer player; // the RacePlayer sending the request
         System.out.println("X:  " +  x + "Y :  " + y + "Rotation " + rotation);
    
@@ -53,7 +54,11 @@ public class RequestSDPosition extends GameRequest{
         player.setY(y);
         player.setRotation(rotation);
         //PlayDAO.updatePlay(player); this is slowing things substanitially
+		 if(GameServer.getInstance().getActivePlayer(p_id) != null){
         GameServer.getInstance().getThreadByPlayerID(p_id).send(responseSDPosition);
+        }
+        }
+		catch(Exception ex) {}
         
     }
 }

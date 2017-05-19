@@ -2,17 +2,18 @@ package shared.model;
 
 import common.TestUtils;
 import org.junit.Before;
+
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import shared.db.ScoreHistoryDAO;
+import shared.metadata.Constants;
 import shared.util.Vector3;
 
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class EcosystemTest {
 
@@ -132,7 +133,7 @@ public class EcosystemTest {
 
     @Test
     public void testSmoothedEnvironmentScoreNoSpecies() {
-        assertEquals(0, ecosystem.smoothedEnvironmentScore());
+        assertEquals(0, ecosystem.smoothedEnvironmentScore(), 1e-20);
     }
 
     @Test
@@ -141,54 +142,80 @@ public class EcosystemTest {
         ecosystem.setSpecies(makeSpecies(50, 2f));
         ecosystem.setSpecies(makeSpecies(50, 3f));
         int rawScore = ecosystem.rawEnvironmentScore();
-        assertEquals(rawScore, ecosystem.smoothedEnvironmentScore());
+        assertEquals(rawScore, ecosystem.smoothedEnvironmentScore(), 1e-20);
     }
 
+    // Test score smoothing with a rolling history window and no repeating days.
+    // Assumes scores are smoothed using rightTriangularWeightedAverage().
     @Test
-    public void testSmoothedEnvironmentScoreSingleWindow() {
-        testSmoothedEnvironmentScore(3, 3);
+    public void testSmoothedEnvironmentScore() {
+        Deque<Integer> rawScores = new ArrayDeque<>();
+
+        ecosystem.setScoreSmoothingWindowSize(3);
+
+        ecosystem.setCurrentDay(1);
+        ecosystem.setSpecies(makeSpecies(100, 1.1f));
+        rawScores.addLast(ecosystem.rawEnvironmentScore());
+        assertEquals(rawScores.getLast(), ecosystem.smoothedEnvironmentScore(), 1e-20);
+
+        ecosystem.setCurrentDay(2);
+        ecosystem.setSpecies(makeSpecies(200, 2.2f));
+        rawScores.addLast(ecosystem.rawEnvironmentScore());
+        assertEquals(Ecosystem.rightTriangularWeightedAverage(rawScores),
+                ecosystem.smoothedEnvironmentScore(), 1e-20);
+
+        ecosystem.setCurrentDay(3);
+        ecosystem.setSpecies(makeSpecies(300, 3.3f));
+        rawScores.addLast(ecosystem.rawEnvironmentScore());
+        assertEquals(Ecosystem.rightTriangularWeightedAverage(rawScores),
+                ecosystem.smoothedEnvironmentScore(), 1e-20);
+
+        // The first day of history should now be removed from the smoothing window
+        rawScores.removeFirst();
+
+        ecosystem.setCurrentDay(4);
+        ecosystem.setSpecies(makeSpecies(400, 4.4f));
+        rawScores.addLast(ecosystem.rawEnvironmentScore());
+        assertEquals(Ecosystem.rightTriangularWeightedAverage(rawScores),
+                ecosystem.smoothedEnvironmentScore(), 1e-20);
     }
 
-    @Test
-    public void testSmoothedEnvironmentScoreRollingWindow() {
-        testSmoothedEnvironmentScore(5, 3);
-    }
-
+    // Similar to testSmoothedEnvironmentScore(),
+    // but updates species biomass and score twice in a day
+    // to verify that the the second calculated score replaces the first.
     @Test
     public void testSmoothedEnvironmentScoreRepeatingDays() {
-        Set<Integer> daysToRepeat = new HashSet<>();
-        daysToRepeat.add(2);
-        daysToRepeat.add(4);
-        testSmoothedEnvironmentScore(5, 3, daysToRepeat);
-    }
+        Deque<Integer> rawScores = new ArrayDeque<>();
 
-    private void testSmoothedEnvironmentScore(int numDays, int windowSize) {
-        testSmoothedEnvironmentScore(numDays, windowSize, new HashSet<>());
-    }
+        ecosystem.setScoreSmoothingWindowSize(2);
 
-    private void testSmoothedEnvironmentScore(int numDays, int windowSize, Set<Integer> daysToRepeat) {
-        int[] rawScores = new int[numDays];
-        int smoothedScore = -1;
-        ecosystem.setScoreSmoothingWindowSize(windowSize);
-        for (int day = 0; day < numDays; day++) {
-            ecosystem.setCurrentDay(day);
-            int iterations = daysToRepeat.contains(day) ? 2 : 1;
-            for (int i = 0; i < iterations; i++) {
-                ecosystem.setSpecies(makeSpecies(day * 100, (float) day / 2));
-                rawScores[day] = ecosystem.rawEnvironmentScore();
-                smoothedScore = ecosystem.smoothedEnvironmentScore();
-            }
-        }
-        assertEquals(arrayWindowMean(rawScores, numDays - windowSize, windowSize), smoothedScore);
-    }
+        ecosystem.setCurrentDay(1);
+        ecosystem.setSpecies(makeSpecies(100, 1.1f));
+        rawScores.addLast(ecosystem.rawEnvironmentScore());
+        assertEquals(rawScores.getLast(), ecosystem.smoothedEnvironmentScore(), 1e-20);
 
-    private int arrayWindowMean(int[] data, int start, int windowSize) {
-        double sum = 0;
-        for (int i = start; i < start + windowSize; i++) {
-            sum += data[i];
-        }
-        double mean = sum / windowSize;
-        return (int) (Math.round(mean));
+        ecosystem.setCurrentDay(2);
+        ecosystem.setSpecies(makeSpecies(200, 2.2f));
+        rawScores.addLast(ecosystem.rawEnvironmentScore());
+        assertEquals(Ecosystem.rightTriangularWeightedAverage(rawScores),
+                ecosystem.smoothedEnvironmentScore(), 1e-20);
+
+        // Repeat day 2 with different numbers
+        rawScores.removeLast();
+        ecosystem.setCurrentDay(2);
+        ecosystem.setSpecies(makeSpecies(220, 2.8f));
+        rawScores.addLast(ecosystem.rawEnvironmentScore());
+        assertEquals(Ecosystem.rightTriangularWeightedAverage(rawScores),
+                ecosystem.smoothedEnvironmentScore(), 1e-20);
+
+        // The first day of history should now be removed from the smoothing window
+        rawScores.removeFirst();
+
+        ecosystem.setCurrentDay(3);
+        ecosystem.setSpecies(makeSpecies(300, 3.3f));
+        rawScores.addLast(ecosystem.rawEnvironmentScore());
+        assertEquals(Ecosystem.rightTriangularWeightedAverage(rawScores),
+                ecosystem.smoothedEnvironmentScore(), 1e-20);
     }
 
     @Test
@@ -198,13 +225,47 @@ public class EcosystemTest {
         ecosystem.setScoreSmoothingWindowSize(2);
         ecosystem.setCurrentDay(3);
         ecosystem.loadRawScoreHistory();
-        int smoothedScore = ecosystem.smoothedEnvironmentScore();
-        assertEquals(10, smoothedScore);  // (10 + 20 + 0) / 3 = 10
+
+        assertEquals(true, ecosystem.rawScoreHistoryLoaded);
+
+        Integer[] expectedHistory = {10, 20};
+        assertArrayEquals(expectedHistory, ecosystem.rawScoreHistory.toArray());
+    }
+
+    @Test
+    public void testRightTriangularWeightedAverageEmpty() {
+        assertEquals(0, Ecosystem.rightTriangularWeightedAverage(new ArrayDeque<>()), 1e-20);
+    }
+
+    @Test
+    public void testRightTriangularWeightedAverageSingleElement() {
+        Deque<Integer> values = new ArrayDeque<>();
+        values.add(12345);
+        assertEquals(12345, Ecosystem.rightTriangularWeightedAverage(values), 1e-20);
+    }
+
+    @Test
+    public void testRightTriangularWeightedAverageTwoElements() {
+        Deque<Integer> values = new ArrayDeque<>();
+        values.addLast(10);  // weight = 1
+        values.addLast(20);  // weight = 2
+        // sum of weights = 3
+        assertEquals((10 * 1 + 20 * 2) / 3.0, Ecosystem.rightTriangularWeightedAverage(values), 1e-20);
+    }
+
+    @Test
+    public void testRightTriangularWeightedAverageThreeElements() {
+        Deque<Integer> values = new ArrayDeque<>();
+        values.addLast(10);  // weight = 1
+        values.addLast(20);  // weight = 2
+        values.addLast(30);  // weight = 3
+        // sum of weights = 6
+        assertEquals((10 * 1 + 20 * 2 + 30 * 3) / 6.0, Ecosystem.rightTriangularWeightedAverage(values), 1e-20);
     }
 
     /**
      * Note: testing of updateEnvironmentScore is currently limited to testing the
-     * changes related to the new smoothedEnvironmentScore() method.
+     * changes related to the smoothedEnvironmentScore() and scaledSmoothedEnvironmentScore() methods.
      */
     @Test
     public void testUpdateEnvironmentScore() {
@@ -217,6 +278,14 @@ public class EcosystemTest {
         } catch (NullPointerException e) {
             // Ignore irrelevant NullPointerException caused by NetworkFunctions.sendToPlayer()
         }
-        assertEquals(10, ecosystem.getScore());
+
+        Deque<Integer> expectedRawScores = new ArrayDeque<>();
+        expectedRawScores.addLast(20);
+        expectedRawScores.addLast(0);
+        double expectedSmoothedScore = Ecosystem.rightTriangularWeightedAverage(expectedRawScores);
+        int expectedScaledScore = (int) Math.round(
+                Math.sqrt(expectedSmoothedScore) * Constants.SCORE_MULTIPLIER);
+
+        assertEquals(expectedScaledScore, ecosystem.getScore());
     }
 }

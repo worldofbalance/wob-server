@@ -25,7 +25,7 @@ public class RequestLogout extends GameRequest {
     @Override
     public void process() throws Exception {
         short status = ResponseLogout.SUCCESS;
-
+        Log.consoleln("Inside RequestLogout, process, type = " + type);
         if (status == ResponseLogout.SUCCESS) {
             if (client != null) {
             if (type == 0) { // Exit (+ Logout)
