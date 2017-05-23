@@ -31,21 +31,6 @@ public class RequestConvergeEcosystems extends GameRequest {
         Log.consoleln("Processing RequestConvergeEcosystems");
         ResponseConvergeEcosystems response = new ResponseConvergeEcosystems();
         response.setConvergeEcosystems(ConvergeEcosystemDAO.getConvergeEcosystems());
-//        client.add(response);
-        
-        //one time use to create file to port to client instead of requesting each time
-        File file = new File("converge-ecosystems.txt");
-        if (file.exists()) {
-            file.delete();
-        }
-        file.createNewFile();
-
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            fileOutputStream.write(response.getBytes());
-            fileOutputStream.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        client.add(response);
     }
 }
