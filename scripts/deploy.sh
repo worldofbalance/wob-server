@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-SERVER_HOSTNAME=smurf.sfsu.edu
+#SERVER_HOSTNAME=smurf.sfsu.edu
+SERVER_HOSTNAME=54.153.66.118  # AWS instance
 
 echo "deploying to $SERVER_HOSTNAME"
 
