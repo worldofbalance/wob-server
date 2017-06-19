@@ -18,6 +18,9 @@ import shared.util.Log;
  * @author Gary
  */
 public final class ConvergeEcosystemDAO {
+    // Contains maximum number of ecosystems to send across network
+    // Found system hanged with 100, probably due to 32K limit in network message length
+    private final static int MAX_ECOSYSTEMS = 60;
 
     private ConvergeEcosystemDAO() {
     }
@@ -31,6 +34,7 @@ public final class ConvergeEcosystemDAO {
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
+        int maxCnt = MAX_ECOSYSTEMS;
 
         try {
             con = GameDB.getConnection();
@@ -38,7 +42,7 @@ public final class ConvergeEcosystemDAO {
 
             rs = pstmt.executeQuery();
 
-            while (rs.next()) {
+            while (rs.next() && (maxCnt > 0)) {
                 ConvergeEcosystem ecosystem = new ConvergeEcosystem();
 
                 ecosystem.setEcosystemId(rs.getInt("ecosystem_id"));
@@ -49,7 +53,9 @@ public final class ConvergeEcosystemDAO {
                 ecosystem.setCsvDefault(rs.getString("csv_default"));
                 ecosystem.setCsvTarget(rs.getString("csv_target"));
 
+                Log.consoleln("ConvergeEcosystemDAO, id = " + ecosystem.getEcosystemId());
                 ecosystems.add(ecosystem);
+                maxCnt--;
             }
         } catch (SQLException ex) {
             Log.println_e(ex.getMessage());
