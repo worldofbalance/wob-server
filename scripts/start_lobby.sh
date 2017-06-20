@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-printf "\n" | java -jar ~/wob-server-binaries/lobby.jar \
+printf "\n" | /opt/java8/bin/java -jar ~/wob-server-binaries/lobby.jar \
      -XX:+UnlockCommercialFeatures -XX:+FlightRecorder \
      -XX:StartFlightRecording=settings=default \
      -XX:FlightRecorderOptions=dumponexit=true,dumponexitpath=$HOME \
