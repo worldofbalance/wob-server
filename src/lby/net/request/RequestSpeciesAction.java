@@ -30,7 +30,7 @@ public class RequestSpeciesAction extends GameRequest {
     private short type;
     private int species_id, startDay;
     private short index;
-    private String spStr;
+    private String configStr;
     private Map<Integer, Integer> speciesList;
     private List<Species> speciesListFull;
 
@@ -66,8 +66,8 @@ public class RequestSpeciesAction extends GameRequest {
             startDay = DataReader.readInt(dataInput);
             Log.println("RequestSpeciesAction, parse, action = 7, id/day = " + species_id + " " + startDay);
         } else if (action == 8) {
-            spStr = DataReader.readString(dataInput);
-            Log.println("RequestSpeciesAction, parse, action = 8, species string = " + spStr);
+            configStr = DataReader.readString(dataInput);
+            Log.println("RequestSpeciesAction, parse, action = 8, config string = " + configStr);
         }
     }
 
@@ -207,7 +207,7 @@ public class RequestSpeciesAction extends GameRequest {
                 String cmd, s;
                 Process p;
             
-                cmd = "atn-generate-food-web.py --parent-dir /home/wob_server/src from-node-ids " + spStr;
+                cmd = "atn-generate-food-web.py --parent-dir ~/src " + configStr;
                 Log.println("Executing: " + cmd);            
                 p = Runtime.getRuntime().exec(cmd); 
                 BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
