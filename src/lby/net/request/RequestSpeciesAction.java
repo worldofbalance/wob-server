@@ -207,7 +207,7 @@ public class RequestSpeciesAction extends GameRequest {
                 String cmd, s;
                 Process p;
             
-                cmd = "atn-generate-food-web.py --parent-dir ~/src " + configStr;
+                cmd = "atn-generate-food-web.py --parent-dir /project/wob_server/src " + configStr;
                 Log.println("Executing: " + cmd);            
                 p = Runtime.getRuntime().exec(cmd); 
                 BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
