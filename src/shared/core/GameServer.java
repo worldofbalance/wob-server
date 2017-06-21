@@ -74,6 +74,10 @@ public class GameServer {
     private final static int ECC_UPDATE_CYCLE_DEFAULT = 24;   // Default update all ecosystems once per day, every 24 hours
     private final static int ECC_UPDATE_STAGGER = 1000 * 20;   // Stagger ecosystem updates by 20 seconds
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+    /* This is the path name in the server. Must be updated if a new server path is used  */
+    public final static String SERVER_PATH = "/project/wob_server";
+    
+    
 
     /**
      * Create the GameServer by setting up the request types and creating a

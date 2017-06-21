@@ -3,8 +3,12 @@ package lby.net.request;
 // Java Imports
 import java.io.BufferedReader;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +20,7 @@ import shared.db.ShopDAO;
 import shared.model.Ecosystem;
 import shared.model.ShopItem;
 import lby.net.response.ResponseSpeciesAction;
+import shared.core.GameServer;
 import shared.core.ServerResources;
 import shared.db.EcoSpeciesDAO;
 import shared.db.SpeciesChangeListDAO;
@@ -30,7 +35,7 @@ public class RequestSpeciesAction extends GameRequest {
     private short type;
     private int species_id, startDay;
     private short index;
-    private String configStr;
+    private String configStr, speciesStr;
     private Map<Integer, Integer> speciesList;
     private List<Species> speciesListFull;
 
@@ -67,7 +72,9 @@ public class RequestSpeciesAction extends GameRequest {
             Log.println("RequestSpeciesAction, parse, action = 7, id/day = " + species_id + " " + startDay);
         } else if (action == 8) {
             configStr = DataReader.readString(dataInput);
-            Log.println("RequestSpeciesAction, parse, action = 8, config string = " + configStr);
+            speciesStr = DataReader.readString(dataInput);
+            Log.println("RequestSpeciesAction, parse, action = 8, :config:species: = :" 
+                    + configStr + ":" + speciesStr + ":");
         }
     }
 
@@ -202,24 +209,45 @@ public class RequestSpeciesAction extends GameRequest {
                     SpeciesChangeListDAO.getSpeciesHistory(client.getPlayer().getEcosystem().getID(), species_id, startDay));
             Log.println("RequestSpeciesAction, process, action = 7, size = " + response.speciesHistoryList.size());
             client.add(response);
-        } else if (action == 8) { // Generate food web graph            
-            try {
-                String cmd, s;
-                Process p;
-            
-                cmd = "atn-generate-food-web.py --parent-dir /project/wob_server/src " + configStr;
-                Log.println("Executing: " + cmd);            
-                p = Runtime.getRuntime().exec(cmd); 
-                BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                while ((s = stdInput.readLine()) != null) {
-                    Log.println("Out:" + s);
-                }
-
-                int exitVal = p.waitFor();
-                Log.println("ExitValue: " + exitVal);
-            } catch (Exception e) {
-                Log.println("atn-generate-food-web.py exception: " + e.toString());
+        } else if (action == 8) { // Generate food web graph    
+            String folderName = speciesStr.replaceAll(" ", "-");
+            String fileName = "foodweb." + folderName + ".png";
+            folderName = GameServer.SERVER_PATH + "/src/" + folderName;
+            Log.println("RequestSpeciesAction, 8: folderName,fileName = " + folderName + "," + fileName); 
+            File imageFile = new File(folderName + "/" + fileName);
+            if (!imageFile.exists()) {
+                try {
+                    String cmd, s;
+                    Process p;
+                    cmd = "atn-generate-food-web.py --parent-dir " + GameServer.SERVER_PATH 
+                            + "/src " + configStr + " from-node-ids " + speciesStr;
+                    Log.println("Executing: " + cmd);            
+                    p = Runtime.getRuntime().exec(cmd); 
+                    BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                    while ((s = stdInput.readLine()) != null) {
+                        Log.println("Out:" + s);
+                    }
+                    int exitVal = p.waitFor();
+                    Log.println("ExitValue: " + exitVal);
+                } catch (Exception e) {
+                    Log.println("atn-generate-food-web.py exception: " + e.toString());
+                }                
             }
+
+            int byteCount = 0;
+            byte[] fileContents;            
+            imageFile = new File(folderName + "/" + fileName);
+            if (imageFile.exists()) {
+                Path path = Paths.get(folderName + "/" + fileName);
+                fileContents =  Files.readAllBytes(path);
+                byteCount = fileContents.length;
+                response.setByteCount(byteCount);
+                response.setBytes(fileContents);
+            } else {
+                response.setByteCount(byteCount);
+            }
+            Log.println("food-web response. byte count = " + byteCount);
+            client.add(response);
         }
     }
 }
