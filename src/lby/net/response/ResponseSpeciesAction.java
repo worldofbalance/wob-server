@@ -22,7 +22,7 @@ public class ResponseSpeciesAction extends GameResponse {
     private String selectionList;
     private Map<Integer, Integer> speciesList = new HashMap<Integer, Integer>();
     public Map<Integer, Integer> speciesHistoryList = new HashMap<Integer, Integer>();
-    private int byteCount;
+    private int byteCount, startByte;
     private byte[] fileContents;
 
     public ResponseSpeciesAction() {
@@ -79,10 +79,17 @@ public class ResponseSpeciesAction extends GameResponse {
             packet.addInt32(fDay);
             packet.addInt32(lDay);
         } else if (action == 8) {
+            Log.println("ResponseSpeciesAction, action = 8, byteCount = " + byteCount);
             packet.addInt32(byteCount);
             if (byteCount > 0) {
                 packet.addBytes(fileContents);
             }
+        } else if (action == 9) {
+            Log.println("ResponseSpeciesAction, action = 9, byteCount, startByte = " 
+                    + byteCount + " " + startByte);
+            packet.addInt32(startByte);
+            packet.addInt32(byteCount);
+            packet.addBytes(fileContents);
         } 
         
         return packet.getBytes();
@@ -154,5 +161,9 @@ public class ResponseSpeciesAction extends GameResponse {
     
     public void setBytes(byte[] fileContents) {
         this.fileContents = fileContents;
+    }
+    
+    public void setStartByte(int startByte) {
+        this.startByte = startByte;
     }
 }

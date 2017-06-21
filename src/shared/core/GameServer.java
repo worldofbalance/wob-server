@@ -76,6 +76,11 @@ public class GameServer {
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
     /* This is the path name in the server. Must be updated if a new server path is used  */
     public final static String SERVER_PATH = "/project/wob_server";
+    /* This is food web image block size to send to client. 
+     * Must match value in client, WorldController class
+     * Must be under 32K limit
+     */
+    public final static int FOOD_WEB_BLOCK_SIZE = 32000;
     
     
 
