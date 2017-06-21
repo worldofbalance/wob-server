@@ -81,9 +81,6 @@ public class ResponseSpeciesAction extends GameResponse {
         } else if (action == 8) {
             Log.println("ResponseSpeciesAction, action = 8, byteCount = " + byteCount);
             packet.addInt32(byteCount);
-            if (byteCount > 0) {
-                packet.addBytes(fileContents);
-            }
         } else if (action == 9) {
             Log.println("ResponseSpeciesAction, action = 9, byteCount, startByte = " 
                     + byteCount + " " + startByte);
