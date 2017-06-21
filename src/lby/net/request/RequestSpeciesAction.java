@@ -33,7 +33,7 @@ public class RequestSpeciesAction extends GameRequest {
 
     private short action;
     private short type;
-    private int species_id, startDay;
+    private int species_id, startDay, startByte;
     private short index;
     private String configStr, speciesStr;
     private Map<Integer, Integer> speciesList;
@@ -75,6 +75,12 @@ public class RequestSpeciesAction extends GameRequest {
             speciesStr = DataReader.readString(dataInput);
             Log.println("RequestSpeciesAction, parse, action = 8, :config:species: = :" 
                     + configStr + ":" + speciesStr + ":");
+        } else if (action == 9) {
+            configStr = DataReader.readString(dataInput);
+            speciesStr = DataReader.readString(dataInput);
+            startByte = DataReader.readInt(dataInput);
+            Log.println("RequestSpeciesAction, parse, action = 9, :config:species:startByte = :" 
+                    + configStr + ":" + speciesStr + ":" + startByte);
         }
     }
 
@@ -209,7 +215,7 @@ public class RequestSpeciesAction extends GameRequest {
                     SpeciesChangeListDAO.getSpeciesHistory(client.getPlayer().getEcosystem().getID(), species_id, startDay));
             Log.println("RequestSpeciesAction, process, action = 7, size = " + response.speciesHistoryList.size());
             client.add(response);
-        } else if (action == 8) { // Generate food web graph    
+        } else if (action == 8) { // Generate food web graph. Send byte count back
             String folderName = speciesStr.replaceAll(" ", "-");
             String fileName = "foodweb." + folderName + ".png";
             folderName = GameServer.SERVER_PATH + "/src/" + folderName;
@@ -239,14 +245,35 @@ public class RequestSpeciesAction extends GameRequest {
             imageFile = new File(folderName + "/" + fileName);
             if (imageFile.exists()) {
                 Path path = Paths.get(folderName + "/" + fileName);
-                fileContents =  Files.readAllBytes(path);
+                fileContents = Files.readAllBytes(path);
                 byteCount = fileContents.length;
-                response.setByteCount(byteCount);
-                response.setBytes(fileContents);
-            } else {
-                response.setByteCount(byteCount);
-            }
-            Log.println("food-web response. byte count = " + byteCount);
+            } 
+            response.setByteCount(byteCount);
+            Log.println("food-web response, action = 8. byte count = " + byteCount);
+            client.add(response);
+        } else if (action == 9) { // Send selected block back    
+            String folderName = speciesStr.replaceAll(" ", "-");
+            String fileName = "foodweb." + folderName + ".png";
+            folderName = GameServer.SERVER_PATH + "/src/" + folderName;
+            Log.println("RequestSpeciesAction, 8: folderName,fileName = " + folderName + "," + fileName); 
+            File imageFile = new File(folderName + "/" + fileName);                        
+            int byteCount = 0;
+            byte[] fileContents;            
+            if (imageFile.exists()) {
+                Path path = Paths.get(folderName + "/" + fileName);
+                fileContents = Files.readAllBytes(path);
+                byteCount = Math.min(fileContents.length - startByte, 
+                        GameServer.FOOD_WEB_BLOCK_SIZE);
+                byte[] bufferContents = new byte[byteCount];
+                for (int i = 0; i < byteCount; i++) {
+                    bufferContents[i] = fileContents[i + startByte];
+                }
+                response.setBytes(bufferContents);
+            } 
+            response.setStartByte(startByte);
+            response.setByteCount(byteCount);
+            Log.println("food-web response, action = 9. byte count, startByte = " 
+                + byteCount + " " + startByte);
             client.add(response);
         }
     }
