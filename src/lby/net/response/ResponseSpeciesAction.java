@@ -22,6 +22,8 @@ public class ResponseSpeciesAction extends GameResponse {
     private String selectionList;
     private Map<Integer, Integer> speciesList = new HashMap<Integer, Integer>();
     public Map<Integer, Integer> speciesHistoryList = new HashMap<Integer, Integer>();
+    private int byteCount;
+    private byte[] fileContents;
 
     public ResponseSpeciesAction() {
         response_id = NetworkCode.SPECIES_ACTION;
@@ -76,7 +78,12 @@ public class ResponseSpeciesAction extends GameResponse {
             packet.addInt32(cDay);
             packet.addInt32(fDay);
             packet.addInt32(lDay);
-        }
+        } else if (action == 8) {
+            packet.addInt32(byteCount);
+            if (byteCount > 0) {
+                packet.addBytes(fileContents);
+            }
+        } 
         
         return packet.getBytes();
     }
@@ -140,4 +147,12 @@ public class ResponseSpeciesAction extends GameResponse {
     public void setLDay(int lDay) {
         this.lDay = lDay;
     }    
+    
+    public void setByteCount(int byteCount) {
+        this.byteCount = byteCount;
+    }
+    
+    public void setBytes(byte[] fileContents) {
+        this.fileContents = fileContents;
+    }
 }
