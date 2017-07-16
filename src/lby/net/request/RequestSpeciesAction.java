@@ -9,6 +9,8 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,7 @@ import shared.db.SpeciesChangeListDAO;
 import shared.model.Species;
 import shared.model.SpeciesType;
 import shared.util.DataReader;
+import shared.util.GameFunctions;
 import shared.util.Log;
 
 public class RequestSpeciesAction extends GameRequest {
@@ -216,7 +219,32 @@ public class RequestSpeciesAction extends GameRequest {
             Log.println("RequestSpeciesAction, process, action = 7, size = " + response.speciesHistoryList.size());
             client.add(response);
         } else if (action == 8) { // Generate food web graph. Send byte count back
+            Map<Integer, Integer> speciesBiomassList = new HashMap<Integer, Integer>();
+            String speciesStrProc = speciesStr;
+            int idx1, speciesID;
+            while (speciesStrProc.length() > 0) {
+                if ((idx1 = speciesStrProc.indexOf(' ')) > -1) {
+                    speciesID = Integer.parseInt(speciesStrProc.substring(0, idx1));
+                    speciesBiomassList.put(speciesID, 0);
+                    speciesStrProc = speciesStrProc.substring(idx1+1);
+                } else {
+                    speciesID = Integer.parseInt(speciesStrProc);
+                    speciesBiomassList.put(speciesID, 0);
+                    speciesStrProc = "";
+                }
+            }
+            
+            Map<Integer, Integer> nodeBiomassList = GameFunctions.convertSpeciesToNodes(speciesBiomassList);
+            ArrayList<Integer> nodeList = new ArrayList<Integer>(nodeBiomassList.keySet());
+            Collections.sort(nodeList);
+            String nodeStr = "" + nodeList.get(0);
+            for (int i = 1; i < nodeList.size(); i++) {
+                nodeStr += "-" + nodeList.get(i);
+            }
             String folderName = speciesStr.replaceAll(" ", "-");
+            Log.println("RequestSpeciesAction, action = 8, speciesList = " + folderName);
+            Log.println("RequestSpeciesAction, action = 8, nodeList = " + nodeStr);
+            
             String fileName = "foodweb." + folderName + ".png";
             folderName = GameServer.SERVER_PATH + "/src/" + folderName;
             Log.println("RequestSpeciesAction, 8: folderName,fileName = " + folderName + "," + fileName); 
