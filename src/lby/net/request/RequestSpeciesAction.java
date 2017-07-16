@@ -239,7 +239,7 @@ public class RequestSpeciesAction extends GameRequest {
             Collections.sort(nodeList);
             String nodeStr = "" + nodeList.get(0);
             for (int i = 1; i < nodeList.size(); i++) {
-                nodeStr += "-" + nodeList.get(i);
+                nodeStr += " " + nodeList.get(i);
             }
             String folderName = speciesStr.replaceAll(" ", "-");
             Log.println("RequestSpeciesAction, action = 8, speciesList = " + folderName);
@@ -254,7 +254,7 @@ public class RequestSpeciesAction extends GameRequest {
                     String cmd, s;
                     Process p;
                     cmd = "atn-generate-food-web.py --parent-dir " + GameServer.SERVER_PATH 
-                            + "/src " + configStr + " from-node-ids " + speciesStr;
+                            + "/src " + configStr + " from-node-ids " + nodeStr;
                     Log.println("Executing: " + cmd);            
                     p = Runtime.getRuntime().exec(cmd); 
                     BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
